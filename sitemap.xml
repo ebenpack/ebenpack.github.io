@@ -4,70 +4,70 @@ xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitem
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-<loc>/index.html</loc>
-<lastmod>2014-03-05T17:55:12-00:00</lastmod>
+<loc>http://www.ebenpackwood.com/index.html</loc>
+<lastmod>2014-03-05T18:14:22-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/archives.html</loc>
-<lastmod>2014-03-05T17:55:12-00:00</lastmod>
+<loc>http://www.ebenpackwood.com/archives.html</loc>
+<lastmod>2014-03-05T18:14:22-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tags.html</loc>
-<lastmod>2014-03-05T17:55:12-00:00</lastmod>
+<loc>http://www.ebenpackwood.com/tags.html</loc>
+<lastmod>2014-03-05T18:14:22-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/categories.html</loc>
-<lastmod>2014-03-05T17:55:12-00:00</lastmod>
+<loc>http://www.ebenpackwood.com/categories.html</loc>
+<lastmod>2014-03-05T18:14:22-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/pages/projects.html</loc>
+<loc>http://www.ebenpackwood.com/pages/projects.html</loc>
 <lastmod>2014-02-15T20:28:00-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/category/javascript.html</loc>
+<loc>http://www.ebenpackwood.com/category/javascript.html</loc>
 <lastmod>2014-02-16T12:49:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tag/javascript.html</loc>
+<loc>http://www.ebenpackwood.com/tag/javascript.html</loc>
 <lastmod>2014-02-16T12:49:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tag/js1k.html</loc>
+<loc>http://www.ebenpackwood.com/tag/js1k.html</loc>
 <lastmod>2014-02-16T12:49:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tag/lattice-boltzmann.html</loc>
+<loc>http://www.ebenpackwood.com/tag/lattice-boltzmann.html</loc>
 <lastmod>2014-02-16T12:49:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/author/ebenpack.html</loc>
+<loc>http://www.ebenpackwood.com/author/ebenpack.html</loc>
 <lastmod>2014-02-16T12:49:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
