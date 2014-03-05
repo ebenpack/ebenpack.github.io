@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=endge, chrome=IE8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no" />
+    <title>Eben Packwood — Lattice Boltzmann</title>
+    <!--[if lte IE 8]><script type="text/javascript" src="../../theme/js/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" type="text/css" href="../../theme/css/skeleton.css" />
+    <link rel="stylesheet" type="text/css" href="../../theme/css/theme.css" />
+    <link rel="shortcut icon" type="image/png" href="../../favicon.png" />
+    <!--[if lte IE 8]><link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico" /><![endif]-->
+    <link rel="alternate" type="application/atom+xml"
+                           title="Eben Packwood — Flux Atom"
+                           href="../../" /> 
+  </head>
+  <body>
+    <div id="page">   
+      <div id="page-body">
+        <section id="page-main" role="main">
+      <h1>Lattice Boltzmann</h1>
+      <div class="main" style="position:relative;">
+    <canvas id="boltzmann" style="background-color: black; position:relative;" width='600' height='240'></canvas>
+    <canvas id="vectorcanvas" style="position: absolute; left: 0; pointer-events: none" width='600' height='240'></canvas>
+    <canvas id="particlecanvas" style="position: absolute; left: 0; pointer-events: none" width='600' height='240'></canvas>
+    <canvas id="barriercanvas" style="position: absolute; left: 0; pointer-events: none" width='600' height='240'></canvas>
+     <div id="controls" class="controls">
+        <select id="drawmode">
+            <option value="speed">Speed</option>
+            <option value="xvelocity">X Velocity</option>
+            <option value="yvelocity">Y Velocity</option>
+            <option value="density">Density</option>
+            <option value="curl">Curl</option>
+            <option value="nothing">Nothing</option>
+        </select>
+        <label><input id="flowvectors" type="checkbox" name="flowvectors"> Flow Vectors</label>
+        <label><input id="flowparticles" type="checkbox" name="flowparticles"> Flow Particles</label>
+        <button id="play">Start</button>
+        <button id="reset">Reset</button>
+        <button id="clearbarriers">Clear barriers</button>
+        <br>
+        <br>
+        <label><input id="viscosity" type="range" name="viscosity" min="2" max="50"> Viscosity</label><br><br>
+        <label><input id="speed" type="range" name="anim-speed" min="1" max="15"> Animation Speed</label>
+    </div>
+    <div style="border:1px solid gray; width: 600px; padding: 10px; margin-top:10px;">
+        <p><b>Left click</b> to drag fluid</p>
+        <p><b>Right click</b> to draw/erase barriers</p>
+    </div>
+    <div id="debug"></div>
+</div>
+
+<script src="https://rawgithub.com/ebenpack/laboratory/master/JS/boltzmann/js/init.js"></script>
+
+<script src="https://rawgithub.com/ebenpack/laboratory/master/JS/boltzmann/js/draw.js"></script>
+
+<script src="https://rawgithub.com/ebenpack/laboratory/master/JS/boltzmann/js/events.js"></script>
+
+<script src="https://rawgithub.com/ebenpack/laboratory/master/JS/boltzmann/js/main.js"></script>
+      </section> <!-- /#page-main -->
+
+        <aside id="page-side">
+          <!-- begin includes/sidebar.html -->
+          <h2>
+            <a href="../../index.html">Eben Packwood</a>
+          </h2>
+          <nav>
+            <h3>Pages</h3>
+            <ul>
+              <li><a href="../..">Home</a></li>
+              <li><a href="../../categories.html">Categories</a></li>
+              <li><a href="../../archives.html">Archives</a></li>
+              <li><a href="../../tags.html">Tags</a></li>
+              <li><a href="../../pages/projects.html">Projects</a></li>
+            </ul>
+          </nav>
+
+          <nav>
+            <h3>Categories</h3>
+            <ul>
+              <li><a href="../../category/javascript.html">JavaScript</a></li>
+            </ul>
+          </nav>
+
+          <nav>
+            <h3>Social</h3>
+            <ul>
+              <li><a href="https://github.com/ebenpack" target="_blank">GitHub</a></li>
+            </ul>
+          </nav>
+          <!-- end includes/sidebar.html --></aside> <!-- /#page-side -->
+      </div>  <!-- /#page-body -->
+
+      <footer id="page-foot">
+        <p> Powered by <a href="http://pelican.readthedocs.org">Pelican</a></p>
+<p><a id="github-link" href="https://github.com/ebenpack/ebenpack.github.io">Fork me on Github</a></p><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+      </footer>
+    </div> <!-- /#page -->
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../theme/js/jquery-1.11.0.min.js"><\/script>')</script> -->
+    <script src="../../theme/js/main.js"></script>
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-48710000-1', 'ebenpackwood.com');
+	  ga('send', 'pageview');
+
+	</script>
+  </body>
+</html>
