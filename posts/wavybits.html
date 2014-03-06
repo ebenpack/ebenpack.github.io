@@ -5,18 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=endge, chrome=IE8" />
     <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no" />
     <title>Bytes!?! We don't need no stinkin' bytes! — Eben Packwood</title>
-    <!--[if lte IE 8]><script type="text/javascript" src="../theme/js/html5shiv.js"></script><![endif]-->
-    <link rel="stylesheet" type="text/css" href="../theme/css/skeleton.css" />
-    <link rel="stylesheet" type="text/css" href="../theme/css/theme.css" />
+    <!--[if lte IE 8]><script type="text/javascript" src="http://www.ebenpackwood.com/theme/js/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" type="text/css" href="http://www.ebenpackwood.com/theme/css/skeleton.css" />
+    <link rel="stylesheet" type="text/css" href="http://www.ebenpackwood.com/theme/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="http://www.ebenpackwood.com/theme/js/modernizr.js" />
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-    <!--[if lte IE 8]><link rel="shortcut icon" type="image/x-icon" href="../favicon.ico" /><![endif]-->
+    <!--[if lte IE 8]><link rel="shortcut icon" type="image/x-icon" href="http://www.ebenpackwood.com/favicon.ico" /><![endif]-->
     <link rel="alternate" type="application/atom+xml"
                            title="Eben Packwood — Flux Atom"
-                           href="../" /> 
+                           href="http://www.ebenpackwood.com/" /> 
 
     <meta name="author"   content="ebenpack" />
     <meta name="keywords" content="JavaScript, JS1K, Lattice Boltzmann" />
-    <link rel="stylesheet" media="not print" type="text/css" href="../theme/css/pygments.css" /> 
+    <link rel="stylesheet" media="not print" type="text/css" href="http://www.ebenpackwood.com/theme/css/pygments.css" /> 
   </head>
   <body>
     <div id="page">   
@@ -25,7 +26,7 @@
       <header class="post-header">
         <h1>
           <a rel="bookmark"
-             href="../posts/wavybits"
+             href="http://www.ebenpackwood.com/posts/wavybits"
              title="Permanent link Bytes!?! We don't need no stinkin' bytes!">
              Bytes!?! We don't need no stinkin' bytes!
           </a>
@@ -33,14 +34,14 @@
         <div class="meta">
 <!-- includes/article_meta.html -->
             Posted <time datetime="2014-02-16T12:49:00">Sun 16 February 2014</time>
-            in <a href="../category/javascript.html">JavaScript</a> 
-            by <a href="../author/ebenpack.html">ebenpack</a>              <br />Tags:              <a rel="tag" href="../tag/javascript.html">JavaScript</a>,               <a rel="tag" href="../tag/js1k.html">JS1K</a>,               <a rel="tag" href="../tag/lattice-boltzmann.html">Lattice Boltzmann</a>        </div>
+            in <a href="http://www.ebenpackwood.com/category/javascript.html">JavaScript</a> 
+            by <a href="http://www.ebenpackwood.com/author/ebenpack.html">ebenpack</a>              <br />Tags:              <a rel="tag" href="http://www.ebenpackwood.com/tag/javascript.html">JavaScript</a>,               <a rel="tag" href="http://www.ebenpackwood.com/tag/js1k.html">JS1K</a>,               <a rel="tag" href="http://www.ebenpackwood.com/tag/lattice-boltzmann.html">Lattice Boltzmann</a>        </div>
       </header>
       <div class="post-content"> 
         <p><em>Being an attempt to write a computational fluid dynamics simulation using no more than two raised to the power ten bytes.</em></p>
 <p>First, before I begin, N.B: apparently the extreme brevity required by this project has put me in rather a garrulous mood, so I apologize for the length of this post-mortem. If you're interested in maybe learning a few byte shaving tricks for your own js1k, though, read on. Also, verbose variable names will be used for the sake of clarity, though keep in mind that all variables here have a single letter identifier in the final program.</p>
 <h2>What it is</h2>
-<p>This project, written for the <a href="http://js1k.com/2014-dragons/">JS1K competition</a>, is essentially a complete rewrite of an <a href="https://github.com/ebenpack/laboratory/tree/master/JS/boltzmann">earlier, much more feature rich project</a>. You can have a look at the <a href="https://rawgithub.com/ebenpack/laboratory/master/JS/boltzmann/index.html">demo</a>, which is probably more intersting than this 1K version, but which is an order of magnitude larger in the bytes department. If you're not familiar with the lattice Boltzmann method, there's a fairly nice introduction <a href="http://physics.weber.edu/schroeder/fluids/FluidSimulationsForUndergrads.pdf">here (pdf)</a>, or you can read <a href="../posts/lattice-boltzmann">my explanation</a>. The TL;DR version, though, is that this is a 2D computational fluid dynamics simulation. You can think of it as the surface of a pond that you're dragging your finger through.</p>
+<p>This project, written for the <a href="http://js1k.com/2014-dragons/">JS1K competition</a>, is essentially a complete rewrite of an <a href="https://github.com/ebenpack/laboratory/tree/master/JS/boltzmann">earlier, much more feature rich project</a>. You can have a look at the <a href="https://rawgithub.com/ebenpack/laboratory/master/JS/boltzmann/index.html">demo</a>, which is probably more intersting than this 1K version, but which is an order of magnitude larger in the bytes department. If you're not familiar with the lattice Boltzmann method, there's a fairly nice introduction <a href="http://physics.weber.edu/schroeder/fluids/FluidSimulationsForUndergrads.pdf">here (pdf)</a>, or you can read <a href="http://www.ebenpackwood.com/posts/lattice-boltzmann">my explanation</a>. The TL;DR version, though, is that this is a 2D computational fluid dynamics simulation. You can think of it as the surface of a pond that you're dragging your finger through.</p>
 <p>So what does this have to do with the contest's theme, 'here be dragons'? Well, nothing, really. It's just an interesting problem I was working on recently, and I thought it would be fun to see if it was possible to achieve in 1K. So let's get to it, shall we.</p>
 <p>I started this project with a slightly modified version of the original program mentioned earlier. The original program clocked in just north of 20000 bytes, uncompressed, and the modified version was around about 4000 bytes. It fairly quickly became clear, though, that I waasn't going to be able to cut the size by three-quarters, and a fresh start was required. I wasn't quite so quick to accept this, though, and wasted a few commits trying to make it work. But once I had started fresh with just the core features (starting at about 1900 bytes), from there it was pretty rough sledding down to 1K. Strangely, as difficult as it was initially to trim away bytes, once I hit 1K the bytes seemed to keep melting off. The smallest size I achieved was 944 bytes, although this version was mostly an attempt to test the limits, and, while it 'worked', it had some serious issues. From this low-byte point, I began to add features and improve performance, while continuing to strip away any extra bytes I could. At this stage, the program oscillated between ~990 and ~1200 bytes. As I added each new feature, the size of the program would baloon up over 1K, and I then had to fret over whether to keep the feature, swap it for another one, or else find some other way to strip away a few spare bytes. If I can coin an analogy, the whole process was a bit like throwing tic-tacs and pennies out the window of your Chrysler K-car to make it go faster. Anyway, here's a little of what I learned.</p>
 <h2>The things I'm most proud/ashamed of, or, speedups and speedbumps:</h2>
@@ -177,32 +178,32 @@
       </div>
       <footer class="post-footer">
         <div class="meta">
-            Posted in <a href="../category/javascript.html">JavaScript</a> 
-            by <a href="../author/ebenpack.html">ebenpack</a><br />
-            Tags:  #<a href="../tag/javascript.html">JavaScript</a> #<a href="../tag/js1k.html">JS1K</a> #<a href="../tag/lattice-boltzmann.html">Lattice Boltzmann</a>        </div>
+            Posted in <a href="http://www.ebenpackwood.com/category/javascript.html">JavaScript</a> 
+            by <a href="http://www.ebenpackwood.com/author/ebenpack.html">ebenpack</a><br />
+            Tags:  #<a href="http://www.ebenpackwood.com/tag/javascript.html">JavaScript</a> #<a href="http://www.ebenpackwood.com/tag/js1k.html">JS1K</a> #<a href="http://www.ebenpackwood.com/tag/lattice-boltzmann.html">Lattice Boltzmann</a>        </div>
       </footer>
       </article> <!-- /#page-main -->
 
         <aside id="page-side">
           <!-- begin includes/sidebar.html -->
           <h2>
-            <a href="../index.html">Eben Packwood</a>
+            <a href="http://www.ebenpackwood.com/index.html">Eben Packwood</a>
           </h2>
           <nav>
             <h3>Pages</h3>
             <ul>
-              <li><a href="..">Home</a></li>
-              <li><a href="../categories.html">Categories</a></li>
-              <li><a href="../archives.html">Archives</a></li>
-              <li><a href="../tags.html">Tags</a></li>
-              <li><a href="../pages/projects.html">Projects</a></li>
+              <li><a href="http://www.ebenpackwood.com">Home</a></li>
+              <li><a href="http://www.ebenpackwood.com/categories.html">Categories</a></li>
+              <li><a href="http://www.ebenpackwood.com/archives.html">Archives</a></li>
+              <li><a href="http://www.ebenpackwood.com/tags.html">Tags</a></li>
+              <li><a href="http://www.ebenpackwood.com/pages/projects.html">Projects</a></li>
             </ul>
           </nav>
 
           <nav>
             <h3>Categories</h3>
             <ul>
-              <li class="active"><a href="../category/javascript.html">JavaScript</a></li>
+              <li class="active"><a href="http://www.ebenpackwood.com/category/javascript.html">JavaScript</a></li>
             </ul>
           </nav>
 
@@ -221,8 +222,8 @@
       </footer>
     </div> <!-- /#page -->
     <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../theme/js/jquery-1.11.0.min.js"><\/script>')</script> -->
-    <script src="../theme/js/main.js"></script>
+    <script>window.jQuery || document.write('<script src="http://www.ebenpackwood.com/theme/js/jquery-1.11.0.min.js"><\/script>')</script> -->
+    <script src="http://www.ebenpackwood.com/theme/js/main.js"></script>
     <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

@@ -1,0 +1,943 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Eben Packwood</title><link href="http://www.ebenpackwood.com/" rel="alternate"></link><link href="http://www.ebenpackwood.com/feeds/javascript.atom.xml" rel="self"></link><id>http://www.ebenpackwood.com/</id><updated>2014-02-16T12:49:00-05:00</updated><entry><title>Computational fluid dynamics made easy</title><link href="http://www.ebenpackwood.com/posts/lattice-boltzmann" rel="alternate"></link><updated>2014-02-16T12:49:00-05:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-02-16:posts/lattice-boltzmann</id><summary type="html">&lt;div style="height:0"&gt;
+    &lt;svg width="0" height="0"&gt;
+        &lt;!-- Definitions --&gt;
+        &lt;defs&gt;
+            &lt;!-- Hatching pattern --&gt;
+            &lt;pattern id="diagonalHatch" patternUnits="userSpaceOnUse" width="50" height="50" patternTransform="rotate(-45)"&gt;
+            &lt;rect x="0" y="0" width="100" height="100" fill="white"/&gt;
+            &lt;path d="M -1,50 H 200" stroke="#000000" stroke-width="20"/&gt;
+            &lt;/pattern&gt;
+        &lt;/defs&gt;
+        &lt;defs&gt;
+            &lt;g id="arrow-group"&gt;
+                &lt;line x1="0" y1="0" x2="125" y2="125" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;polygon points="155,155 145,105 105,145"&gt;&lt;/polygon&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+        &lt;defs&gt;
+            &lt;g id="arrow-group-short"&gt;
+                &lt;line x1="0" y1="0" x2="85" y2="85" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;polygon points="110,110 100,60 60,100"&gt;&lt;/polygon&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+        &lt;defs&gt;
+            &lt;g id="triangle"&gt;
+                &lt;line x1="200" y1="0" x2="0" y2="347" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;line x1="200" y1="0" x2="400" y2="347" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;line x1="0" y1="347" x2="400" y2="347" stroke-width="10"&gt;&lt;/line&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+        &lt;defs&gt;
+            &lt;g id="particle-arrow"&gt;
+                &lt;circle cx="0" cy="0" r="30"&gt;&lt;/circle&gt;
+                &lt;line x1="0" y1="0" x2="175" y2="0" stroke-width="15"&gt;&lt;/line&gt;
+                &lt;polygon points="200,0 170,-20 170,20"&gt;&lt;/polygon&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+        &lt;defs&gt;
+            &lt;g id="arrow-group-large"&gt;
+                &lt;line x1="0" y1="0" x2="470" y2="470" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;polygon points="485,485 475,435 435,475"&gt;&lt;/polygon&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+        &lt;defs&gt;
+            &lt;g id="arrow-group-large-short"&gt;
+                &lt;line x1="0" y1="0" x2="330" y2="330" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;polygon points="345,345 335,295 295,335"&gt;&lt;/polygon&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+         &lt;defs&gt;
+            &lt;!-- Hatching pattern --&gt;
+            &lt;pattern id="diagonalHatch" patternUnits="userSpaceOnUse" width="50" height="50" patternTransform="rotate(-45)"&gt;
+            &lt;rect x="0" y="0" width="100" height="100" fill="white"/&gt;
+            &lt;path d="M -1,50 H 200" stroke="#000000" stroke-width="20"/&gt;
+            &lt;/pattern&gt;
+        &lt;/defs&gt;
+        &lt;defs&gt;
+            &lt;g id="arrow-group"&gt;
+                &lt;line x1="0" y1="0" x2="125" y2="125" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;polygon points="155,155 145,105 105,145"&gt;&lt;/polygon&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+    &lt;/svg&gt;
+    &lt;style&gt;
+        svg .particle-arrow {
+            fill: red;
+            stroke: red;
+        }
+
+        svg .arrow-1 {
+            fill: red;
+            stroke: red;
+        }
+        svg .arrow-2 {
+            fill: blue;
+            stroke: blue;
+        }
+        svg .arrow-3 {
+            fill: black;
+            stroke: black;
+        }
+
+        svg .triangle {
+            fill: black;
+            stroke: black;
+        }
+    &lt;/style&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Over the 2013 winter holidays I was looking for a project to work on. I had been interested in learning more about the canvas element for a while, so, with the snow driving o’er the fields, I decided to make a simple snow simulation to start learning some canvas basics. Once I had a simple snow program up and running in the canvas, I turned my attention to implementing a wind system that would allow users to interact with the snow, creating gusts of wind with their mouse. My initial naive attempts—which mostly involved a mesh of nodes which contained a single wind vector, and some mechanism to propagate those vectors to the next node in their direction of travel—were fairly unsatisfactory, so I began to look for ways to improve the wind system. After some cursory googling, I started looking in earnest at computational fluid dynamics. This led me to the Navier-Stokes equations, which seemed just a little too complicated for what I was after. Navier-Stokes led me to lattice-gas automata (LGA), which, while conceptually quite simple, has some inherent issues. Finally, LGA led to the lattice Boltzmann methods (LBM).&lt;/p&gt;
+&lt;p&gt;In the 1970s and 1980s, the LGA model was developed to simulate fluid flow. This model uses a lattice comprised of individual cellular automata. Each cell can be in one of several states, each state representing particles at the cell moving with different discrete velocities. For example, in one of the most popular forms of the model, in which the lattice is represented as a hexagonal grid of cells, each cell has six or seven velocities (possibly including the 'at-rest' velocity), and each of these velocities can be in either the 'on' or 'off' state to indicate if there is a particle at that node traveling at that velocity. Each discrete time step in the model is comprised of two phases: the streaming phase, in which particles move from one node to the next in their direction of travel, and the collision phase, in which the particles within a node collide and bounce off each other and change direction.&lt;/p&gt;
+&lt;div id="lattice-gas-illustration"&gt;
+    &lt;svg width="300" height="200" viewbox="-20 -20 1230 650" &gt;
+        &lt;!-- First row --&gt;
+        &lt;g class="triangle" transform="translate(0,0)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;g class="triangle" transform="translate(200,-52) rotate(180 200 200)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;g class="triangle" transform="translate(400, 0)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;g class="triangle" transform="translate(600, -52) rotate(180 200 200)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;g class="triangle" transform="translate(800, 0)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;!-- Second row --&gt;
+        &lt;g class="triangle" transform="translate(0,294) rotate(180 200 200)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;g class="triangle" transform="translate(200,345)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;g class="triangle" transform="translate(400,294) rotate(180 200 200)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;g class="triangle" transform="translate(600,345)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;g class="triangle" transform="translate(800,294) rotate(180 200 200)"&gt;
+            &lt;use xlink:href="#triangle" /&gt;
+        &lt;/g&gt;
+        &lt;!-- Particles --&gt;
+        &lt;g class="particle-arrow" transform="translate(400,347)"&gt;
+            &lt;use xlink:href="#particle-arrow" /&gt;
+        &lt;/g&gt;
+        &lt;g class="particle-arrow" transform="translate(800,347) rotate(-120)"&gt;
+            &lt;use xlink:href="#particle-arrow" /&gt;
+        &lt;/g&gt;
+        &lt;g class="particle-arrow" transform="translate(400,347) rotate(60)"&gt;
+            &lt;use xlink:href="#particle-arrow" /&gt;
+        &lt;/g&gt;
+        &lt;g class="particle-arrow" transform="translate(400,347) rotate(120)"&gt;
+            &lt;use xlink:href="#particle-arrow" /&gt;
+        &lt;/g&gt;
+        &lt;g class="particle-arrow" transform="translate(800,347) rotate(120)"&gt;
+            &lt;use xlink:href="#particle-arrow" /&gt;
+        &lt;/g&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;p class="illustration-label"&gt;Two cells in a lattice-gas automata&lt;/p&gt;
+
+&lt;p&gt;While its conceptual simplicity is alluring, LGA has some major shortcomings, many of which LBM directly addresses. And while LBM sacrifices a small amount of LGA's simplicity for the sake of increased accuracy and robustness, LBM is actually still surprisingly quite simple. Like LGA, LBM also consists of a lattice of nodes, but where LGA's nodes have a finite set of possible states, LBM's nodes contain a set of particle distribution functions (DFs). In other words, LBM is continuous where LGA is discrete.&lt;/p&gt;
+&lt;p&gt;LBM comes in many flavors. It can easily be configured for one-, two-, or three-dimensional spaces, each of which has its own variants. In this example we will be discussing D2Q9, which means a two-dimensional lattice, with nine discrete distribution functions per node. Other common configurations include D1Q3, D1Q5, D3Q15, and D3Q19&lt;/p&gt;
+&lt;p&gt;Each node in the lattice consists of a set of particle DFs. Together, these DFs represent a collection of particles, and are related to the probability of finding a particle at a node, at a given time, with a particular velocity. For D2Q9, there are nine DFs per node. The density of these DFs is represented by \(n_i\). Each DF is also associated with a velocity, represented by \( \vec{e}_{i}\). These velocities correspond to the four cardinal directions, the four ordinal directions, as well as the 'at-rest' velocity. These velocities are chosen such that they carry a particle from a node in the lattice to one of its neighboring nodes. For convenience, these velocities are each assigned a number, as seen below.&lt;/p&gt;
+&lt;div id="node-distribution-illustration"&gt;
+    &lt;svg width="200" height="200" viewbox="-300 -300  1620 1620"&gt;
+        &lt;!-- Directions --&gt;
+        &lt;defs&gt;
+            &lt;g id="arrow-group-large"&gt;
+                &lt;line x1="0" y1="0" x2="470" y2="470" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;polygon points="485,485 475,435 435,475"&gt;&lt;/polygon&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+        &lt;defs&gt;
+            &lt;g id="arrow-group-large-short"&gt;
+                &lt;line x1="0" y1="0" x2="330" y2="330" stroke-width="10"&gt;&lt;/line&gt;
+                &lt;polygon points="345,345 335,295 295,335"&gt;&lt;/polygon&gt;
+            &lt;/g&gt;
+        &lt;/defs&gt;
+        &lt;rect class="outer" width="990" height="990" x="20" y="20" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;!-- Ordinals --&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(0)"&gt;
+            &lt;use xlink:href="#arrow-group-large" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group-large" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(180)"&gt;
+            &lt;use xlink:href="#arrow-group-large" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(270)"&gt;
+            &lt;use xlink:href="#arrow-group-large" /&gt;
+        &lt;/g&gt;
+
+        &lt;!-- Cardinals --&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(45)"&gt;
+            &lt;use xlink:href="#arrow-group-large-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(135)"&gt;
+            &lt;use xlink:href="#arrow-group-large-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(225)"&gt;
+            &lt;use xlink:href="#arrow-group-large-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(315)"&gt;
+            &lt;use xlink:href="#arrow-group-large-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;text x="-100" y="-50" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            6
+        &lt;/text&gt;
+        &lt;text x="500" y="-50" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            2
+        &lt;/text&gt;
+        &lt;text x="1100" y="-50" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            5
+        &lt;/text&gt;
+        &lt;text x="-100" y="550" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            3
+        &lt;/text&gt;
+        &lt;text x="600" y="500" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            0
+        &lt;/text&gt;
+        &lt;text x="1100" y="550" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            1
+        &lt;/text&gt;
+        &lt;text x="1100" y="1120" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            8
+        &lt;/text&gt;
+        &lt;text x="500" y="1120" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            4
+        &lt;/text&gt;
+        &lt;text x="-100" y="1120" 
+            font-family="Verdana" 
+            font-size="75"&gt;
+            7
+        &lt;/text&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;p class="illustration-label"&gt;Discrete velocities for D2Q9 model&lt;/p&gt;
+
+&lt;p&gt;The \(x\) and \(y\) components of the velocities for each \( \vec{e}_{i}\) are shown below, and as you can see they correspond to the diagram above.&lt;/p&gt;
+&lt;p&gt;\(
+    \begin{alignat}{7}
+        &amp;amp;\vec{e}_{0} = (&amp;amp;0,  &amp;amp;&amp;amp;0)  \quad \\
+        &amp;amp;\vec{e}_{1} = (&amp;amp;1,  &amp;amp;&amp;amp;0)  \quad &amp;amp;\vec{e}_{5} = (&amp;amp; 1, &amp;amp;&amp;amp;1) \\
+        &amp;amp;\vec{e}_{2} = (&amp;amp;0,  &amp;amp;&amp;amp;1)  \quad &amp;amp;\vec{e}_{6} = (&amp;amp;-1, &amp;amp;&amp;amp;1) \\
+        &amp;amp;\vec{e}_{3} = (&amp;amp;-1, &amp;amp;&amp;amp;0)  \quad &amp;amp;\vec{e}_{7} = (&amp;amp;-1,&amp;amp;&amp;amp;-1) \\
+        &amp;amp;\vec{e}_{4} = (&amp;amp;0,  &amp;amp;&amp;amp;-1) \quad &amp;amp;\vec{e}_{8} = (&amp;amp; 1,&amp;amp;&amp;amp;-1) \\
+    \end{alignat}
+\)&lt;/p&gt;
+&lt;p&gt;For each node in the lattice, two important properties can be calculated from the DFs. The macroscopic density at a particular node is described by the equation \( \rho = \sum n_{i} \), or the summation of the densities of the individual distribution functions of a node (i.e. the macroscopic density). Once the density has been calculated, it can then be used to calculate the macroscopic velocity, \( \vec{u} = \frac{1}{\rho} \sum n_{i} \vec{e}_{i}\).&lt;/p&gt;
+&lt;p&gt;Like the LGA, the LBM consists of two phases which update the DFs: namely, streaming, and collision. In the streaming phase, the DFs of each node move to the next node in their direction of travel. It is also during this phase that boundary conditions are considered. If a boundary is encountered, the distributions that would have been streamed into the boundary are in some way redirected away from that boundary. More will be said of this later.&lt;/p&gt;
+&lt;div id="stream-start-illustration"&gt;
+    &lt;svg width="200" height="200" viewbox="0 0 1020 1020"&gt;
+        &lt;!-- Streaming, start --&gt;
+        &lt;!-- First column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="20" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(185,185) rotate(0)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="185" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(185,515) rotate(315)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(185,845) rotate(270)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+
+        &lt;!-- Second column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(515,185) rotate(45)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="185" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+
+        &lt;!-- Ordinal directions --&gt;
+        &lt;g class="arrow-1" transform="translate(515,515) rotate(0)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-1" transform="translate(515,515) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-1" transform="translate(515,515) rotate(180)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-1" transform="translate(515,515) rotate(270)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+
+        &lt;!-- Cardinal directions --&gt;
+        &lt;g class="arrow-1" transform="translate(515,515) rotate(45)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-1" transform="translate(515,515) rotate(135)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-1" transform="translate(515,515) rotate(225)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-1" transform="translate(515,515) rotate(315)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(515,845) rotate(225)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+
+        &lt;!-- Third column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(845,185) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="845" cy="185" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(845,515) rotate(135)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="845" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(845,845) rotate(180)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="845" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;p class="illustration-label"&gt;Prior to streaming phase&lt;/p&gt;
+
+&lt;div id="stream-end-illustration"&gt;
+    &lt;svg width="200" height="200" viewbox="0 0 1020 1020"&gt;
+        &lt;!-- Streaming, end --&gt;
+        &lt;!-- First column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="20" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(185,185) rotate(180)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="185" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(185,515) rotate(135)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(185,845) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+
+        &lt;!-- Second column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(515,185) rotate(225)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="185" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+
+        &lt;!-- Ordinal directions --&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(0)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(180)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(270)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+
+        &lt;!-- Cardinal directions --&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(45)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(135)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(225)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(315)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(515,845) rotate(45)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+
+        &lt;!-- Third column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(845,185) rotate(270)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="845" cy="185" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(845,515) rotate(315)"&gt;
+            &lt;use xlink:href="#arrow-group-short" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="845" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(845,845) rotate(0)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="845" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;p class="illustration-label"&gt;After streaming phase&lt;/p&gt;
+
+&lt;p&gt;The collision phase moves the DFs at a node towards a local equilibrium. The collision phase for the LBM is somewhat more complicated than that of LGA. The most important thing for this phase is that however the collision is calculated, it must conserve mass, momentum and energy. One common approach to this phase is to make use of the Bhatnagar-Gross-Krook (BGK) relaxation term. This is described by the equation \( \Omega_{i}=-\tau^{-1}(n_i-n_i^{eq})\), where \( n_i^{eq} \) is a local equilibrium value for the DFs. The term \( \tau \) is a relaxation time, and is related to the viscosity. Equilibrium is calculated with the equation \( n_{i}^{eq} = \rho\omega_{i}[1+3\vec{e}_{i}\cdot\vec{u}+\frac{9}{2}(\vec{e}_{i}\cdot\vec{u}^{2})-\frac{3}{2}|\vec{u}|^{2}] \), where the weights \(\omega_{i}\) are as follows:&lt;/p&gt;
+&lt;p&gt;\(
+    \begin{cases}\begin{alignat}{2}
+        \omega_{i=0} =  \frac{4}{9} \\
+        \omega_{i=\{1..4\}}= \frac{1}{9} \\
+        \omega_{i=\{5..8\}}= \frac{1}{36}
+    \end{alignat}\end{cases}
+\)&lt;/p&gt;
+&lt;p&gt;The new equilibrium values after collision are calculated with the following equation \( n_{i}^{new} = n_{i}^{old}+\frac{1}{\tau}(n_{i}^{eq}-n_{i}^{old})\)&lt;/p&gt;
+&lt;p&gt;There are many options for handling boundary conditions, but for the sake of brevity we will only discuss a few of the highlights. One of the most important distinctions with boundary conditions is between slip and no-slip conditions. These describe the behavior of the fluid at the interface between fluid and solid boundary. The slip condition represents a non-zero relative velocity between the fluid and the boundary, while no-slip represents a zero velocity at the boundary.&lt;/p&gt;
+&lt;p&gt;In terms of implementation in a lattice Boltzmann simulation, these two boundnary conditions would look like this: in this example, before streaming, we have three distribution functions of three different nodes, all with the same velocity. If boundary conditions were ignored, after streaming, each of these DFs would land within a boundary.&lt;/p&gt;
+&lt;div id="bounce-start-illustration"&gt;
+    &lt;svg width="200" height="200" viewbox="0 0 1020 1020"&gt;
+        &lt;!-- Boundary conditions, starting position --&gt;
+        &lt;!-- First column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(185,515) rotate(-90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+
+        &lt;!-- Second column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-2" transform="translate(515,515) rotate(-90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(515,845) rotate(-90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+
+        &lt;!-- Third column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="680" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;p&gt;After streaming, with the no-slip condition, each of those distributions are still headed in the same direction, although they are now travelling in the opposite direction as prior to streaming. No-slip, in essence, can be thought of as a simple reflection of the particles at the boundary. Upon encountering a boundary, a distribution is bounced back to its source node, but with an opposing velocity.&lt;/p&gt;
+&lt;div id="bounce-no-slip-illustration"&gt;
+    &lt;svg width="200" height="200" viewbox="0 0 1020 1020"&gt;
+        &lt;!-- Boundary conditions, no-slip --&gt;
+        &lt;!-- First column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(185,515) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+
+        &lt;!-- Second column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-2" transform="translate(515,515) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(515,845) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+
+        &lt;!-- Third column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="680" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The no-slip condition is a bit more complicated in terms of implementation. In the example below, we start as before, with three distribution functions of three different nodes, all headed in the same direction towards a boundary.&lt;/p&gt;
+&lt;div id="bounce-start-illustration"&gt;
+    &lt;svg width="200" height="200" viewbox="0 0 1020 1020"&gt;
+        &lt;!-- Boundary conditions, starting position --&gt;
+        &lt;!-- First column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-1" transform="translate(185,515) rotate(-90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+
+        &lt;!-- Second column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-2" transform="translate(515,515) rotate(-90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-3" transform="translate(515,845) rotate(-90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+
+        &lt;!-- Third column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="680" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;p&gt;After streaming we can see the distributions 'slip' at the boundary.&lt;/p&gt;
+&lt;div id="bounce-slip-illustration"&gt;
+    &lt;svg width="200" height="200" viewbox="0 0 1020 1020"&gt;
+        &lt;!-- Boundary conditions, slip --&gt;
+        &lt;!-- First column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+
+        &lt;!-- Second column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;g class="arrow-2" transform="translate(515,515) rotate(90)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-1" transform="translate(515,515)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;g class="arrow-3" transform="translate(515,515) rotate(180)"&gt;
+            &lt;use xlink:href="#arrow-group" /&gt;
+        &lt;/g&gt;
+        &lt;circle cx="515" cy="515" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+        &lt;rect class="inner" width="330" height="330" x="350" y="680" stroke="black" stroke-width="20" fill="white" /&gt;
+        &lt;circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"&gt;&lt;/circle&gt;
+
+        &lt;!-- Third column --&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+        &lt;rect class="inner" width="330" height="330" x="680" y="680" stroke="black" stroke-width="20" fill="url(#diagonalHatch)" /&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can see that, although the three DFs had the same velocity before streaming (i.e. were travelling in the same direction), after they collide with the boundary, each is headed in a different direction. The direction that a DF is travelling after encountering a boundary under the slip condition, then, is dependent on the orientation of that boundary.&lt;/p&gt;
+&lt;p&gt;Fortunately, not only is no-slip easier to implement, it also generally provides a more accurate simulation. It simulates the adhesion of a viscous fluid at the boundary, as if the fluid at the edge is sticking to the boundary. The no-slip condition does not hold in every situation, but for our purposes it is sufficient.&lt;/p&gt;
+&lt;p&gt;That more or less sums up the lattice Boltzmann method. Of course, it's very broad and deep topic, and I have only provided a short introduction. Hopefully, though, that will provide enough of a background to understand some of the implementation details I'm going to discuss below. For more information, "Lattice Boltzmann Simulation for Shallow Water Flow Applications" (Banda and Seaid) provides a nice, brief introduction, and "Lattice-Gas Cellular Automata and Lattice Boltzmann Models - An Introduction" (Wolf-Gladrow) presents a much more thorough study of the topic.&lt;/p&gt;
+&lt;h2&gt;JavaScript Implementation&lt;/h2&gt;
+&lt;p&gt;Implementation is not particularly difficult, once you understand the lattice Bolzman methods. At its most basic, the LBM requires a lattice of nodes. In this case, for D2Q9, a two-dimensional array suffices to represent our lattice (techincally, an array of length n, with each item consisting of an m length array, where n represents the width of the lattice, and m represents the height). For each node in the lattice, we must store, at a minimum, the densities of the DFs. It is also useful, in order to avoid repetition of work, to store the calculated macroscopic density, macroscopic velocity, the x and y components of that velocity, and the 'curl'. Additionally, a &lt;code&gt;barrier&lt;/code&gt; boolean was stored on each node, as well as a &lt;code&gt;stream&lt;/code&gt; array, used to temporarily store streamed values. Altogether, the constructor looked like this:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;LatticeNode&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;distribution&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt; &lt;span class="c1"&gt;// Individual densities for &lt;/span&gt;
+    &lt;span class="c1"&gt;// each of the nine DFs of a node.&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;stream&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt; &lt;span class="c1"&gt;// Used to temporarily hold streamed values&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;density&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// Macroscopic density of a node.&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;ux&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// X component of macroscopic velocity of a node.&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;uy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// Y component of macroscopic velocity of a node.&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;barrier&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// Boolean indicating if node is a barrier.&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;curl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// Curl of node.&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;A &lt;code&gt;stream&lt;/code&gt; and &lt;code&gt;collide&lt;/code&gt; function are also required. And an &lt;code&gt;equilibrium&lt;/code&gt; function helps avoid some repetition of code. These are shown below.&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;stream&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// For each node in the lattice&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;lattice_width&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;lattice_height&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;node&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;lattice&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;barrier&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="c1"&gt;// For each DF on the node&lt;/span&gt;
+                &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                    &lt;span class="c1"&gt;// Get the velocity for the DF and calculate&lt;/span&gt;
+                    &lt;span class="c1"&gt;// the coordinates of the node to stream it to&lt;/span&gt;
+                    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;move&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;node_directions&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+                    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;newx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;move&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;newy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;move&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                    &lt;span class="c1"&gt;// Check if new node is in the lattice&lt;/span&gt;
+                    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;newx&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;newx&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;lattice_width&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+                        &lt;span class="nx"&gt;newy&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;newy&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;lattice_height&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                        &lt;span class="c1"&gt;// If destination node is barrier, bounce distribution back to &lt;/span&gt;
+                        &lt;span class="c1"&gt;// originating node in opposite direction.&lt;/span&gt;
+                        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;lattice&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;newx&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="nx"&gt;newy&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="nx"&gt;barrier&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                            &lt;span class="nx"&gt;lattice&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="nx"&gt;stream&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;reflection&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;distribution&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+                        &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                            &lt;span class="nx"&gt;lattice&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;newx&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="nx"&gt;newy&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="nx"&gt;stream&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;distribution&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+                        &lt;span class="p"&gt;}&lt;/span&gt;
+                    &lt;span class="p"&gt;}&lt;/span&gt;
+                &lt;span class="p"&gt;}&lt;/span&gt;
+            &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;In this example, the streamed values are placed in the special &lt;code&gt;node.stream&lt;/code&gt; array. This allows us to avoid obliterating DF values which we will still need to use, while also allowing us to avoid creating an entirely new &lt;code&gt;LatticeNode&lt;/code&gt; for every single node in the lattice.&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;collide&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// For each node in the lattice&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;lattice_width&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;lattice_height&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;node&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;lattice&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;barrier&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;distribution&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// Array of DFs&lt;/span&gt;
+                &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;p&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;p&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                    &lt;span class="c1"&gt;// Copy over values from streaming phase.&lt;/span&gt;
+                    &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;p&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;stream&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;p&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+                &lt;span class="p"&gt;}&lt;/span&gt;
+                &lt;span class="c1"&gt;// Calculate macroscopic density (rho) and velocity (ux, uy)&lt;/span&gt;
+                &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;direction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;node_directions&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+                    &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+                    &lt;span class="nx"&gt;ux&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;direction&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                    &lt;span class="nx"&gt;uy&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;direction&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="p"&gt;}&lt;/span&gt;
+                &lt;span class="c1"&gt;// Update values stored in node.&lt;/span&gt;
+                &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;density&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;ux&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;uy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="c1"&gt;// Set node equilibrium for each velocity&lt;/span&gt;
+                &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;eq&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;equilibrium&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;ux&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+                &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;old_value&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+                    &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;distribution&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;old_value&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;module&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;omega&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;old_value&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+                &lt;span class="p"&gt;}&lt;/span&gt;
+            &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;The equilibrium function would look more or less like so:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;equilibrium&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// Calculate equilibrium densities of a node&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;eq&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt; &lt;span class="c1"&gt;// Equilibrium values for all velocities in a node.&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;u2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;ux&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;uy&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// Magnitude of macroscopic velocity&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="c1"&gt;// Calculate equilibrium value&lt;/span&gt;
+        &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;velocity&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;node_directions&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt; &lt;span class="c1"&gt;// Node direction vector&lt;/span&gt;
+        &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;eu&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;velocity&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;velocity&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// Macro velocity multiplied by distribution velocity&lt;/span&gt;
+        &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;node_weight&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;eu&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;eu&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;eu&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mf"&gt;1.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;u2&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt; &lt;span class="c1"&gt;// Equilibrium equation&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;It is possible to rewrite these functions such that much of the repetition of work is elimintated, but these are the core algorithms.&lt;/p&gt;
+&lt;p&gt;And that's really more or less all that's required at the most basic level. Of course, in order to draw and interact with the lattice, and do other interesting things, a few more functions are required, and there's going to be some glue code to stick everything together, but those are mostly just implementation details.&lt;/p&gt;
+&lt;h2&gt;Difficulties&lt;/h2&gt;
+&lt;p&gt;It took rather a long time to arrive at a proper implementation of the LBM. Not having any prior experience with computational fluid dynamics, I was learning the material as I was trying to code it. There were a lot of missteps, as I didn't fully understand the topic, but attempting to code implementations as I learned certainly helped to concretize the material.&lt;/p&gt;
+&lt;p&gt;One of the biggest bugbears on this project was related to the coordinate system. The literature on the topic naturally presents examples and equations in the standard Cartesian coordinate system (i.e. with the origin at the bottom left, with x increasing as you move left, and y increasing as you move up). However, computer graphics typically place the origin at the top left (i.e. x increasing as you move right, and y increasing as you move down). This is how the canvas behaves. This was the source of a subtle and pernicious bug, where I had failed to translate between these coordinate systems in a single equation. The program appeared to behave mostly correctly, but upon close inspection exhibited odd, incorrect behavior. At this point, where this bug has been (I hope) thoroughly squashed, I am not planning on re-engineering the program, but if I were to build this from scratch, knowing what I now know, I would try to find a way to design the program with a single point of failure for this issue, instead of translating between the coordinate systems every time something happens on the y-axis.&lt;/p&gt;
+&lt;h3&gt;Optimizations and improvements&lt;/h3&gt;
+&lt;p&gt;This simulation started out dog-slow. Some optimizations were made here and there (e.g. removing the loop from the equilibrium function, pre-calculating any shared values, and then calculating each equilibrium value on its own line; see below), but I believe the most significant speedup came when I added the &lt;code&gt;stream&lt;/code&gt; array to the &lt;code&gt;LatticeNode&lt;/code&gt; objects. With the LBM, it is necessary to have somewhere to store the streamed values so that they don't obliterate the values ahead of them (although this isn't strictly true... it is possible to achieve the same goal by looping over the lattice four times, starting from each of the four corners, streaming only a portion of the DFs each time). Previously I had been creating an entirely new lattice for each time-step. This was very inefficient, and required a lot of extra work, both to set up and initialize the array, as well as behind the scenes with the extra garbage collection required when the old array was discarded. So the addition of the &lt;code&gt;stream&lt;/code&gt; array, along with a few related optimizations, meant that, instead of throwing away every single node on every single tick, that each node essentially lived in perpetuity, for the life of the program, and the values it stored (especially the &lt;code&gt;distribution&lt;/code&gt; array) were never destroyed and recreated, only ever updated. This obviated the need for much of the garbage collection and object instantiation that the browser had been performing, and it resulted in a very significant speedup.&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// Optimized equilibrium function.&lt;/span&gt;
+&lt;span class="c1"&gt;// Eliminates much repetition of work.&lt;/span&gt;
+&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;equilibrium&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;ux&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;eq&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt; &lt;span class="c1"&gt;// Equilibrium values for all velocities in a node.&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;ux3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;uy3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;ux2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;uy2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;uxuy2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;ux&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;uy&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;u2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;ux2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;uy2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;1.5&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;u2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;four9ths&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;one9th&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;ux3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;ux2&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;one9th&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;uy3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;uy2&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;one9th&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;ux3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;ux2&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;one9th&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;uy3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;uy2&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;one36th&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;ux3&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;uy3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;u2&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nx"&gt;uxuy2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;one36th&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;ux3&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;uy3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;u2&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="nx"&gt;uxuy2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;one36th&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;ux3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;uy3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;u2&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nx"&gt;uxuy2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;one36th&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;rho&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;ux3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;uy3&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mf"&gt;4.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;u2&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="nx"&gt;uxuy2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;u215&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;One of the most significant improvements that I made, in terms of maintainability, clarity, and extensibility, was refactoring to the module pattern. My early efforts in programming the LBM were not well designed. It can be difficult to settle on a design before you fully understand the problem at hand. But once I had come to a full understanding of the problem, and had a more-or-less working (but still poorly designed) implementation, I refactored. Well... I say refactored, but the truth is that it was a complete rewrite. They say 'write one to throw away', and that can be a major boon on a project. It certainly would have taken longer to reshape my initial design than to start from scratch, and bugs—introduced as a result of my incomplete understanding of the problem—would have almost certainly come along for the ride. This module-like architecture has also allowed for more rapid extension of the program, such as the addition of a new draw-mode, or new controls (play/pause, etc.), and overall it is far less brittle than the ad-hoc, global-ridden spaghetti-mess the prgram began as.&lt;/p&gt;
+&lt;script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;
+&lt;/script&gt;</summary><category term="JavaScript"></category><category term="Lattice Boltzmann"></category></entry><entry><title>Bytes!?! We don't need no stinkin' bytes!</title><link href="http://www.ebenpackwood.com/posts/wavybits" rel="alternate"></link><updated>2014-02-16T12:49:00-05:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-02-16:posts/wavybits</id><summary type="html">&lt;p&gt;&lt;em&gt;Being an attempt to write a computational fluid dynamics simulation using no more than two raised to the power ten bytes.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;First, before I begin, N.B: apparently the extreme brevity required by this project has put me in rather a garrulous mood, so I apologize for the length of this post-mortem. If you're interested in maybe learning a few byte shaving tricks for your own js1k, though, read on. Also, verbose variable names will be used for the sake of clarity, though keep in mind that all variables here have a single letter identifier in the final program.&lt;/p&gt;
+&lt;h2&gt;What it is&lt;/h2&gt;
+&lt;p&gt;This project, written for the &lt;a href="http://js1k.com/2014-dragons/"&gt;JS1K competition&lt;/a&gt;, is essentially a complete rewrite of an &lt;a href="https://github.com/ebenpack/laboratory/tree/master/JS/boltzmann"&gt;earlier, much more feature rich project&lt;/a&gt;. You can have a look at the &lt;a href="https://rawgithub.com/ebenpack/laboratory/master/JS/boltzmann/index.html"&gt;demo&lt;/a&gt;, which is probably more intersting than this 1K version, but which is an order of magnitude larger in the bytes department. If you're not familiar with the lattice Boltzmann method, there's a fairly nice introduction &lt;a href="http://physics.weber.edu/schroeder/fluids/FluidSimulationsForUndergrads.pdf"&gt;here (pdf)&lt;/a&gt;, or you can read &lt;a href="http://www.ebenpackwood.com/posts/lattice-boltzmann"&gt;my explanation&lt;/a&gt;. The TL;DR version, though, is that this is a 2D computational fluid dynamics simulation. You can think of it as the surface of a pond that you're dragging your finger through.&lt;/p&gt;
+&lt;p&gt;So what does this have to do with the contest's theme, 'here be dragons'? Well, nothing, really. It's just an interesting problem I was working on recently, and I thought it would be fun to see if it was possible to achieve in 1K. So let's get to it, shall we.&lt;/p&gt;
+&lt;p&gt;I started this project with a slightly modified version of the original program mentioned earlier. The original program clocked in just north of 20000 bytes, uncompressed, and the modified version was around about 4000 bytes. It fairly quickly became clear, though, that I waasn't going to be able to cut the size by three-quarters, and a fresh start was required. I wasn't quite so quick to accept this, though, and wasted a few commits trying to make it work. But once I had started fresh with just the core features (starting at about 1900 bytes), from there it was pretty rough sledding down to 1K. Strangely, as difficult as it was initially to trim away bytes, once I hit 1K the bytes seemed to keep melting off. The smallest size I achieved was 944 bytes, although this version was mostly an attempt to test the limits, and, while it 'worked', it had some serious issues. From this low-byte point, I began to add features and improve performance, while continuing to strip away any extra bytes I could. At this stage, the program oscillated between ~990 and ~1200 bytes. As I added each new feature, the size of the program would baloon up over 1K, and I then had to fret over whether to keep the feature, swap it for another one, or else find some other way to strip away a few spare bytes. If I can coin an analogy, the whole process was a bit like throwing tic-tacs and pennies out the window of your Chrysler K-car to make it go faster. Anyway, here's a little of what I learned.&lt;/p&gt;
+&lt;h2&gt;The things I'm most proud/ashamed of, or, speedups and speedbumps:&lt;/h2&gt;
+&lt;h3&gt;Flatten all the things&lt;/h3&gt;
+&lt;p&gt;One of the early significant breakthroughs came with flattening every possible nested loop. As the lattice Boltzmann method makes use of a lattice (shocking, I know), it's perhaps most natural to represent this with a multi-dimensional array. In this case, where we are working with a two-dimensional lattice, a two-dimensional array would be0 most appropriate. In JavaScript, this would be represented by an n-length array, each element of which being an m-length array, where n and m are the width and height respectively (in this program, width and height are equal, to save from having to cache both the width and the height; further, it was decided that width and height would be 99, as this saves a single byte vs a triple digit array size... seriously). Accessing this array would look like this: &lt;code&gt;lattice[x][y]&lt;/code&gt;. The simplest way to loop over each of the elements of the lattice would be two nested loops, like so:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;lattice_width&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;lattice_height&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;lattice&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;The lattice Boltzmann method requires looping over the array at least twice per tick, once for the streaming phase, and once for the collision phase (although it &lt;em&gt;may&lt;/em&gt; be possible to do it in a single loop with some additional storage on each node and some more complicated logic to shuffle around distributions, I never looked into it closely enough to determine the feasability of this option, so I leave it as an exercise for the reader). However, while it is necessary to iterate over the array at least twice, these iterations needn't be performed with nested loops. It is possible to loop over any n-by-m array with a single loop. To do this, you loop from 0 to the total number of items in the the array (n*m), and determine the x and y coordinates on the fly, like so:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;lattice_width&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;lattice_height&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="nx"&gt;lattice_width&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// x-coordinate&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;Math&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;floor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="nx"&gt;lattice_width&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// y-coordinate&lt;/span&gt;
+    &lt;span class="nx"&gt;lattice&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;If it's not clear why this works, think of it this way: &lt;code&gt;y&lt;/code&gt; is increasing by one every time we go through another &lt;code&gt;lattice_width&lt;/code&gt; values. This corresponds exactly to the row numbers. And &lt;code&gt;x&lt;/code&gt; is cycling between 0 and &lt;code&gt;lattice_width&lt;/code&gt;, which corresponds to the column numbers.&lt;/p&gt;
+&lt;p&gt;Although calculating the x and y coordinates does take a few extra bytes, the elimination of the inner loop more than makes up for this. For the most part, flattening these nested loops was fairly straightforward. However, I did have some problems flattening the draw loop. This loop iterates over a square region of the canvas image, and draws a colored square for each lattice node. Originally this loop looked like this:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3
+4
+5
+6
+7
+8
+9&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;ypx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;y_pos&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;px_per_node&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;ypx&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;y_pos&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;px_per_node&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;ypx&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;xpx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;x_pos&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;px_per_node&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;xpx&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;x_pos&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;px_per_node&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;xpx&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;index&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;xpx&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;ypx&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;width&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;index&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;color&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;red&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;index&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;color&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;green&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;index&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;color&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;blue&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;index&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;color&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;alpha&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;The additional logic in each loop initialization and condition, and in calculating the index, made this one a little more difficult to figure out. At its core, though, this loop is merely iterating over a square region of the image. Since I decided to fix the width and height of the image that's drawn to the canvas (which also simplified many other areas of the program and saved quite a few bytes), this loop eventually boiled down to this:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;36&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;Math&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;floor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;index&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;x_pos&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;width&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nx"&gt;y_pos&lt;/span&gt;&lt;span class="p"&gt;)));&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;where 36 is the fixed area of the square to be drawn, and 6 is the width and height of that square (AKA &lt;code&gt;px_per_node&lt;/code&gt;). You may recognize the method of calculating x and y from earlier. The rest of the logic merely calculates the image index, and is an implementation detail of the image data array. When I was working on this late at night, this extra logic confounded the problem immensely, but after breaking it down into its essential components it became clear enough.&lt;/p&gt;
+&lt;p&gt;A related trick that gained a few extra bytes was to flatten the two dimensional array representing the lattice into a one-dimensional array. This complicates lookup slightly (each node is accessed via &lt;code&gt;lattice[x+y*width]&lt;/code&gt; instead of &lt;code&gt;lattice[x][y]&lt;/code&gt;), and you may nottice that, even when the width variable is squashed to a single letter, lookup with this method actually takes one more byte. The small extra lookup cost was worth it, however, as I was able to eliminate an &lt;code&gt;if&lt;/code&gt; test during initialization, which was checking to see if the initialization loop had reached a new column in the array, and adding a new array if it had (which looked like this):&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;y_pos&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="nx"&gt;lattice&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;x_pos&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[];&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;h2&gt;Flows of data more vast than anything the world has seen&lt;/h2&gt;
+&lt;p&gt;If you're trying to shave bytes, one of the most important things is efficient data storage. If you can eliminate the need for data storage altogether (e.g. with procedural generation)
+, so much the better. But for this project, there was a small amount of data that was absolutely critical, and which, sofar as I can tell, cannot be succicntly programatically generated. These were, namely, the velocities associated with each distribution function (DF) and the distribution function weights. In the lattice Boltzmann method, each node has a number of distribution functions, each representing a distrubution of particle densities. In this program (which uses the D2Q9 discretization... which just means a two-dimensional lattice, with 9 velocites per node), each node has nine of these distribution functions. These are numbered from zero to eight. Zero represents the 'at-rest' velocity, one through four represent the cardinal direction velocities, and five through eight represent the ordinal direction velocities. In order for these distributions to stream in their direction of travel (i.e. move from one node another), each must have some notion of what that direction is. Originally I had stored these directions as an 8-by-2 array, where each inner array represented the delta x and y for its respective distribution to travel. This looked something like this: &lt;code&gt;ND = [[0,0],[1,0],[0,-1],[-1,0],[0,1],[1,-1],[-1,-1],[-1,1],[1,1]]&lt;/code&gt;. So, for example, the '6' distribution travels -1 in the x direction, and -1 in the y direction. For a node at coordinates (100,100), after streaming the '6' distribution from (100,100) would end up at coordinates (99,99). You may notice that the data above contains a fair number of non-data characters in the form of brackets and commas. Altogether, this array takes up 61 bytes. My initial solution to reduce the size of this data, which was one of my largest blunders on this project, was to represent this data as a string. I will give you a moment to allow that to sink in. If it strikes you that this is an utterly inane solution, you are correct, but I think there's a lesson to be learned here, so let's have a look at how I came to it. With this method, the data would look like this &lt;code&gt;ND = " 0 0 1 0 0-1-1 0 0 1 1-1-1-1-1 1 1 1"&lt;/code&gt;. Note the extra spaces, which are used to pad non negative numbers to a string length of 2. This makes lookup much simpler. Now granted, this storage method is much more compact (it's only 38 bytes), but lookup is more complicated and verbose. It would look something like this &lt;code&gt;ND.slice(x*4,x*4+2),ND.slice(x*4+2,x*4+4)&lt;/code&gt;, where x is the distribution we are looking at from 0 to 8. Although &lt;code&gt;slice&lt;/code&gt; might seem quite expensive, when I was employing this method I was caching the string 'slice' once and using bracket notation, like this: &lt;code&gt;X='slice';ND[X](x*4,x*4+2)&lt;/code&gt;, so overall it wasn't too terrible, and the extra bytes needed for lookup were still made up by the relative compactness of the storage method. However, a quick &lt;a href="http://jsperf.com/string-slice-vs-array-lookup"&gt;jsperf&lt;/a&gt; revealed that this method was over 90% slower than a simple array lookup. Perhaps some of you have by now come to the realization that took me far, far too long. This data can be stored in a single dimensional array for a few extra bytes (43 total), but with the dual benefits of significantly faster lookup time, and of saving several bytes per lookup (&lt;code&gt;ND[x*2]&lt;/code&gt; vs &lt;code&gt;ND[X](x*4,x*4+2)&lt;/code&gt;; keep in mind that the latter example would almost certainly have cached &lt;code&gt;x*4&lt;/code&gt;, and in reality would be &lt;code&gt;ND[X](x,x+2)&lt;/code&gt;). Additionally, another 10 bytes are saved by not having to cache 'slice'. Perhaps the worst part of this whole ordeal is how inordinately clever I thought I was being at the time. So the lesson here, if there is one, is that you're almost certainly never as clever as you think you are. If you get myopia about a problem and lock into your initial solution, you can close yourself off to the easier, more elegant solution.&lt;/p&gt;
+&lt;p&gt;There was also one more savings on data. Each DF has a weight associated with it. Zero has its own weight (&lt;code&gt;one9th=1/9&lt;/code&gt;), the cardinal directions share another weight (&lt;code&gt;four9ths=4/9&lt;/code&gt;), and the ordinal directions share yet another (&lt;code&gt;one36th=1/36&lt;/code&gt;). Originally I was storing these velocities in their own array. Of course this was very costly. Even though tacking them onto the node directions array saved a few extra bytes, there was still a lot of unecessary repetition (&lt;code&gt;four9ths&lt;/code&gt; and &lt;code&gt;one36th&lt;/code&gt; were each stored in four separate locations, each of those instances requiring an extra comma in the array). Since this data is only used once, in the equilibrium function, it is hard to justify spending so many bytes on storage. So it was a very obvious candidate for some form of simplification or compression. The most succinct method I was able to find was to use an if/else statement inside the loop over the DFs (i.e. from 0 to 8), which fails if zero (thus setting else &lt;code&gt;weight&lt;/code&gt; to 4/9), and otherwise evaluates a conditional operator. If we are looking at velocities one through four, the weight is 1/9, otherwise it is 1/36. So like this:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3
+4
+5
+6
+7&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;weight&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;36&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;weight&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;Google's closure compiler further compacts this piece of logic in a way I myself probably wouldn't have thought of (&lt;code&gt;weight=i?5&amp;gt;i?1/9:1/36:4/9&lt;/code&gt;). Overall a significant byte savings was realized over storing this data in its own array.&lt;/p&gt;
+&lt;h2&gt;Sound trumpets! let our bloody colours wave!&lt;/h2&gt;
+&lt;p&gt;This is a brief point, but I think it's an important one. Visually, the program originally drew green 'waves' on a black background. In my opinion, this doesn't look too bad. Working with any more colors than this was pretty much off the table, as it would not have been within my byte budget, and there were many more things besides that would have taken precedence if I had the bytes to spare. For a long time, I was achieving this effect by setting the background style property of the canvas to black (at a cost of 26 bytes). Eventually, though, it became clear that this was too expensive, and would have to go. So for a while I was drawing green waves on a white background. This looked... less nice. I experimented with different colored waves—red, black, blue, everything... light blue—still on a white background, but they were all lacking. Eventually I realized that I could achieve the exact same effect as I had been without using any extra bytes. I had been setting the green channel of each pixel to 255 (well, 600, actually, as I already had 600 cached in a variable anyway, to use for the width and height of the image... setting this well above the allowed maximum hasn't seemed to have any ill effects, and 2 bytes is 2 bytes), and varying the alpha channel based on speed. This has the effect of drawing each lattice node green, with the alpha channel being proportional to the speed at that node. Like this:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;index&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;255&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// Green channel&lt;/span&gt;
+&lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;index&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;speed&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// Alpha channel&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;Using this method, if a node has low or no speed, it is essentially transparent. In other words, the background color can and will shine through. Eventually I came to realize that if I swapped these (in other words, set the alpha channel to a constant (i.e. fully opaque), and vary the green channel proportionally with the speed at the node), that I could achieve the same green on black effect I had wanted, but at absolutely no additional cost over what I was already using. This works primarily because the different channels are defaulted to 0. So when speed is 0, the node would be colored &lt;code&gt;{r: 0, g: 0, b: 0, a: 255}&lt;/code&gt; (black), and when speed is high, it would be &lt;code&gt;{r: 0, g: 255, b: 0, a: 255}&lt;/code&gt; (green). Somewhat embarressingly, this realization came when trying random color combinations. It was not a stroke of insight so much as it was a happy accident. The takeaway here being, if something isn't working for you, there very well may be more than one way to achieve the same effect. Don't give up on something just because your first attempt failed or was too costly. Keep experimenting. You're almost certainly not so smart that you can't stumble your way into something, at some point, that you couldn't have thought your way into.&lt;/p&gt;
+&lt;h2&gt;The point of no &lt;code&gt;return&lt;/code&gt;s&lt;/h2&gt;
+&lt;p&gt;This was a small-ish savings, but if you look at my program, you may notice that there isn't a single return statement. Not one. After all, &lt;code&gt;return&lt;/code&gt; is pretty costly. To return anything meaningful requires at least nine bytes, plus two more for assignment upon calling. Streaming and collision don't really require a &lt;code&gt;return&lt;/code&gt; (they both manipulate the &lt;code&gt;lattice&lt;/code&gt; array which is in the global scope). The mouse function doesn't require one. The equilibrium function originally did return the equilibrium array, but ultimately it didn't require one either. To achieve this, an &lt;code&gt;eq&lt;/code&gt; array was put into the global scope. When it is necessary to calculate the equilibrium of a node, the &lt;code&gt;equilibrium&lt;/code&gt; function is called on it's own, and on the next line the equilibrium values are accessed from the now updated &lt;code&gt;eq&lt;/code&gt; variable. In other words, it's all about the side-effects. In the following example, the equilibrium values are calculated using the node's density and fixed x and y velocity values (0.1); the node's streaming array (which is just a place to store streaming values, to save us having to throw out and rebuild every single node on every single tick) is then set to the recently calculated equilibrium values.&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// Here eq holds outdated values&lt;/span&gt;
+&lt;span class="nx"&gt;equilibrium&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;density&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// eq values are up to date after this executes&lt;/span&gt;
+&lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;stream&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// Set streaming array to new equilibrium values&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;The one important thing to note here is that, since the &lt;code&gt;eq&lt;/code&gt; variable is shared quite promiscuously, it is imperative that a new array be created each and every time the equilibrium value is calculated, otherwise every node would share a reference to the same array, and madness would ensue. This is the inherent danger of mutable state, but there's no way around it if you want to trim some bytes.&lt;/p&gt;
+&lt;h2&gt;I ain't got time to &lt;code&gt;var&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;If you look carefully at the fully minified version of this program, you may notice something interesting. Every single variable is in the global scope. Every. Single. One. Well... aside from the arguments to the &lt;code&gt;equilibrium&lt;/code&gt; and &lt;code&gt;mousemove&lt;/code&gt; functions. But the point is, there isn't a single instance of &lt;code&gt;var&lt;/code&gt; in the entire program. Now, Google's closure compiler doesn't rename globals, as this could cause serious issues, so this was one of the more difficult optimizations to achieve. Since the compiler would not have any qualms about using, for example, the local variable identifier &lt;code&gt;a&lt;/code&gt; in two separate functions (as they would each belong to their own scope, neither would ever be in danger of overwriting the data of the other), it isn't possible to simply delete all &lt;code&gt;var&lt;/code&gt;'s from the compiled program without risking dangeous name collisions. While this may work coincidentally in certain instances, it's not a technique that can be consistently relied upon. So in order to eliminate all local variables, I had to manually rename virtually all variables to single letter identifiers, making certain that there were no name clashes. This was particularly difficult, as it required some careful bookkeeping to keep the different variables straight. It is probably best to perform this step as late as possible, once your program is functioning properly and the functionality has been more or less locked down, as once this is performed your program will become significantly more difficult to understand and follow, even in its uncompiled state. Before you reach this step, though, you can make this process much easier for yourself by only using unique, easily searchable, and easily mechanically replacable identifiers for all your different variables. So as an example, having the variables &lt;code&gt;lattice&lt;/code&gt; and &lt;code&gt;lattice_width&lt;/code&gt; could present problems if you were to search/replace &lt;code&gt;lattice&lt;/code&gt; before &lt;code&gt;lattice_width&lt;/code&gt;. Also, loop variables can generally be reused with impunity, although it's best to perform a quick sanity check to make certain there won't ever be conflicts when reusing them before renaming. As an example, if you are using the loop variable &lt;code&gt;i&lt;/code&gt; in both your &lt;code&gt;update&lt;/code&gt; function and your &lt;code&gt;mousemove&lt;/code&gt; function, if the mouse event interrupts the &lt;code&gt;update&lt;/code&gt; method during that loop, this could lead to problems. One other thing that was helpful was to put the entire program in an immediately invoked function expression. This provides your program with its own scope, and allows Google's closure compiler to freely rename variables therein.&lt;/p&gt;
+&lt;h2&gt;&lt;code&gt;requestAnimationFrame&lt;/code&gt;, captain&lt;/h2&gt;
+&lt;p&gt;Finally, it's important to know when you can't get away with trimming bytes. For a long time, I was using &lt;code&gt;setTimeout&lt;/code&gt; instead of either the much superior but much more verbose &lt;code&gt;requestAnimationFrame&lt;/code&gt; or the probably not much better but slightly more verbose &lt;code&gt;setInterval&lt;/code&gt;. I thought this was an easy 11 bytes. It worked pretty well in chrome, which is what I was primarily developing in, but it put firefox into an absolute fit. When it came time to test my program in Firefox, it took me a while to determine what the actual issue was, and I wasted a fair amount of time chasing red herrings. When I finally realized that &lt;code&gt;requestAnimationFrame&lt;/code&gt; was not optional, it was pretty rough. The program was hovering right around 1K, and &lt;code&gt;requestAnimationFrame&lt;/code&gt; sent it over the top. I had to make some hard decisions as a result, and I had to dig in even deeper to keep shaving off more bytes. If I had started with &lt;code&gt;requestAnimationFrame&lt;/code&gt;, I still would have had to shave the same number of bytes, but I might have saved myself a mini heartache of going from ~1K up into the 1040 range. That was pretty demoralizing. Now, I'm not saying every program absolutely needs to use &lt;code&gt;requestAnimationFrame&lt;/code&gt;. I believe it was only essential to this program because of the relatively high computational complexity of the algorithm. I'm sure a less taxing program could easily get away with &lt;code&gt;setInterval&lt;/code&gt;. The important takeaway here, though, is that, whenever possible, you should find those things that are absolutely essential to your program as early as you can, and make them nonnegotiable in your byte-budget. So if you determine early on that you absolutely need &lt;code&gt;requestAnimationFrame&lt;/code&gt; and &lt;code&gt;a.onmousemove=function(){}&lt;/code&gt;, then you really only have 977 bytes to play with, not 1024.&lt;/p&gt;
+&lt;h2&gt;Odds and bobs&lt;/h2&gt;
+&lt;p&gt;A few random bits of advice:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Set up a build/compile process early, especially if you're using a mechanical minification service like Google's closure compiler. They have an easy to use API, and a little regex knowledge should do the rest. I manually search/replaced variables and things far more often than I really should have before I set up a compile script. I set mine up to send to Google's closure compiler, knock some variables off the response that I only kept around to keep the closure compiler from using those identifiers, wipe out the IIFE I was using for scoping, and then finally print the final length to the terminal. There were a few more steps I never bothered to automate, too, so I always knew that the reported length was going to be ~10 bytes higher than the fully minified program.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you dig through my repo, you'll find one commit message made early in the morning that reads "Had a few beers, somehow gained 36 bytes?!?; 1100 bytes". This was prior to reaching 1K, and at the time it was a pretty significant step towards that goal. It wasn't even that many beers, either. Who knows how many bytes could have been shed if it had been tequila. So, I guess the point is, that it can't hurt to get a little drunk? Maybe? Or even just step away for a minute, take a walk, do whatever you need to to take your mind off the problem, and you might return to it with a new perspective.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Conclusion, or whatever&lt;/h2&gt;
+&lt;p&gt;Though this project certainly had its low points, and there were a few moments when I seriously questioned whether what I had set out to do was even possible, ultimately I achieved my goal: I made a program that was far more functional and polished than I would have thought possible in such a small number of bytes, I learned a few interesting and useful things about JavaScript (and a couple of dirty, dirty hacks), and I got a different perspective on programming in general.&lt;/p&gt;
+&lt;p&gt;The French Oulipo are a group of writers and mathematicians that are primarily known for their contrained writing. Georges Perec, for example, wrote a 300 page lipogram novel, &lt;em&gt;La disparition&lt;/em&gt;, in which the letter 'e' is never used. Like, at all. Ever. In French, the letter 'e' has a slightly higher frequency than it does in English, so this was no small feat. While it can be maddening at times, as the Oulipo realized, imposing an arbitrary constraint upon yourself can force you to focus more clearly on what you are doing, and can lead to brilliant insights you might never have realized otherwise, as well as a deeper understanding of the boundaries of the sytem you're working in.&lt;/p&gt;</summary><category term="JavaScript"></category><category term="JS1K"></category><category term="Lattice Boltzmann"></category></entry></feed>
