@@ -203,9 +203,7 @@ figure * { border: none; margin: auto; padding: auto; }
 /* CUSTOM */
 
 .no-svg svg:after {
-    content: "Oops... it looks like your browser doesn't support SVG. Maybe think about using a better browser. Or just pretend like there's a really nice illustration here.";
-    padding: 2em;
-    border: 1px solid #FF0047;
+    /* TODO: Make fallback images for SVG */
 }
 
 h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
