@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=endge, chrome=IE8" />
     <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no" />
-    <title>Eben Packwood — Projects</title>
+    <title>Eben Packwood — Wireframe</title>
     <!--[if lte IE 8]><script type="text/javascript" src="http://www.ebenpackwood.com/theme/js/html5shiv.js"></script><![endif]-->
-    <link rel="canonical" href="http://www.ebenpackwood.com/pages/projects.html" >
+    <link rel="canonical" href="http://www.ebenpackwood.com/pages/projects/wireframe.html" >
     <link rel="stylesheet" type="text/css" href="http://www.ebenpackwood.com/theme/css/style.min.css?f2e8db1f" />
     <script src="http://www.ebenpackwood.com/theme/js/modernizr.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
@@ -15,116 +15,25 @@
                            title="Eben Packwood — Flux Atom"
                            href="http://www.ebenpackwood.com/" /> 
 
+    <meta name="description" content="3D software engine." />
   </head>
   <body>
     <div id="page">   
       <div id="page-body">
         <section id="page-main" role="main">
-      <h1>Projects</h1>
-      <div class="project">
-    <div class="title">
-        <h3><a href="http://pygular.appspot.com/" target="_blank">Pygular</a></h3>
-    </div>
-    <div class="image">
-        <a href="http://pygular.appspot.com/" target="_blank"><img src="http://www.ebenpackwood.com/images/snout.png" alt="Pygular logo"></a>
-    </div>
-    <div class="languages">
-        Python, JavaScript, Flask, Knockout,
-    </div>
-    <div class="summary">
-        A real-time regular expression editor.
+      <h1>Wireframe</h1>
+      <div class="main" style="position:relative; width: 600px; margin: 80px auto">
+    <canvas tabindex="1" id="wireframe" style="background-color:black; position:relative; border: 2px solid green;" width="600" height="400"></canvas>
+    <p>Click on the canvas to give it focus. Move with WASDRF keys. Look around with QETG. Spin icosahedron with HJKLUI.</p>
+    <div id="controls">
+        <button id="toggledraw">Toggle draw mode</button>
+        <button id="togglebfcull">Toggle backface culling</button>
     </div>
 </div>
 
-<div class="project">
-    <div class="title">
-        <h3><a href="http://www.ebenpackwood.com/pages/projects/lattice-boltzmann.html">Lattice Boltzmann</a></h3>
-    </div>
-    <div class="image">
-        <a href="http://www.ebenpackwood.com/pages/projects/lattice-boltzmann.html"><img src="http://www.ebenpackwood.com/images/lattice-boltzmann.gif" alt="Lattice Boltzmann"></a>
-    </div>
-    <div class="languages">
-        JavaScript 
-    </div>
-    <div class="summary">
-        A computational fluid dynamics simulation.
-    </div>
-</div>
+<script src="http://www.ebenpackwood.com/js/wireframe.js"></script>
 
-<div class="project">
-    <div class="title">
-        <h3><a href="http://www.ebenpackwood.com/pages/projects/wireframe.html">Wireframe</a></h3>
-    </div>
-    <div class="image">
-        <a href="http://www.ebenpackwood.com/pages/projects/lattice-boltzmann.html"><img src="http://www.ebenpackwood.com/images/wireframe.gif" alt="Wireframe"></a>
-    </div>
-    <div class="languages">
-        JavaScript 
-    </div>
-    <div class="summary">
-        A 3d software engine.
-    </div>
-</div>
-
-<div class="project">
-    <div class="title">
-        <h3><a href="http://www.ebenpackwood.com/pages/projects/game-of-life.html">Conway's Game of Life</a></h3>
-    </div>
-    <div class="image">
-        <a href="http://www.ebenpackwood.com/pages/projects/game-of-life.html"><img src="http://www.ebenpackwood.com/images/game-of-life.png" alt="Glider"></a>
-    </div>
-    <div class="languages">
-        JavaScript 
-    </div>
-    <div class="summary">
-        Conway's Game of Life, on a toroidal board.
-    </div>
-</div>
-
-<div class="project">
-    <div class="title">
-        <h3><a href="http://www.ebenpackwood.com/pages/projects/a-star.html">A*</a></h3>
-    </div>
-    <div class="image">
-        <a href="http://www.ebenpackwood.com/pages/projects/a-star.html"><img src="http://www.ebenpackwood.com/images/astar.gif" alt="A*"></a>
-    </div>
-    <div class="languages">
-        JavaScript 
-    </div>
-    <div class="summary">
-        A* pathfinding.
-    </div>
-</div>
-
-<div class="project">
-    <div class="title">
-        <h3><a href="http://www.ebenpackwood.com/pages/projects/js1k.html">JS1K Lattice Boltzmann</a></h3>
-    </div>
-    <div class="image">
-        <a href="http://www.ebenpackwood.com/pages/projects/js1k.html"><img src="http://www.ebenpackwood.com/images/js1k.gif" alt="Lattice Boltzmann"></a>
-    </div>
-    <div class="languages">
-        JavaScript 
-    </div>
-    <div class="summary">
-        Lattice Boltzmann, implemented in under 1K.
-    </div>
-</div>
-
-<div class="project">
-    <div class="title">
-        <h3><a href="http://wiki.bennington.edu/wiki/LM3000" target="_blank">Logic Machine 3000</a></h3>
-    </div>
-    <div class="image">
-        <a href="http://wiki.bennington.edu/wiki/LM3000" target="_blank"><img src="http://www.ebenpackwood.com/images/LM3000.jpg" alt="LM3000"></a>
-    </div>
-    <div class="languages">
-        Breadboards, integrated circuits, 50 odd meters of wire, etc.
-    </div>
-    <div class="summary">
-        8-bit microprocessor.
-    </div>
-</div>
+<script src="http://www.ebenpackwood.com/js/wireframe.demo.js"></script>
       </section> <!-- /#page-main -->
 
         <aside id="page-side">
