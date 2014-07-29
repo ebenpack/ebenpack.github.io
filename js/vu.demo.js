@@ -89,7 +89,7 @@
     function draw() {
         var current_time = new Date();
         // Shift everything back a row.
-        if (current_time - last_update > 2000){
+        if (current_time - last_update > 100){
             for (var row = ROWS - 2; row >= 0; row--){
                 for (var col = 0; col <= COLS; col++){
                     var i = (row*17) + col;
