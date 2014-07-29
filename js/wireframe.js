@@ -1,6 +1,350 @@
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.wireframe=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (global){
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.colour=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+var hslToRgb, rgbToHsl, parseColor, cache, div;
+/**
+ * A color with both rgb and hsl representations.
+ * @class Color
+ * @param {string} color Any legal CSS color value (hex, color keyword, rgb[a], hsl[a]).
+ */
+function Color(color, alpha){
+    var hsl, rgb;
+    var parsed_color = {};
+    if (typeof color === 'string'){
+        color = color.toLowerCase();
+        if (color in cache){
+            parsed_color = cache[color];
+        } else {
+            parsed_color = parseColor(color);
+            cache[color] = parsed_color;
+        }
+        rgb = parsed_color;
+        hsl = rgbToHsl(parsed_color.r, parsed_color.g, parsed_color.b);
+        alpha = parsed_color.a || alpha || 1;
+    } else if ('r' in color){
+        rgb = color;
+        hsl = rgbToHsl(color.r, color.g, color.b);
+        alpha = hsl.a || alpha || 1;
+    } else if ('h' in color){
+        hsl = color;
+        rgb = hslToRgb(color.h, color.s, color.l);
+        alpha = rgb.a || alpha || 1;
+    }
+    this.rgb = {'r': rgb.r, 'g': rgb.g, 'b': rgb.b};
+    this.hsl = {'h': hsl.h, 's': hsl.s, 'l': hsl.l};
+    this.alpha = alpha;
+}
+/**
+ * Lighten a color by the given percentage.
+
+ * @method
+ * @param  {number} percent
+ * @return {Color}
+ */
+Color.prototype.lighten = function(percent){
+    var hsl = this.hsl;
+    var lum = hsl.l + percent;
+    if (lum > 100){
+        lum = 100;
+    }
+    return new Color({'h':hsl.h, 's':hsl.s, 'l':lum}, this.alpha);
+};
+/**
+ * Darken a color by the given percentage.
+ * @method
+ * @param  {number} percent
+ * @return {Color}
+ */
+Color.prototype.darken = function(percent){
+    var hsl = this.hsl;
+    var lum = hsl.l - percent;
+    if (lum < 0){
+        lum = 0;
+    }
+    return new Color({'h':hsl.h, 's':hsl.s, 'l':lum}, this.alpha);
+};
+/**
+* @param {number} h Hue
+* @param {number} s Saturation
+* @param {number} l Luminance
+* @return {{r: number, g: number, b: number}}
+*/
+hslToRgb = function(h, s, l){
+    function _v(m1, m2, hue){
+        hue = hue;
+        if (hue < 0){hue+=1;}
+        if (hue > 1){hue-=1;}
+        if (hue < (1/6)){
+            return m1 + (m2-m1)*hue*6;
+        }
+        if (hue < 0.5){
+            return m2;
+        }
+        if (hue < (2/3)){
+            return m1 + (m2-m1)*((2/3)-hue)*6;
+        }
+        return m1;
+    }
+    var m2;
+    var fraction_l = (l/100);
+    var fraction_s = (s/100);
+    if (s === 0){
+        var gray = fraction_l*255;
+        return {'r': gray, 'g': gray, 'b': gray};
+    }
+    if (l <= 50){
+        m2 = fraction_l * (1+fraction_s);
+    }
+    else{
+        m2 = fraction_l+fraction_s-(fraction_l*fraction_s);
+    }
+    var m1 = 2*fraction_l - m2;
+    h = h / 360;
+    return {'r': Math.round(_v(m1, m2, h+(1/3))*255), 'g': Math.round(_v(m1, m2, h)*255), 'b': Math.round(_v(m1, m2, h-(1/3))*255)};
+};
+/**
+ * @param  {number} r Red
+ * @param  {number} g Green
+ * @param  {number} b Blue
+ * @return {{h: number, s: number, l: number}}
+ */
+rgbToHsl = function(r, g, b){
+    r = r / 255;
+    g = g / 255;
+    b = b / 255;
+    var maxc = Math.max(r, g, b);
+    var minc = Math.min(r, g, b);
+    var l = Math.round(((minc+maxc)/2)*100);
+    if (l > 100) {l = 100;}
+    if (l < 0) {l = 0;}
+    var h, s;
+    if (minc === maxc){
+        return {'h': 0, 's': 0, 'l': l};
+    }
+    if (l <= 50){
+        s = (maxc-minc) / (maxc+minc);
+    }
+    else{
+        s = (maxc-minc) / (2-maxc-minc);
+    }
+    var rc = (maxc-r) / (maxc-minc);
+    var gc = (maxc-g) / (maxc-minc);
+    var bc = (maxc-b) / (maxc-minc);
+    if (r === maxc){
+        h = bc-gc;
+    }
+    else if (g === maxc){
+        h = 2+rc-bc;
+    }
+    else{
+        h = 4+gc-rc;
+    }
+    h = (h/6) % 1;
+    if (h < 0){h+=1;}
+    h = Math.round(h*360);
+    s = Math.round(s*100);
+    if (h > 360) {h = 360;}
+    if (h < 0) {h = 0;}
+    if (s > 100) {s = 100;}
+    if (s < 0) {s = 0;}
+    return {'h': h, 's': s, 'l': l};
+};
+div = document.createElement('div');
+/**
+ * Parse a CSS color value and return an rgba color object.
+ * @param  {string} color A legal CSS color value (hex, color keyword, rgb[a], hsl[a]).
+ * @return {{r: number, g: number, b: number, a: number}}   rgba color object.
+ * @throws {ColorError} If illegal color value is passed.
+ */
+parseColor = function(color){
+    // TODO: How cross-browser compatible is this? How efficient?
+    // Make a temporary HTML element styled with the given color string
+    // then extract and parse the computed rgb(a) value.
+    // N.B. This can create a loooot of DOM nodes. It's not a great method.
+    // TODO: Fix
+    div.style.backgroundColor = color;
+    var rgba = div.style.backgroundColor;
+    // Convert string in form 'rgb[a](num, num, num[, num])' to array ['num', 'num', 'num'[, 'num']]
+    rgba = rgba.slice(rgba.indexOf('(')+1).slice(0,-1).replace(/\s/g, '').split(',');
+    var return_color = {};
+    var color_spaces = ['r', 'g', 'b', 'a'];
+    for (var i = 0; i < rgba.length; i++){
+        var value = parseFloat(rgba[i]); // Alpha value will be floating point.
+        if (isNaN(value)){
+            throw "ColorError: Something went wrong. Perhaps " + color + " is not a legal CSS color value";
+        }
+        else {
+            return_color[color_spaces[i]] = value;
+        }
+    }
+    return return_color;
+};
+// Pre-warm the cache with named colors, as these are not
+// converted to rgb values by the parseColor function above.
+cache = {
+    "black": {"r": 0, "g": 0, "b": 0, "h": 0, "s": 0, "l": 0},
+    "silver": {"r": 192, "g": 192, "b": 192, "h": 0, "s": 0, "l": 75},
+    "gray": {"r": 128, "g": 128, "b": 128, "h": 0, "s": 0, "l": 50},
+    "white": {"r": 255, "g": 255, "b": 255, "h": 0, "s": 0, "l": 100},
+    "maroon": {"r": 128, "g": 0, "b": 0, "h": 0, "s": 100, "l": 25},
+    "red": {"r": 255, "g": 0, "b": 0, "h": 0, "s": 100, "l": 50},
+    "purple": {"r": 128, "g": 0, "b": 128, "h": 300, "s": 100, "l": 25},
+    "fuchsia": {"r": 255, "g": 0, "b": 255, "h": 300, "s": 100, "l": 50},
+    "green": {"r": 0, "g": 128, "b": 0, "h": 120, "s": 100, "l": 25},
+    "lime": {"r": 0, "g": 255, "b": 0, "h": 120, "s": 100, "l": 50},
+    "olive": {"r": 128, "g": 128, "b": 0, "h": 60, "s": 100, "l": 25},
+    "yellow": {"r": 255, "g": 255, "b": 0, "h": 60, "s": 100, "l": 50},
+    "navy": {"r": 0, "g": 0, "b": 128, "h": 240, "s": 100, "l": 25},
+    "blue": {"r": 0, "g": 0, "b": 255, "h": 240, "s": 100, "l": 50},
+    "teal": {"r": 0, "g": 128, "b": 128, "h": 180, "s": 100, "l": 25},
+    "aqua": {"r": 0, "g": 255, "b": 255, "h": 180, "s": 100, "l": 50},
+    "orange": {"r": 255, "g": 165, "b": 0, "h": 39, "s": 100, "l": 50},
+    "aliceblue": {"r": 240, "g": 248, "b": 255, "h": 208, "s": 100, "l": 97},
+    "antiquewhite": {"r": 250, "g": 235, "b": 215, "h": 34, "s": 78, "l": 91},
+    "aquamarine": {"r": 127, "g": 255, "b": 212, "h": 160, "s": 100, "l": 75},
+    "azure": {"r": 240, "g": 255, "b": 255, "h": 180, "s": 100, "l": 97},
+    "beige": {"r": 245, "g": 245, "b": 220, "h": 60, "s": 56, "l": 91},
+    "bisque": {"r": 255, "g": 228, "b": 196, "h": 33, "s": 100, "l": 88},
+    "blanchedalmond": {"r": 255, "g": 235, "b": 205, "h": 36, "s": 100, "l": 90},
+    "blueviolet": {"r": 138, "g": 43, "b": 226, "h": 271, "s": 76, "l": 53},
+    "brown": {"r": 165, "g": 42, "b": 42, "h": 0, "s": 59, "l": 41},
+    "burlywood": {"r": 222, "g": 184, "b": 135, "h": 34, "s": 57, "l": 70},
+    "cadetblue": {"r": 95, "g": 158, "b": 160, "h": 182, "s": 25, "l": 50},
+    "chartreuse": {"r": 127, "g": 255, "b": 0, "h": 90, "s": 100, "l": 50},
+    "chocolate": {"r": 210, "g": 105, "b": 30, "h": 25, "s": 75, "l": 47},
+    "coral": {"r": 255, "g": 127, "b": 80, "h": 16, "s": 100, "l": 66},
+    "cornflowerblue": {"r": 100, "g": 149, "b": 237, "h": 219, "s": 79, "l": 66},
+    "cornsilk": {"r": 255, "g": 248, "b": 220, "h": 48, "s": 100, "l": 93},
+    "crimson": {"r": 220, "g": 20, "b": 60, "h": 348, "s": 83, "l": 47},
+    "darkblue": {"r": 0, "g": 0, "b": 139, "h": 240, "s": 100, "l": 27},
+    "darkcyan": {"r": 0, "g": 139, "b": 139, "h": 180, "s": 100, "l": 27},
+    "darkgoldenrod": {"r": 184, "g": 134, "b": 11, "h": 43, "s": 89, "l": 38},
+    "darkgray": {"r": 169, "g": 169, "b": 169, "h": 0, "s": 0, "l": 66},
+    "darkgreen": {"r": 0, "g": 100, "b": 0, "h": 120, "s": 100, "l": 20},
+    "darkgrey": {"r": 169, "g": 169, "b": 169, "h": 0, "s": 0, "l": 66},
+    "darkkhaki": {"r": 189, "g": 183, "b": 107, "h": 56, "s": 38, "l": 58},
+    "darkmagenta": {"r": 139, "g": 0, "b": 139, "h": 300, "s": 100, "l": 27},
+    "darkolivegreen": {"r": 85, "g": 107, "b": 47, "h": 82, "s": 39, "l": 30},
+    "darkorange": {"r": 255, "g": 140, "b": 0, "h": 33, "s": 100, "l": 50},
+    "darkorchid": {"r": 153, "g": 50, "b": 204, "h": 280, "s": 61, "l": 50},
+    "darkred": {"r": 139, "g": 0, "b": 0, "h": 0, "s": 100, "l": 27},
+    "darksalmon": {"r": 233, "g": 150, "b": 122, "h": 15, "s": 72, "l": 70},
+    "darkseagreen": {"r": 143, "g": 188, "b": 143, "h": 120, "s": 25, "l": 65},
+    "darkslateblue": {"r": 72, "g": 61, "b": 139, "h": 248, "s": 39, "l": 39},
+    "darkslategray": {"r": 47, "g": 79, "b": 79, "h": 180, "s": 25, "l": 25},
+    "darkslategrey": {"r": 47, "g": 79, "b": 79, "h": 180, "s": 25, "l": 25},
+    "darkturquoise": {"r": 0, "g": 206, "b": 209, "h": 181, "s": 100, "l": 41},
+    "darkviolet": {"r": 148, "g": 0, "b": 211, "h": 282, "s": 100, "l": 41},
+    "deeppink": {"r": 255, "g": 20, "b": 147, "h": 328, "s": 100, "l": 54},
+    "deepskyblue": {"r": 0, "g": 191, "b": 255, "h": 195, "s": 100, "l": 50},
+    "dimgray": {"r": 105, "g": 105, "b": 105, "h": 0, "s": 0, "l": 41},
+    "dimgrey": {"r": 105, "g": 105, "b": 105, "h": 0, "s": 0, "l": 41},
+    "dodgerblue": {"r": 30, "g": 144, "b": 255, "h": 210, "s": 100, "l": 56},
+    "firebrick": {"r": 178, "g": 34, "b": 34, "h": 0, "s": 68, "l": 42},
+    "floralwhite": {"r": 255, "g": 250, "b": 240, "h": 40, "s": 100, "l": 97},
+    "forestgreen": {"r": 34, "g": 139, "b": 34, "h": 120, "s": 61, "l": 34},
+    "gainsboro": {"r": 220, "g": 220, "b": 220, "h": 0, "s": 0, "l": 86},
+    "ghostwhite": {"r": 248, "g": 248, "b": 255, "h": 240, "s": 100, "l": 99},
+    "gold": {"r": 255, "g": 215, "b": 0, "h": 51, "s": 100, "l": 50},
+    "goldenrod": {"r": 218, "g": 165, "b": 32, "h": 43, "s": 74, "l": 49},
+    "greenyellow": {"r": 173, "g": 255, "b": 47, "h": 84, "s": 100, "l": 59},
+    "grey": {"r": 128, "g": 128, "b": 128, "h": 0, "s": 0, "l": 50},
+    "honeydew": {"r": 240, "g": 255, "b": 240, "h": 120, "s": 100, "l": 97},
+    "hotpink": {"r": 255, "g": 105, "b": 180, "h": 330, "s": 100, "l": 71},
+    "indianred": {"r": 205, "g": 92, "b": 92, "h": 0, "s": 53, "l": 58},
+    "indigo": {"r": 75, "g": 0, "b": 130, "h": 275, "s": 100, "l": 25},
+    "ivory": {"r": 255, "g": 255, "b": 240, "h": 60, "s": 100, "l": 97},
+    "khaki": {"r": 240, "g": 230, "b": 140, "h": 54, "s": 77, "l": 75},
+    "lavender": {"r": 230, "g": 230, "b": 250, "h": 240, "s": 67, "l": 94},
+    "lavenderblush": {"r": 255, "g": 240, "b": 245, "h": 340, "s": 100, "l": 97},
+    "lawngreen": {"r": 124, "g": 252, "b": 0, "h": 90, "s": 100, "l": 49},
+    "lemonchiffon": {"r": 255, "g": 250, "b": 205, "h": 54, "s": 100, "l": 90},
+    "lightblue": {"r": 173, "g": 216, "b": 230, "h": 195, "s": 53, "l": 79},
+    "lightcoral": {"r": 240, "g": 128, "b": 128, "h": 0, "s": 79, "l": 72},
+    "lightcyan": {"r": 224, "g": 255, "b": 255, "h": 180, "s": 100, "l": 94},
+    "lightgoldenrodyellow": {"r": 250, "g": 250, "b": 210, "h": 60, "s": 80, "l": 90},
+    "lightgray": {"r": 211, "g": 211, "b": 211, "h": 0, "s": 0, "l": 83},
+    "lightgreen": {"r": 144, "g": 238, "b": 144, "h": 120, "s": 73, "l": 75},
+    "lightgrey": {"r": 211, "g": 211, "b": 211, "h": 0, "s": 0, "l": 83},
+    "lightpink": {"r": 255, "g": 182, "b": 193, "h": 351, "s": 100, "l": 86},
+    "lightsalmon": {"r": 255, "g": 160, "b": 122, "h": 17, "s": 100, "l": 74},
+    "lightseagreen": {"r": 32, "g": 178, "b": 170, "h": 177, "s": 70, "l": 41},
+    "lightskyblue": {"r": 135, "g": 206, "b": 250, "h": 203, "s": 92, "l": 75},
+    "lightslategray": {"r": 119, "g": 136, "b": 153, "h": 210, "s": 14, "l": 53},
+    "lightslategrey": {"r": 119, "g": 136, "b": 153, "h": 210, "s": 14, "l": 53},
+    "lightsteelblue": {"r": 176, "g": 196, "b": 222, "h": 214, "s": 41, "l": 78},
+    "lightyellow": {"r": 255, "g": 255, "b": 224, "h": 60, "s": 100, "l": 94},
+    "limegreen": {"r": 50, "g": 205, "b": 50, "h": 120, "s": 61, "l": 50},
+    "linen": {"r": 250, "g": 240, "b": 230, "h": 30, "s": 67, "l": 94},
+    "mediumaquamarine": {"r": 102, "g": 205, "b": 170, "h": 160, "s": 51, "l": 60},
+    "mediumblue": {"r": 0, "g": 0, "b": 205, "h": 240, "s": 100, "l": 40},
+    "mediumorchid": {"r": 186, "g": 85, "b": 211, "h": 288, "s": 59, "l": 58},
+    "mediumpurple": {"r": 147, "g": 112, "b": 219, "h": 260, "s": 60, "l": 65},
+    "mediumseagreen": {"r": 60, "g": 179, "b": 113, "h": 147, "s": 50, "l": 47},
+    "mediumslateblue": {"r": 123, "g": 104, "b": 238, "h": 249, "s": 80, "l": 67},
+    "mediumspringgreen": {"r": 0, "g": 250, "b": 154, "h": 157, "s": 100, "l": 49},
+    "mediumturquoise": {"r": 72, "g": 209, "b": 204, "h": 178, "s": 60, "l": 55},
+    "mediumvioletred": {"r": 199, "g": 21, "b": 133, "h": 322, "s": 81, "l": 43},
+    "midnightblue": {"r": 25, "g": 25, "b": 112, "h": 240, "s": 64, "l": 27},
+    "mintcream": {"r": 245, "g": 255, "b": 250, "h": 150, "s": 100, "l": 98},
+    "mistyrose": {"r": 255, "g": 228, "b": 225, "h": 6, "s": 100, "l": 94},
+    "moccasin": {"r": 255, "g": 228, "b": 181, "h": 38, "s": 100, "l": 85},
+    "navajowhite": {"r": 255, "g": 222, "b": 173, "h": 36, "s": 100, "l": 84},
+    "oldlace": {"r": 253, "g": 245, "b": 230, "h": 39, "s": 85, "l": 95},
+    "olivedrab": {"r": 107, "g": 142, "b": 35, "h": 80, "s": 60, "l": 35},
+    "orangered": {"r": 255, "g": 69, "b": 0, "h": 16, "s": 100, "l": 50},
+    "orchid": {"r": 218, "g": 112, "b": 214, "h": 302, "s": 59, "l": 65},
+    "palegoldenrod": {"r": 238, "g": 232, "b": 170, "h": 55, "s": 67, "l": 80},
+    "palegreen": {"r": 152, "g": 251, "b": 152, "h": 120, "s": 93, "l": 79},
+    "paleturquoise": {"r": 175, "g": 238, "b": 238, "h": 180, "s": 65, "l": 81},
+    "palevioletred": {"r": 219, "g": 112, "b": 147, "h": 340, "s": 60, "l": 65},
+    "papayawhip": {"r": 255, "g": 239, "b": 213, "h": 37, "s": 100, "l": 92},
+    "peachpuff": {"r": 255, "g": 218, "b": 185, "h": 28, "s": 100, "l": 86},
+    "peru": {"r": 205, "g": 133, "b": 63, "h": 30, "s": 59, "l": 53},
+    "pink": {"r": 255, "g": 192, "b": 203, "h": 350, "s": 100, "l": 88},
+    "plum": {"r": 221, "g": 160, "b": 221, "h": 300, "s": 47, "l": 75},
+    "powderblue": {"r": 176, "g": 224, "b": 230, "h": 187, "s": 52, "l": 80},
+    "rosybrown": {"r": 188, "g": 143, "b": 143, "h": 0, "s": 25, "l": 65},
+    "royalblue": {"r": 65, "g": 105, "b": 225, "h": 225, "s": 73, "l": 57},
+    "saddlebrown": {"r": 139, "g": 69, "b": 19, "h": 25, "s": 76, "l": 31},
+    "salmon": {"r": 250, "g": 128, "b": 114, "h": 6, "s": 93, "l": 71},
+    "sandybrown": {"r": 244, "g": 164, "b": 96, "h": 28, "s": 87, "l": 67},
+    "seagreen": {"r": 46, "g": 139, "b": 87, "h": 146, "s": 50, "l": 36},
+    "seashell": {"r": 255, "g": 245, "b": 238, "h": 25, "s": 100, "l": 97},
+    "sienna": {"r": 160, "g": 82, "b": 45, "h": 19, "s": 56, "l": 40},
+    "skyblue": {"r": 135, "g": 206, "b": 235, "h": 197, "s": 71, "l": 73},
+    "slateblue": {"r": 106, "g": 90, "b": 205, "h": 248, "s": 53, "l": 58},
+    "slategray": {"r": 112, "g": 128, "b": 144, "h": 210, "s": 13, "l": 50},
+    "slategrey": {"r": 112, "g": 128, "b": 144, "h": 210, "s": 13, "l": 50},
+    "snow": {"r": 255, "g": 250, "b": 250, "h": 0, "s": 100, "l": 99},
+    "springgreen": {"r": 0, "g": 255, "b": 127, "h": 150, "s": 100, "l": 50},
+    "steelblue": {"r": 70, "g": 130, "b": 180, "h": 207, "s": 44, "l": 49},
+    "tan": {"r": 210, "g": 180, "b": 140, "h": 34, "s": 44, "l": 69},
+    "thistle": {"r": 216, "g": 191, "b": 216, "h": 300, "s": 24, "l": 80},
+    "tomato": {"r": 255, "g": 99, "b": 71, "h": 9, "s": 100, "l": 64},
+    "turquoise": {"r": 64, "g": 224, "b": 208, "h": 174, "s": 72, "l": 56},
+    "violet": {"r": 238, "g": 130, "b": 238, "h": 300, "s": 76, "l": 72},
+    "wheat": {"r": 245, "g": 222, "b": 179, "h": 39, "s": 77, "l": 83},
+    "whitesmoke": {"r": 245, "g": 245, "b": 245, "h": 0, "s": 0, "l": 96},
+    "yellowgreen": {"r": 154, "g": 205, "b": 50, "h": 80, "s": 61, "l": 50}
+};
+
+module.exports = Color;
+
+},{}]},{},[1])
+(1)
+});
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],2:[function(_dereq_,module,exports){
+(function (global){
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.linearalgea=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+/**
+ * @license
+ * Copyright (c) 2014 Eben Packwood. All rights reserved.
+ * MIT License
+ *
+ */
+
 var Vector = _dereq_('./vector.js');
 var Matrix = _dereq_('./matrix.js');
 
@@ -577,7 +921,7 @@ module.exports = Vector;
 (1)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],2:[function(_dereq_,module,exports){
+},{}],3:[function(_dereq_,module,exports){
 var math = _dereq_('linearalgea');
 var Vector = math.Vector;
 var Matrix = math.Matrix;
@@ -726,7 +1070,7 @@ Camera.prototype.moveBackward = function(amount){
 
 module.exports = Camera;
 
-},{"linearalgea":1}],3:[function(_dereq_,module,exports){
+},{"linearalgea":2}],4:[function(_dereq_,module,exports){
 var Scene = _dereq_('./scene.js');
 var Camera = _dereq_('./camera.js');
 
@@ -736,7 +1080,7 @@ engine.Scene = Scene;
 engine.Camera = Camera;
 
 module.exports = engine;
-},{"./camera.js":2,"./scene.js":5}],4:[function(_dereq_,module,exports){
+},{"./camera.js":3,"./scene.js":6}],5:[function(_dereq_,module,exports){
 /**
  * Event handler.
  * @constructor
@@ -783,7 +1127,7 @@ EventTarget.prototype.removeListener = function(type, listener){
 
 module.exports = EventTarget;
 
-},{}],5:[function(_dereq_,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 var math = _dereq_('linearalgea');
 var Camera = _dereq_('./camera.js');
 var EventTarget = _dereq_('./events.js');
@@ -1104,7 +1448,7 @@ Scene.prototype.update = function(){
 
 module.exports = Scene;
 
-},{"../utilities/keycodes.js":11,"./camera.js":2,"./events.js":4,"linearalgea":1}],6:[function(_dereq_,module,exports){
+},{"../utilities/keycodes.js":11,"./camera.js":3,"./events.js":5,"linearalgea":2}],7:[function(_dereq_,module,exports){
 /**
  * @license
  * Copyright (c) 2014 Eben Packwood. All rights reserved.
@@ -1122,8 +1466,8 @@ wireframe.engine = engine;
 
 module.exports = wireframe;
 
-},{"./engine/engine.js":3,"./geometry/geometry.js":8}],7:[function(_dereq_,module,exports){
-var Color = _dereq_('../utilities/color.js');
+},{"./engine/engine.js":4,"./geometry/geometry.js":9}],8:[function(_dereq_,module,exports){
+var Color = _dereq_('colour');
 
 /**
  * A 3D triangle
@@ -1139,7 +1483,7 @@ function Face(a, b, c, color){
 }
 
 module.exports = Face;
-},{"../utilities/color.js":10}],8:[function(_dereq_,module,exports){
+},{"colour":1}],9:[function(_dereq_,module,exports){
 var Mesh = _dereq_('./mesh.js');
 var Face = _dereq_('./face.js');
 
@@ -1150,7 +1494,7 @@ geometry.Face = Face;
 
 module.exports = geometry;
 
-},{"./face.js":7,"./mesh.js":9}],9:[function(_dereq_,module,exports){
+},{"./face.js":8,"./mesh.js":10}],10:[function(_dereq_,module,exports){
 var Vector = _dereq_('linearalgea').Vector;
 var Face = _dereq_('./face.js');
 
@@ -1192,285 +1536,7 @@ Mesh.fromJSON = function(json){
 
 module.exports = Mesh;
 
-},{"./face.js":7,"linearalgea":1}],10:[function(_dereq_,module,exports){
-var rgbToHsl, parseColor, cache;
-/**
- * A color with both rgb and hsl representations.
- * @class Color
- * @param {string} color Any legal CSS color value (hex, color keyword, rgb[a], hsl[a]).
- */
-function Color(color){
-    var parsed_color = {};
-    color = color.toLowerCase();
-    if (color in cache){
-        parsed_color = cache[color];
-    } else {
-        parsed_color = parseColor(color);
-        cache[color] = parsed_color;
-    }
-    var hsl = rgbToHsl(parsed_color.r, parsed_color.g, parsed_color.b);
-    this.rgb = {'r': parsed_color.r, 'g': parsed_color.g, 'b': parsed_color.b};
-    this.hsl = {'h': hsl.h, 's': hsl.s, 'l': hsl.l};
-    this.alpha = parsed_color.a || 1;
-}
-/**
- * Lighten a color by the given percentage.
-
- * @method
- * @param  {number} percent
- * @return {Color}
- */
-Color.prototype.lighten = function(percent){
-    var hsl = this.hsl;
-    var lum = hsl.l + percent;
-    if (lum > 100){
-        lum = 100;
-    }
-    return new Color("hsla(" + hsl.h + "," + hsl.s + "%," + lum + "%," + this.alpha + ")");
-};
-/**
- * Darken a color by the given percentage.
- * @method
- * @param  {number} percent
- * @return {Color}
- */
-Color.prototype.darken = function(percent){
-    var hsl = this.hsl;
-    var lum = hsl.l - percent;
-    if (lum < 0){
-        lum = 0;
-    }
-    return new Color("hsla(" + hsl.h + "," + hsl.s + "%," + lum + "%," + this.alpha + ")");
-};
-/**
- * @param  {number} r Red
- * @param  {number} g Green
- * @param  {number} b Blue
- * @return {{h: number, s: number, l: number}}
- */
-rgbToHsl = function(r, g, b){
-    r = r / 255;
-    g = g / 255;
-    b = b / 255;
-    var maxc = Math.max(r, g, b);
-    var minc = Math.min(r, g, b);
-    var l = Math.round(((minc+maxc)/2)*100);
-    if (l > 100) {l = 100;}
-    if (l < 0) {l = 0;}
-    var h, s;
-    if (minc === maxc){
-        return {'h': 0, 's': 0, 'l': l};
-    }
-    if (l <= 50){
-        s = (maxc-minc) / (maxc+minc);
-    }
-    else{
-        s = (maxc-minc) / (2-maxc-minc);
-    }
-    var rc = (maxc-r) / (maxc-minc);
-    var gc = (maxc-g) / (maxc-minc);
-    var bc = (maxc-b) / (maxc-minc);
-    if (r === maxc){
-        h = bc-gc;
-    }
-    else if (g === maxc){
-        h = 2+rc-bc;
-    }
-    else{
-        h = 4+gc-rc;
-    }
-    h = (h/6) % 1;
-    if (h < 0){h+=1;}
-    h = Math.round(h*360);
-    s = Math.round(s*100);
-    if (h > 360) {h = 360;}
-    if (h < 0) {h = 0;}
-    if (s > 100) {s = 100;}
-    if (s < 0) {s = 0;}
-    return {'h': h, 's': s, 'l': l};
-};
-/**
- * Parse a CSS color value and return an rgba color object.
- * @param  {string} color A legal CSS color value (hex, color keyword, rgb[a], hsl[a]).
- * @return {{r: number, g: number, b: number, a: number}}   rgba color object.
- * @throws {ColorError} If illegal color value is passed.
- */
-parseColor = function(color){
-    // TODO: How cross-browser compatible is this? How efficient?
-    // Make a temporary HTML element styled with the given color string
-    // then extract and parse the computed rgb(a) value.
-    // N.B. This can create a loooot of DOM nodes. It's not a great method.
-    // TODO: Fix
-    var div = document.createElement('div');
-    div.style.backgroundColor = color;
-    var rgba = div.style.backgroundColor;
-    // Convert string in form 'rgb[a](num, num, num[, num])' to array ['num', 'num', 'num'[, 'num']]
-    rgba = rgba.slice(rgba.indexOf('(')+1).slice(0,-1).replace(/\s/g, '').split(',');
-    var return_color = {};
-    var color_spaces = ['r', 'g', 'b', 'a'];
-    for (var i = 0; i < rgba.length; i++){
-        var value = parseFloat(rgba[i]); // Alpha value will be floating point.
-        if (isNaN(value)){
-            throw "ColorError: Something went wrong. Perhaps " + color + " is not a legal CSS color value";
-        }
-        else {
-            return_color[color_spaces[i]] = value;
-        }
-    }
-    return return_color;
-};
-// Pre-warm the cache with named colors, as these are not
-// converted to rgb values by the parseColor function above.
-cache = {
-    "black": {"r": 0, "g": 0, "b": 0, "h": 0, "s": 0, "l": 0},
-    "silver": {"r": 192, "g": 192, "b": 192, "h": 0, "s": 0, "l": 75},
-    "gray": {"r": 128, "g": 128, "b": 128, "h": 0, "s": 0, "l": 50},
-    "white": {"r": 255, "g": 255, "b": 255, "h": 0, "s": 0, "l": 100},
-    "maroon": {"r": 128, "g": 0, "b": 0, "h": 0, "s": 100, "l": 25},
-    "red": {"r": 255, "g": 0, "b": 0, "h": 0, "s": 100, "l": 50},
-    "purple": {"r": 128, "g": 0, "b": 128, "h": 300, "s": 100, "l": 25},
-    "fuchsia": {"r": 255, "g": 0, "b": 255, "h": 300, "s": 100, "l": 50},
-    "green": {"r": 0, "g": 128, "b": 0, "h": 120, "s": 100, "l": 25},
-    "lime": {"r": 0, "g": 255, "b": 0, "h": 120, "s": 100, "l": 50},
-    "olive": {"r": 128, "g": 128, "b": 0, "h": 60, "s": 100, "l": 25},
-    "yellow": {"r": 255, "g": 255, "b": 0, "h": 60, "s": 100, "l": 50},
-    "navy": {"r": 0, "g": 0, "b": 128, "h": 240, "s": 100, "l": 25},
-    "blue": {"r": 0, "g": 0, "b": 255, "h": 240, "s": 100, "l": 50},
-    "teal": {"r": 0, "g": 128, "b": 128, "h": 180, "s": 100, "l": 25},
-    "aqua": {"r": 0, "g": 255, "b": 255, "h": 180, "s": 100, "l": 50},
-    "orange": {"r": 255, "g": 165, "b": 0, "h": 39, "s": 100, "l": 50},
-    "aliceblue": {"r": 240, "g": 248, "b": 255, "h": 208, "s": 100, "l": 97},
-    "antiquewhite": {"r": 250, "g": 235, "b": 215, "h": 34, "s": 78, "l": 91},
-    "aquamarine": {"r": 127, "g": 255, "b": 212, "h": 160, "s": 100, "l": 75},
-    "azure": {"r": 240, "g": 255, "b": 255, "h": 180, "s": 100, "l": 97},
-    "beige": {"r": 245, "g": 245, "b": 220, "h": 60, "s": 56, "l": 91},
-    "bisque": {"r": 255, "g": 228, "b": 196, "h": 33, "s": 100, "l": 88},
-    "blanchedalmond": {"r": 255, "g": 235, "b": 205, "h": 36, "s": 100, "l": 90},
-    "blueviolet": {"r": 138, "g": 43, "b": 226, "h": 271, "s": 76, "l": 53},
-    "brown": {"r": 165, "g": 42, "b": 42, "h": 0, "s": 59, "l": 41},
-    "burlywood": {"r": 222, "g": 184, "b": 135, "h": 34, "s": 57, "l": 70},
-    "cadetblue": {"r": 95, "g": 158, "b": 160, "h": 182, "s": 25, "l": 50},
-    "chartreuse": {"r": 127, "g": 255, "b": 0, "h": 90, "s": 100, "l": 50},
-    "chocolate": {"r": 210, "g": 105, "b": 30, "h": 25, "s": 75, "l": 47},
-    "coral": {"r": 255, "g": 127, "b": 80, "h": 16, "s": 100, "l": 66},
-    "cornflowerblue": {"r": 100, "g": 149, "b": 237, "h": 219, "s": 79, "l": 66},
-    "cornsilk": {"r": 255, "g": 248, "b": 220, "h": 48, "s": 100, "l": 93},
-    "crimson": {"r": 220, "g": 20, "b": 60, "h": 348, "s": 83, "l": 47},
-    "darkblue": {"r": 0, "g": 0, "b": 139, "h": 240, "s": 100, "l": 27},
-    "darkcyan": {"r": 0, "g": 139, "b": 139, "h": 180, "s": 100, "l": 27},
-    "darkgoldenrod": {"r": 184, "g": 134, "b": 11, "h": 43, "s": 89, "l": 38},
-    "darkgray": {"r": 169, "g": 169, "b": 169, "h": 0, "s": 0, "l": 66},
-    "darkgreen": {"r": 0, "g": 100, "b": 0, "h": 120, "s": 100, "l": 20},
-    "darkgrey": {"r": 169, "g": 169, "b": 169, "h": 0, "s": 0, "l": 66},
-    "darkkhaki": {"r": 189, "g": 183, "b": 107, "h": 56, "s": 38, "l": 58},
-    "darkmagenta": {"r": 139, "g": 0, "b": 139, "h": 300, "s": 100, "l": 27},
-    "darkolivegreen": {"r": 85, "g": 107, "b": 47, "h": 82, "s": 39, "l": 30},
-    "darkorange": {"r": 255, "g": 140, "b": 0, "h": 33, "s": 100, "l": 50},
-    "darkorchid": {"r": 153, "g": 50, "b": 204, "h": 280, "s": 61, "l": 50},
-    "darkred": {"r": 139, "g": 0, "b": 0, "h": 0, "s": 100, "l": 27},
-    "darksalmon": {"r": 233, "g": 150, "b": 122, "h": 15, "s": 72, "l": 70},
-    "darkseagreen": {"r": 143, "g": 188, "b": 143, "h": 120, "s": 25, "l": 65},
-    "darkslateblue": {"r": 72, "g": 61, "b": 139, "h": 248, "s": 39, "l": 39},
-    "darkslategray": {"r": 47, "g": 79, "b": 79, "h": 180, "s": 25, "l": 25},
-    "darkslategrey": {"r": 47, "g": 79, "b": 79, "h": 180, "s": 25, "l": 25},
-    "darkturquoise": {"r": 0, "g": 206, "b": 209, "h": 181, "s": 100, "l": 41},
-    "darkviolet": {"r": 148, "g": 0, "b": 211, "h": 282, "s": 100, "l": 41},
-    "deeppink": {"r": 255, "g": 20, "b": 147, "h": 328, "s": 100, "l": 54},
-    "deepskyblue": {"r": 0, "g": 191, "b": 255, "h": 195, "s": 100, "l": 50},
-    "dimgray": {"r": 105, "g": 105, "b": 105, "h": 0, "s": 0, "l": 41},
-    "dimgrey": {"r": 105, "g": 105, "b": 105, "h": 0, "s": 0, "l": 41},
-    "dodgerblue": {"r": 30, "g": 144, "b": 255, "h": 210, "s": 100, "l": 56},
-    "firebrick": {"r": 178, "g": 34, "b": 34, "h": 0, "s": 68, "l": 42},
-    "floralwhite": {"r": 255, "g": 250, "b": 240, "h": 40, "s": 100, "l": 97},
-    "forestgreen": {"r": 34, "g": 139, "b": 34, "h": 120, "s": 61, "l": 34},
-    "gainsboro": {"r": 220, "g": 220, "b": 220, "h": 0, "s": 0, "l": 86},
-    "ghostwhite": {"r": 248, "g": 248, "b": 255, "h": 240, "s": 100, "l": 99},
-    "gold": {"r": 255, "g": 215, "b": 0, "h": 51, "s": 100, "l": 50},
-    "goldenrod": {"r": 218, "g": 165, "b": 32, "h": 43, "s": 74, "l": 49},
-    "greenyellow": {"r": 173, "g": 255, "b": 47, "h": 84, "s": 100, "l": 59},
-    "grey": {"r": 128, "g": 128, "b": 128, "h": 0, "s": 0, "l": 50},
-    "honeydew": {"r": 240, "g": 255, "b": 240, "h": 120, "s": 100, "l": 97},
-    "hotpink": {"r": 255, "g": 105, "b": 180, "h": 330, "s": 100, "l": 71},
-    "indianred": {"r": 205, "g": 92, "b": 92, "h": 0, "s": 53, "l": 58},
-    "indigo": {"r": 75, "g": 0, "b": 130, "h": 275, "s": 100, "l": 25},
-    "ivory": {"r": 255, "g": 255, "b": 240, "h": 60, "s": 100, "l": 97},
-    "khaki": {"r": 240, "g": 230, "b": 140, "h": 54, "s": 77, "l": 75},
-    "lavender": {"r": 230, "g": 230, "b": 250, "h": 240, "s": 67, "l": 94},
-    "lavenderblush": {"r": 255, "g": 240, "b": 245, "h": 340, "s": 100, "l": 97},
-    "lawngreen": {"r": 124, "g": 252, "b": 0, "h": 90, "s": 100, "l": 49},
-    "lemonchiffon": {"r": 255, "g": 250, "b": 205, "h": 54, "s": 100, "l": 90},
-    "lightblue": {"r": 173, "g": 216, "b": 230, "h": 195, "s": 53, "l": 79},
-    "lightcoral": {"r": 240, "g": 128, "b": 128, "h": 0, "s": 79, "l": 72},
-    "lightcyan": {"r": 224, "g": 255, "b": 255, "h": 180, "s": 100, "l": 94},
-    "lightgoldenrodyellow": {"r": 250, "g": 250, "b": 210, "h": 60, "s": 80, "l": 90},
-    "lightgray": {"r": 211, "g": 211, "b": 211, "h": 0, "s": 0, "l": 83},
-    "lightgreen": {"r": 144, "g": 238, "b": 144, "h": 120, "s": 73, "l": 75},
-    "lightgrey": {"r": 211, "g": 211, "b": 211, "h": 0, "s": 0, "l": 83},
-    "lightpink": {"r": 255, "g": 182, "b": 193, "h": 351, "s": 100, "l": 86},
-    "lightsalmon": {"r": 255, "g": 160, "b": 122, "h": 17, "s": 100, "l": 74},
-    "lightseagreen": {"r": 32, "g": 178, "b": 170, "h": 177, "s": 70, "l": 41},
-    "lightskyblue": {"r": 135, "g": 206, "b": 250, "h": 203, "s": 92, "l": 75},
-    "lightslategray": {"r": 119, "g": 136, "b": 153, "h": 210, "s": 14, "l": 53},
-    "lightslategrey": {"r": 119, "g": 136, "b": 153, "h": 210, "s": 14, "l": 53},
-    "lightsteelblue": {"r": 176, "g": 196, "b": 222, "h": 214, "s": 41, "l": 78},
-    "lightyellow": {"r": 255, "g": 255, "b": 224, "h": 60, "s": 100, "l": 94},
-    "limegreen": {"r": 50, "g": 205, "b": 50, "h": 120, "s": 61, "l": 50},
-    "linen": {"r": 250, "g": 240, "b": 230, "h": 30, "s": 67, "l": 94},
-    "mediumaquamarine": {"r": 102, "g": 205, "b": 170, "h": 160, "s": 51, "l": 60},
-    "mediumblue": {"r": 0, "g": 0, "b": 205, "h": 240, "s": 100, "l": 40},
-    "mediumorchid": {"r": 186, "g": 85, "b": 211, "h": 288, "s": 59, "l": 58},
-    "mediumpurple": {"r": 147, "g": 112, "b": 219, "h": 260, "s": 60, "l": 65},
-    "mediumseagreen": {"r": 60, "g": 179, "b": 113, "h": 147, "s": 50, "l": 47},
-    "mediumslateblue": {"r": 123, "g": 104, "b": 238, "h": 249, "s": 80, "l": 67},
-    "mediumspringgreen": {"r": 0, "g": 250, "b": 154, "h": 157, "s": 100, "l": 49},
-    "mediumturquoise": {"r": 72, "g": 209, "b": 204, "h": 178, "s": 60, "l": 55},
-    "mediumvioletred": {"r": 199, "g": 21, "b": 133, "h": 322, "s": 81, "l": 43},
-    "midnightblue": {"r": 25, "g": 25, "b": 112, "h": 240, "s": 64, "l": 27},
-    "mintcream": {"r": 245, "g": 255, "b": 250, "h": 150, "s": 100, "l": 98},
-    "mistyrose": {"r": 255, "g": 228, "b": 225, "h": 6, "s": 100, "l": 94},
-    "moccasin": {"r": 255, "g": 228, "b": 181, "h": 38, "s": 100, "l": 85},
-    "navajowhite": {"r": 255, "g": 222, "b": 173, "h": 36, "s": 100, "l": 84},
-    "oldlace": {"r": 253, "g": 245, "b": 230, "h": 39, "s": 85, "l": 95},
-    "olivedrab": {"r": 107, "g": 142, "b": 35, "h": 80, "s": 60, "l": 35},
-    "orangered": {"r": 255, "g": 69, "b": 0, "h": 16, "s": 100, "l": 50},
-    "orchid": {"r": 218, "g": 112, "b": 214, "h": 302, "s": 59, "l": 65},
-    "palegoldenrod": {"r": 238, "g": 232, "b": 170, "h": 55, "s": 67, "l": 80},
-    "palegreen": {"r": 152, "g": 251, "b": 152, "h": 120, "s": 93, "l": 79},
-    "paleturquoise": {"r": 175, "g": 238, "b": 238, "h": 180, "s": 65, "l": 81},
-    "palevioletred": {"r": 219, "g": 112, "b": 147, "h": 340, "s": 60, "l": 65},
-    "papayawhip": {"r": 255, "g": 239, "b": 213, "h": 37, "s": 100, "l": 92},
-    "peachpuff": {"r": 255, "g": 218, "b": 185, "h": 28, "s": 100, "l": 86},
-    "peru": {"r": 205, "g": 133, "b": 63, "h": 30, "s": 59, "l": 53},
-    "pink": {"r": 255, "g": 192, "b": 203, "h": 350, "s": 100, "l": 88},
-    "plum": {"r": 221, "g": 160, "b": 221, "h": 300, "s": 47, "l": 75},
-    "powderblue": {"r": 176, "g": 224, "b": 230, "h": 187, "s": 52, "l": 80},
-    "rosybrown": {"r": 188, "g": 143, "b": 143, "h": 0, "s": 25, "l": 65},
-    "royalblue": {"r": 65, "g": 105, "b": 225, "h": 225, "s": 73, "l": 57},
-    "saddlebrown": {"r": 139, "g": 69, "b": 19, "h": 25, "s": 76, "l": 31},
-    "salmon": {"r": 250, "g": 128, "b": 114, "h": 6, "s": 93, "l": 71},
-    "sandybrown": {"r": 244, "g": 164, "b": 96, "h": 28, "s": 87, "l": 67},
-    "seagreen": {"r": 46, "g": 139, "b": 87, "h": 146, "s": 50, "l": 36},
-    "seashell": {"r": 255, "g": 245, "b": 238, "h": 25, "s": 100, "l": 97},
-    "sienna": {"r": 160, "g": 82, "b": 45, "h": 19, "s": 56, "l": 40},
-    "skyblue": {"r": 135, "g": 206, "b": 235, "h": 197, "s": 71, "l": 73},
-    "slateblue": {"r": 106, "g": 90, "b": 205, "h": 248, "s": 53, "l": 58},
-    "slategray": {"r": 112, "g": 128, "b": 144, "h": 210, "s": 13, "l": 50},
-    "slategrey": {"r": 112, "g": 128, "b": 144, "h": 210, "s": 13, "l": 50},
-    "snow": {"r": 255, "g": 250, "b": 250, "h": 0, "s": 100, "l": 99},
-    "springgreen": {"r": 0, "g": 255, "b": 127, "h": 150, "s": 100, "l": 50},
-    "steelblue": {"r": 70, "g": 130, "b": 180, "h": 207, "s": 44, "l": 49},
-    "tan": {"r": 210, "g": 180, "b": 140, "h": 34, "s": 44, "l": 69},
-    "thistle": {"r": 216, "g": 191, "b": 216, "h": 300, "s": 24, "l": 80},
-    "tomato": {"r": 255, "g": 99, "b": 71, "h": 9, "s": 100, "l": 64},
-    "turquoise": {"r": 64, "g": 224, "b": 208, "h": 174, "s": 72, "l": 56},
-    "violet": {"r": 238, "g": 130, "b": 238, "h": 300, "s": 76, "l": 72},
-    "wheat": {"r": 245, "g": 222, "b": 179, "h": 39, "s": 77, "l": 83},
-    "whitesmoke": {"r": 245, "g": 245, "b": 245, "h": 0, "s": 0, "l": 96},
-    "yellowgreen": {"r": 154, "g": 205, "b": 50, "h": 80, "s": 61, "l": 50}
-};
-
-module.exports = Color;
-},{}],11:[function(_dereq_,module,exports){
+},{"./face.js":8,"linearalgea":2}],11:[function(_dereq_,module,exports){
 /** 
  * @constant
  * @type {Object.<string, number>} 
@@ -1577,6 +1643,6 @@ var KEYCODES = {
 };
 
 module.exports = KEYCODES;
-},{}]},{},[6])
-(6)
+},{}]},{},[7])
+(7)
 });
