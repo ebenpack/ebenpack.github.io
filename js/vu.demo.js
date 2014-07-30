@@ -68,9 +68,7 @@
     var canvas = document.getElementById('canvas');
     var canvas_ctx = canvas.getContext('2d');
     var dataArray, bufferLength;
-    // Wait for window.onload to fire. See crbug.com/112368
     window.addEventListener('load', function(e) {
-        // Our <audio> element will be the audio source.
         var source = audioctx.createMediaElementSource(audio_node);
         source.connect(analyser);
         analyser.connect(audioctx.destination);
@@ -81,7 +79,6 @@
 
         analyser.getByteTimeDomainData(dataArray);
         update();
-        // ...call requestAnimationFrame() and render the analyser's output to canvas.
     }, false);
     var WIDTH = canvas.width;
     var HEIGHT = canvas.height;
@@ -100,15 +97,14 @@
             last_update = current_time;
         }
         analyser.getByteFrequencyData(dataArray);
-            
+
         var barHeight;
 
         for(var i = 0; i < bufferLength; i++) {
             barHeight = dataArray[i]/4;
             mesh.vertices[i].y = -barHeight;
         }
-        
-        
+
         scene.renderScene();
     }
 
