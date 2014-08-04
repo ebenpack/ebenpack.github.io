@@ -1,7 +1,7 @@
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.wireframe=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (global){
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.colour=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-var hslToRgb, rgbToHsl, parseColor, cache, div;
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.Colour=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+var hslToRgb, rgbToHsl, parseColor, cache;
 /**
  * A color with both rgb and hsl representations.
  * @class Color
@@ -149,7 +149,6 @@ rgbToHsl = function(r, g, b){
     if (s < 0) {s = 0;}
     return {'h': h, 's': s, 'l': l};
 };
-div = document.createElement('div');
 /**
  * Parse a CSS color value and return an rgba color object.
  * @param  {string} color A legal CSS color value (hex, color keyword, rgb[a], hsl[a]).
@@ -157,27 +156,76 @@ div = document.createElement('div');
  * @throws {ColorError} If illegal color value is passed.
  */
 parseColor = function(color){
-    // TODO: How cross-browser compatible is this? How efficient?
-    // Make a temporary HTML element styled with the given color string
-    // then extract and parse the computed rgb(a) value.
-    // N.B. This can create a loooot of DOM nodes. It's not a great method.
-    // TODO: Fix
-    div.style.backgroundColor = color;
-    var rgba = div.style.backgroundColor;
-    // Convert string in form 'rgb[a](num, num, num[, num])' to array ['num', 'num', 'num'[, 'num']]
-    rgba = rgba.slice(rgba.indexOf('(')+1).slice(0,-1).replace(/\s/g, '').split(',');
+    // TODO: This isn't perfect. Some strings that would be accepted CSS color values
+    // (e.g. negative numbers, alpha greater than 1) will not work.
+    var red, green, blue, hue, sat, lum;
+    var alpha = 1;
+    var regex, match;
+    var pref = color.substr(0,3); // Three letter color prefix
     var return_color = {};
-    var color_spaces = ['r', 'g', 'b', 'a'];
-    for (var i = 0; i < rgba.length; i++){
-        var value = parseFloat(rgba[i]); // Alpha value will be floating point.
-        if (isNaN(value)){
-            throw "ColorError: Something went wrong. Perhaps " + color + " is not a legal CSS color value";
+    var error = false;
+    if (pref === 'hsl'){
+        regex = /(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})/g;
+        match = regex.exec(color);
+        hue = parseInt(match[1], 10);
+        sat = parseInt(match[2], 10);
+        lum = parseInt(match[3], 10);
+        if (color[3] === 'a'){
+            regex = /,\s*(\d\.?\d?)\s*\)/g;
+            match = regex.exec(color);
+            alpha = parseFloat(match[1]);
         }
-        else {
-            return_color[color_spaces[i]] = value;
+        if (hue < 0 || hue > 360 ||
+            sat < 0 || sat > 100 ||
+            lum < 0 || lum > 100 ||
+            alpha < 0 || alpha > 1){
+            error = true;
+        } else {
+            var parsed = hslToRgb(hue, sat, lum);
+            red = parsed.r;
+            green = parsed.g;
+            blue = parsed.b;
         }
+
+    } else if (pref === 'rgb'){
+        regex = /(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/g;
+        match = regex.exec(color);
+        red = parseInt(match[1], 10);
+        green = parseInt(match[2], 10);
+        blue = parseInt(match[3], 10);
+        if (color[3] === 'a'){
+            regex = /,\s*(\d\.?\d?)\s*\)/g;
+            match = regex.exec(color);
+            alpha = parseFloat(match[1]);
+        }
+    } else if (color[0] === '#'){
+        var hex = color.substr(1);
+        if (hex.length === 3){
+            red = parseInt(hex[0]+hex[0], 16);
+            green = parseInt(hex[1]+hex[1], 16);
+            blue = parseInt(hex[2]+hex[2], 16);
+        } else if (hex.length === 6){
+            red = parseInt(hex[0]+hex[1], 16);
+            green = parseInt(hex[2]+hex[3], 16);
+            blue = parseInt(hex[4]+hex[5], 16);
+        } else {
+            error = true;
+        }
+    } else {
+        error = true;
     }
-    return return_color;
+
+    if (red < 0 || red > 255 ||
+        green < 0 || green > 255 ||
+        blue < 0 || blue > 255 ||
+        alpha < 0 || alpha > 1){
+        error = true;
+    }
+
+    if (error){
+        throw "ColorError: Something went wrong. Perhaps " + color + " is not a legal CSS color value";
+    }
+    return {'r': red, 'g': green, 'b': blue, 'a': alpha};
 };
 // Pre-warm the cache with named colors, as these are not
 // converted to rgb values by the parseColor function above.
@@ -215,6 +263,7 @@ cache = {
     "coral": {"r": 255, "g": 127, "b": 80, "h": 16, "s": 100, "l": 66},
     "cornflowerblue": {"r": 100, "g": 149, "b": 237, "h": 219, "s": 79, "l": 66},
     "cornsilk": {"r": 255, "g": 248, "b": 220, "h": 48, "s": 100, "l": 93},
+    "cyan": {"r": 0,"g": 255,"b": 255, "h": 180,"s": 100,"l": 97},
     "crimson": {"r": 220, "g": 20, "b": 60, "h": 348, "s": 83, "l": 47},
     "darkblue": {"r": 0, "g": 0, "b": 139, "h": 240, "s": 100, "l": 27},
     "darkcyan": {"r": 0, "g": 139, "b": 139, "h": 180, "s": 100, "l": 27},
@@ -276,6 +325,7 @@ cache = {
     "lightyellow": {"r": 255, "g": 255, "b": 224, "h": 60, "s": 100, "l": 94},
     "limegreen": {"r": 50, "g": 205, "b": 50, "h": 120, "s": 61, "l": 50},
     "linen": {"r": 250, "g": 240, "b": 230, "h": 30, "s": 67, "l": 94},
+    "magenta": {"r": 255,"g": 0,"b": 255, "h": 17,"s": 100,"l": 74},
     "mediumaquamarine": {"r": 102, "g": 205, "b": 170, "h": 160, "s": 51, "l": 60},
     "mediumblue": {"r": 0, "g": 0, "b": 205, "h": 240, "s": 100, "l": 40},
     "mediumorchid": {"r": 186, "g": 85, "b": 211, "h": 288, "s": 59, "l": 58},
@@ -926,6 +976,8 @@ var math = _dereq_('linearalgea');
 var Vector = math.Vector;
 var Matrix = math.Matrix;
 
+var TWOPI = Math.PI*2;
+
 /** 
  * @constructor
  * @param {Vector} position Camera position.
@@ -1001,6 +1053,20 @@ Camera.prototype.moveTo = function(x, y, z){
     this.position = new Vector(x,y,z);
     this.view_matrix = this.createViewMatrix();
 };
+/**
+ * Move camera position by the x, y, and z amounts passed.
+ * @method
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
+ */
+Camera.prototype.move = function(x, y, z){
+    this.position.x += x;
+    this.position.y += y;
+    this.position.z += z;
+    this.view_matrix = this.createViewMatrix();
+};
+
 /** @method */
 Camera.prototype.moveRight = function(amount){
     var right = this.up.cross(this.direction()).normalize().scale(amount);
@@ -1013,25 +1079,49 @@ Camera.prototype.moveLeft = function(amount){
     this.position = this.position.add(left);
     this.view_matrix = this.createViewMatrix();
 };
+/**
+ * Move camera rotation by the x and y amounts passed.
+ * @method
+ * @param {number} x
+ * @param {number} y
+ */
+Camera.prototype.look = function(x, y){
+    this.rotation.yaw -= x;
+    if (this.rotation.yaw < 0){
+        this.rotation.yaw = this.rotation.yaw + (TWOPI);
+    }
+    else if (this.rotation.yaw > (TWOPI)){
+        this.rotation.yaw = this.rotation.yaw - (TWOPI);
+    }
+    this.rotation.pitch -= y;
+    if (this.rotation.pitch < 0){
+        this.rotation.pitch = this.rotation.pitch + (TWOPI);
+    }
+    else if (this.rotation.pitch > (TWOPI)){
+        this.rotation.pitch = this.rotation.pitch - (TWOPI);
+    }
+    this.view_matrix = this.createViewMatrix();
+};
+
 Camera.prototype.turnRight = function(amount){
     this.rotation.yaw -= amount;
     if (this.rotation.yaw < 0){
-        this.rotation.yaw = this.rotation.yaw + (Math.PI*2);
+        this.rotation.yaw = this.rotation.yaw + (TWOPI);
     }
     this.view_matrix = this.createViewMatrix();
 };
 /** @method */
 Camera.prototype.turnLeft = function(amount){
     this.rotation.yaw += amount;
-    if (this.rotation.yaw > (Math.PI*2)){
-        this.rotation.yaw = this.rotation.yaw - (Math.PI*2);
+    if (this.rotation.yaw > (TWOPI)){
+        this.rotation.yaw = this.rotation.yaw - (TWOPI);
     }
     this.view_matrix = this.createViewMatrix();
 };
 Camera.prototype.lookUp = function(amount){
     this.rotation.pitch -= amount;
-    if (this.rotation.pitch > (Math.PI*2)){
-        this.rotation.pitch = this.rotation.pitch - (Math.PI*2);
+    if (this.rotation.pitch > (TWOPI)){
+        this.rotation.pitch = this.rotation.pitch - (TWOPI);
     }
     this.view_matrix = this.createViewMatrix();
 };
@@ -1039,7 +1129,7 @@ Camera.prototype.lookUp = function(amount){
 Camera.prototype.lookDown = function(amount){
     this.rotation.pitch += amount;
     if (this.rotation.pitch < 0){
-        this.rotation.pitch = this.rotation.pitch + (Math.PI*2);
+        this.rotation.pitch = this.rotation.pitch + (TWOPI);
     }
     this.view_matrix = this.createViewMatrix();
 };
@@ -1102,13 +1192,21 @@ EventTarget.prototype.addListener = function(type, listener){
 };
 /**
  * @method
- * @param  {string} event
+ * @param  {string} type Type of event to be fired.
+ * @param  {Object} [event] Optional event object.
  */
-EventTarget.prototype.fire = function(event){
-    var e = {"event": event, "target": this};
-    var listeners = this._listeners[event];
-    for (var i = 0, len = listeners.length; i < len; i++) {
-        listeners[i].call(this, e);
+EventTarget.prototype.fire = function(type, event){
+    var e = {};
+    if (typeof event !== 'undefined'){
+        e = event;
+    }
+    e.event = type;
+    e.target = this;
+    var listeners = this._listeners[type];
+    if (typeof listeners !== 'undefined'){
+        for (var i = 0, len = listeners.length; i < len; i++) {
+            listeners[i].call(this, e);
+        }
     }
 };
 /**
@@ -1179,6 +1277,9 @@ Scene.prototype.init = function(){
     this.canvas.addEventListener('keydown', this.onKeyDown.bind(this), false);
     this.canvas.addEventListener('keyup', this.onKeyUp.bind(this), false);
     this.canvas.addEventListener('blur', this.emptyKeys.bind(this), false);
+    this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this), false);
+    this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this), false);
+    this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this), false);
     EventTarget.call(this);
     this.update();
 };
@@ -1210,6 +1311,77 @@ Scene.prototype.onKeyUp = function(e){
         this._key_count -= 1;
         this._keys[pressed] = false;
     }
+};
+Scene.prototype._getMousePos = function(e){
+    var rect = this.canvas.getBoundingClientRect();
+    return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    };
+};
+/** @method */
+Scene.prototype.onMouseDown = function(e){
+    // Last mouse position. Used for calculating delta x and y for mousedrag.
+    // Initially set to undefined. Also keep track of time of time of last
+    // update, so that mouse speed calculation is not dependent on steady
+    // frame rate.
+    this._last_mouse_coords = void(0);
+    this._last_mouse_update = void(0);
+    var mouseCoord = {'mouse': this._getMousePos(e)};
+    this.fire('mousedown', mouseCoord);
+    // Setup mousedrag
+    var mousedrag = this.onMouseDrag.bind(this);
+    var mouseup = function(){
+        // Unregister events on mouseup.
+        this.removeEventListener('mousemove', mousedrag, false);
+        this.removeEventListener('mouseup', mouseup, false);
+        this._last_mouse_coords = void(0);
+        this._last_mouse_update = void(0);
+    };
+    this.canvas.addEventListener('mousemove', mousedrag, false);
+    this.canvas.addEventListener('mouseup', mouseup, false);
+    this.canvas.addEventListener('mouseleave', mouseup, false);
+};
+/** @method */
+Scene.prototype.onMouseUp = function(e){
+    var mouseCoord = {'mouse': this._getMousePos(e)};
+    this.fire('mouseup', mouseCoord);
+};
+/** @method */
+Scene.prototype.onMouseMove = function(e){
+    var mouseCoord = {'mouse': this._getMousePos(e)};
+    this.fire('mousemove', mouseCoord);
+};
+/** @method */
+Scene.prototype.onMouseDrag = function(e){
+    var mouse_coords = this._getMousePos(e);
+    // Calculate deltax and delta y, and mouse speed.
+    if (typeof this._last_mouse_coords === 'undefined'){
+        this._last_mouse_coords = mouse_coords;
+    }
+    if (typeof this._last_mouse_update === 'undefined'){
+        this._last_mouse_update = new Date();
+    }
+    var time = new Date() - this._last_mouse_update;
+    var deltax = mouse_coords.x - this._last_mouse_coords.x;
+    var deltay = mouse_coords.y - this._last_mouse_coords.y;
+    var xvel = 0;
+    var yvel = 0;
+    if (time > 0){
+        xvel = deltax / time;
+        yvel = deltay / time;
+    }
+    var mouseEvent = {'mouse': {
+        'x': mouse_coords.x,
+        'y': mouse_coords.y,
+        'xvel': xvel,
+        'yvel': yvel,
+        'deltax': deltax,
+        'deltay': deltay
+    }};
+    this._last_mouse_coords = mouse_coords;
+    this._last_mouse_update = time;
+    this.fire('mousedrag', mouseEvent);
 };
 /** @method */
 Scene.prototype.initializeDepthBuffer = function(){
@@ -1542,6 +1714,7 @@ module.exports = Mesh;
  * @type {Object.<string, number>} 
  */
 var KEYCODES = {
+    'space': 32,
     'backspace' : 8,
     'tab' : 9,
     'enter' : 13,

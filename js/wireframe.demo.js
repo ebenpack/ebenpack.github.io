@@ -223,6 +223,11 @@
     var scene = new Scene({canvas_id: 'wireframe', width:600, height:400});
     scene.addListener('keydown', rotateMesh);
     scene.addListener('keydown', moveCamera);
+    scene.addListener('mousedrag', function(e){
+        var mouse = e.mouse;
+        scene.camera.move(mouse.deltax, mouse.deltay, 0);
+        scene._needs_update = true;
+    });
 
     cube.position.x = 200
     scene.camera.moveTo(0, 0, 400);
