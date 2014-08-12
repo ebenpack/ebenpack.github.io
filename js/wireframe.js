@@ -4,10 +4,10 @@
 var hslToRgb, rgbToHsl, parseColor, cache;
 /**
  * A color with both rgb and hsl representations.
- * @class Color
+ * @class Colour
  * @param {string} color Any legal CSS color value (hex, color keyword, rgb[a], hsl[a]).
  */
-function Color(color, alpha){
+function Colour(color, alpha){
     var hsl, rgb;
     var parsed_color = {};
     if (typeof color === 'string'){
@@ -39,29 +39,50 @@ function Color(color, alpha){
 
  * @method
  * @param  {number} percent
- * @return {Color}
+ * @return {Colour}
  */
-Color.prototype.lighten = function(percent){
+Colour.prototype.lighten = function(percent){
     var hsl = this.hsl;
     var lum = hsl.l + percent;
     if (lum > 100){
         lum = 100;
     }
-    return new Color({'h':hsl.h, 's':hsl.s, 'l':lum}, this.alpha);
+    return new Colour({'h':hsl.h, 's':hsl.s, 'l':lum}, this.alpha);
 };
 /**
  * Darken a color by the given percentage.
  * @method
  * @param  {number} percent
- * @return {Color}
+ * @return {Colour}
  */
-Color.prototype.darken = function(percent){
+Colour.prototype.darken = function(percent){
     var hsl = this.hsl;
     var lum = hsl.l - percent;
     if (lum < 0){
         lum = 0;
     }
-    return new Color({'h':hsl.h, 's':hsl.s, 'l':lum}, this.alpha);
+    return new Colour({'h':hsl.h, 's':hsl.s, 'l':lum}, this.alpha);
+};
+/**
+ * Return a string representation of color in #hex form.
+ * @method
+ * @return {string}
+ */
+Colour.prototype.toString = function(){
+    var r = this.rgb.r.toString(16);
+    var g = this.rgb.g.toString(16);
+    var b = this.rgb.b.toString(16);
+    // Zero fill
+    if (r.length === 1){
+        r = "0" + r;
+    }
+    if (g.length === 1){
+        g = "0" + g;
+    }
+    if (b.length === 1){
+        b = "0" + b;
+    }
+    return "#" + r + g + b;
 };
 /**
 * @param {number} h Hue
@@ -149,55 +170,82 @@ rgbToHsl = function(r, g, b){
     if (s < 0) {s = 0;}
     return {'h': h, 's': s, 'l': l};
 };
+// Clamp x and y values to min and max
+function clamp(x, min, max){
+    if (x < min){x = min;}
+    else if (x > max){x = max;}
+    return x;
+}
 /**
  * Parse a CSS color value and return an rgba color object.
  * @param  {string} color A legal CSS color value (hex, color keyword, rgb[a], hsl[a]).
  * @return {{r: number, g: number, b: number, a: number}}   rgba color object.
- * @throws {ColorError} If illegal color value is passed.
+ * @throws {ColourError} If illegal color value is passed.
  */
 parseColor = function(color){
-    // TODO: This isn't perfect. Some strings that would be accepted CSS color values
-    // (e.g. negative numbers, alpha greater than 1) will not work.
     var red, green, blue, hue, sat, lum;
     var alpha = 1;
-    var regex, match;
-    var pref = color.substr(0,3); // Three letter color prefix
-    var return_color = {};
+    var match;
     var error = false;
+    var pref = color.substr(0,3); // Three letter color prefix
+    // HSL(a)
     if (pref === 'hsl'){
-        regex = /(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})/g;
-        match = regex.exec(color);
-        hue = parseInt(match[1], 10);
-        sat = parseInt(match[2], 10);
-        lum = parseInt(match[3], 10);
-        if (color[3] === 'a'){
-            regex = /,\s*(\d\.?\d?)\s*\)/g;
-            match = regex.exec(color);
-            alpha = parseFloat(match[1]);
-        }
-        if (hue < 0 || hue > 360 ||
-            sat < 0 || sat > 100 ||
-            lum < 0 || lum > 100 ||
-            alpha < 0 || alpha > 1){
-            error = true;
-        } else {
+        var hsl_regex = /hsla?\(\s*(-?\d+)\s*,\s*(-?\d+)%\s*,\s*(-?\d+)%\s*(,\s*(-?\d+(\.\d+)?)\s*)?\)/g;
+        match = hsl_regex.exec(color);
+        if (match){
+            hue = parseInt(match[1], 10);
+            sat = parseInt(match[2], 10);
+            lum = parseInt(match[3], 10);
+            if (color[3] === 'a'){
+                alpha = parseFloat(match[5]);
+            }
+            hue = Math.abs(hue % 360);
+            sat = clamp(sat, 0, 100);
+            lum = clamp(lum, 0, 100);
             var parsed = hslToRgb(hue, sat, lum);
             red = parsed.r;
             green = parsed.g;
             blue = parsed.b;
+        } else {
+            error = true;
         }
-
+    // RGB(a)
     } else if (pref === 'rgb'){
-        regex = /(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/g;
-        match = regex.exec(color);
-        red = parseInt(match[1], 10);
-        green = parseInt(match[2], 10);
-        blue = parseInt(match[3], 10);
-        if (color[3] === 'a'){
-            regex = /,\s*(\d\.?\d?)\s*\)/g;
-            match = regex.exec(color);
-            alpha = parseFloat(match[1]);
+        var rgb_regex = /rgba?\((-?\d+%?)\s*,\s*(-?\d+%?)\s*,\s*(-?\d+%?)(,\s*(-?\d+(\.\d+)?)\s*)?\)/g;
+        match = rgb_regex.exec(color);
+        if (match){
+            var m1 = match[1];
+            var m2 = match[2];
+            var m3 = match[3];
+            red = parseInt(match[1], 10);
+            green = parseInt(match[2], 10);
+            blue = parseInt(match[3], 10);
+            // Check if using rgb(a) percentage values.
+            if (m1[m1.length-1] === '%' ||
+                m2[m2.length-1] === '%' ||
+                m3[m3.length-1] === '%'){
+                // All values must be percetage.
+                if (m1[m1.length-1] === '%' &&
+                    m2[m2.length-1] === '%' &&
+                    m3[m3.length-1] === '%'){
+                    // Convert to 255
+                    red = Math.floor(red/100 * 255);
+                    green = Math.floor(green/100 * 255);
+                    blue = Math.floor(blue/100 * 255);
+                } else {
+                   error = true; 
+                }
+            }
+            red = clamp(red, 0, 255);
+            green = clamp(green, 0, 255);
+            blue = clamp(blue, 0, 255);
+            if (color[3] === 'a'){
+                alpha = parseFloat(match[5]);
+            }
+        } else {
+            error = true;
         }
+    // HEX
     } else if (color[0] === '#'){
         var hex = color.substr(1);
         if (hex.length === 3){
@@ -215,15 +263,10 @@ parseColor = function(color){
         error = true;
     }
 
-    if (red < 0 || red > 255 ||
-        green < 0 || green > 255 ||
-        blue < 0 || blue > 255 ||
-        alpha < 0 || alpha > 1){
-        error = true;
-    }
+    alpha = clamp(alpha, 0, 1);
 
     if (error){
-        throw "ColorError: Something went wrong. Perhaps " + color + " is not a legal CSS color value";
+        throw "ColourError: Something went wrong. Perhaps " + color + " is not a legal CSS color value";
     }
     return {'r': red, 'g': green, 'b': blue, 'a': alpha};
 };
@@ -379,7 +422,7 @@ cache = {
     "yellowgreen": {"r": 154, "g": 205, "b": 50, "h": 80, "s": 61, "l": 50}
 };
 
-module.exports = Color;
+module.exports = Colour;
 
 },{}]},{},[1])
 (1)
@@ -1173,52 +1216,51 @@ module.exports = engine;
 },{"./camera.js":3,"./scene.js":6}],5:[function(_dereq_,module,exports){
 /**
  * Event handler.
- * @constructor
+ * @mixin
  */
-
-function EventTarget(){
-    this._listeners = {};
-}
-/**
- * @method
- * @param {string} type
- * @param {function} listener
- */
-EventTarget.prototype.addListener = function(type, listener){
-    if (!(type in this._listeners)) {
-        this._listeners[type] = [];
-    }
-    this._listeners[type].push(listener);
-};
-/**
- * @method
- * @param  {string} type Type of event to be fired.
- * @param  {Object} [event] Optional event object.
- */
-EventTarget.prototype.fire = function(type, event){
-    var e = {};
-    if (typeof event !== 'undefined'){
-        e = event;
-    }
-    e.event = type;
-    e.target = this;
-    var listeners = this._listeners[type];
-    if (typeof listeners !== 'undefined'){
-        for (var i = 0, len = listeners.length; i < len; i++) {
-            listeners[i].call(this, e);
+var EventTarget = {
+    _listeners: {},
+    /**
+     * @method
+     * @param {string} type Type of event to be added.
+     * @param {function} listener Function to be called when event is fired.
+     */
+    addListener: function(type, listener){
+        if (!(type in this._listeners)) {
+            this._listeners[type] = [];
         }
-    }
-};
-/**
- * @method
- * @param  {string} type
- * @param  {function} listener
- */
-EventTarget.prototype.removeListener = function(type, listener){
-    var listeners = this._listeners[type];
-    for (var i = 0, len = listeners.length; i < len; i++) {
-        if (listeners[i] === listener) {
-            listeners.splice(i, 1);
+        this._listeners[type].push(listener);
+    },
+    /**
+     * @method
+     * @param  {string} type Type of event to be fired.
+     * @param  {Object} [event] Optional user-defined event object. This could contain, for example, mouse coordinates, or key codes.
+     */
+    fire: function(type, event){
+        var e = {};
+        if (typeof event !== 'undefined'){
+            e = event;
+        }
+        e.event = type;
+        e.target = this;
+        var listeners = this._listeners[type];
+        if (typeof listeners !== 'undefined'){
+            for (var i = 0, len = listeners.length; i < len; i++) {
+                listeners[i].call(this, e);
+            }
+        }
+    },
+    /**
+     * @method
+     * @param  {string} type
+     * @param  {function} listener
+     */
+    removeListener: function(type, listener){
+        var listeners = this._listeners[type];
+        for (var i = 0, len = listeners.length; i < len; i++) {
+            if (listeners[i] === listener) {
+                listeners.splice(i, 1);
+            }
         }
     }
 };
@@ -1229,6 +1271,7 @@ module.exports = EventTarget;
 var math = _dereq_('linearalgea');
 var Camera = _dereq_('./camera.js');
 var EventTarget = _dereq_('./events.js');
+var mixin = _dereq_('../utilities/mixin.js');
 var KEYCODES = _dereq_('../utilities/keycodes.js');
 
 var Vector = math.Vector;
@@ -1243,8 +1286,18 @@ function Scene(options){
     this.width = options.width;
     /** @type {number} */
     this.height = options.height;
+    /** @type {HTMLElement} */
     this.canvas = document.getElementById(options.canvas_id);
+    /** @type {CanvasContext} */
     this.ctx = this.canvas.getContext('2d');
+    /** @type {Camera} */
+    this.camera = new Camera(this.width, this.height);
+    /** @type {Vector} */
+    this.illumination = new Vector(90,0,0);
+    /** @type {Object.<string, Mesh>} */
+    this.meshes = {};
+    this._x_offset = Math.round(this.width / 2);
+    this._y_offset = Math.round(this.height / 2);
     this._back_buffer = document.createElement('canvas');
     this._back_buffer.width = this.width;
     this._back_buffer.height = this.height;
@@ -1252,27 +1305,12 @@ function Scene(options){
     this._back_buffer_image = null;
     this._depth_buffer = [];
     this._backface_culling = true;
-    this.camera = new Camera(this.width, this.height);
-    this.illumination = new Vector(90,0,0);
-    /** @type {Array.<Mesh>} */
-    this.meshes = {};
-    /** @type {Object.<number, boolean>} */
     this._keys = {}; // Keys currently pressed
     this._key_count = 0; // Number of keys being pressed... this feels kludgy
-    /** @type {?number} */
     this._anim_id = null;
-    /** @type {boolean} */
     this._needs_update = true;
     this._draw_mode = 0;
-    this.init();
-}
-Scene.prototype = new EventTarget();
-/** @method */
-Scene.prototype.init = function(){
     this.canvas.tabIndex = 1; // Set tab index to allow canvas to have focus to receive key events
-    this._x_offset = Math.round(this.width / 2);
-    this._y_offset = Math.round(this.height / 2);
-    this.initializeDepthBuffer();
     this._back_buffer_image = this._back_buffer_ctx.createImageData(this.width, this.height);
     this.canvas.addEventListener('keydown', this.onKeyDown.bind(this), false);
     this.canvas.addEventListener('keyup', this.onKeyUp.bind(this), false);
@@ -1280,9 +1318,10 @@ Scene.prototype.init = function(){
     this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this), false);
     this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this), false);
     this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this), false);
-    EventTarget.call(this);
+    this.initializeDepthBuffer();
     this.update();
-};
+}
+mixin(Scene.prototype, EventTarget);
 /**
  * Dump all pressed keys on blur.
  * @method
@@ -1291,20 +1330,34 @@ Scene.prototype.emptyKeys = function(){
     this._key_count = 0;
     this._keys = {};
 };
-/** @method */
+/** 
+ * Check if key is pressed.
+ * @method
+ * @param {string} key Key to check. E.g. 'a', 'space', 'tab'.
+ */
 Scene.prototype.isKeyDown = function(key){
     var pressed = KEYCODES[key];
     return (pressed in this._keys && this._keys[pressed]);
 };
-/** @method */
+/** 
+ * Register key presses.
+ * @method
+ * @param {KeyEvent} e
+ */
 Scene.prototype.onKeyDown = function(e){
+    // If there are one or more keys depressed, the keydown event will fire in the update
+    // loop. This prevents a keydown delay that noramlly occurs.
     var pressed = e.keyCode || e.which;
     if (!this.isKeyDown(pressed)){
         this._key_count += 1;
         this._keys[pressed] = true;
     }
 };
-/** @method */
+/** 
+ * Unregister key presses on keyup.
+ * @method
+ * @param {KeyEvent} e
+ */
 Scene.prototype.onKeyUp = function(e){
     var pressed = e.keyCode || e.which;
     if (pressed in this._keys){
@@ -1319,7 +1372,11 @@ Scene.prototype._getMousePos = function(e){
         y: e.clientY - rect.top
     };
 };
-/** @method */
+/** 
+ * Register mousedown event.
+ * @method
+ * @param {MouseEvent} e
+ */
 Scene.prototype.onMouseDown = function(e){
     // Last mouse position. Used for calculating delta x and y for mousedrag.
     // Initially set to undefined. Also keep track of time of time of last
@@ -1342,17 +1399,29 @@ Scene.prototype.onMouseDown = function(e){
     this.canvas.addEventListener('mouseup', mouseup, false);
     this.canvas.addEventListener('mouseleave', mouseup, false);
 };
-/** @method */
+/** 
+ * Register mouseup event.
+ * @method
+ * @param {MouseEvent} e
+ */
 Scene.prototype.onMouseUp = function(e){
     var mouseCoord = {'mouse': this._getMousePos(e)};
     this.fire('mouseup', mouseCoord);
 };
-/** @method */
+/** 
+ * Register mousemove event.
+ * @method
+ * @param {MouseEvent} e
+ */
 Scene.prototype.onMouseMove = function(e){
     var mouseCoord = {'mouse': this._getMousePos(e)};
     this.fire('mousemove', mouseCoord);
 };
-/** @method */
+/** 
+ * Register mousedrag event.
+ * @method
+ * @param {MouseEvent} e
+ */
 Scene.prototype.onMouseDrag = function(e){
     var mouse_coords = this._getMousePos(e);
     // Calculate deltax and delta y, and mouse speed.
@@ -1383,13 +1452,21 @@ Scene.prototype.onMouseDrag = function(e){
     this._last_mouse_update = time;
     this.fire('mousedrag', mouseEvent);
 };
-/** @method */
+/**
+ * Initialize depth buffer with high z values.
+ * @method
+ */
 Scene.prototype.initializeDepthBuffer = function(){
     for (var x = 0, len = this.width * this.height; x < len; x++){
         this._depth_buffer[x] = 9999999;
     }
 };
-/** @method */
+/**
+ * Determine id vector is offscreen.
+ * @method
+ * @param {Vector} vector
+ * @return {boolean}
+ */
 Scene.prototype.offscreen = function(vector){
     // TODO: Not totally certain that z>1 indicates vector is behind camera.
     var x = vector.x + this._x_offset;
@@ -1397,17 +1474,32 @@ Scene.prototype.offscreen = function(vector){
     var z = vector.z;
     return (z > 1 || x < 0 || x > this.width || y < 0 || y > this.height);
 };
-/** @method */
+/**
+ * Toggle drawing mode. Currently, available draw modes are wireframe mode, and
+ * the experimental (and slow) fill mode.
+ * @method
+ */
 Scene.prototype.toggleDrawMode = function(){
     this._draw_mode = (this._draw_mode + 1) % 2;
     this.renderScene();
 };
-/** @method */
+/**
+ * Toggle backface culling. 
+ * @method
+ */
 Scene.prototype.toggleBackfaceCulling = function(){
     this._backface_culling = !this._backface_culling;
     this.renderScene();
 };
-/** @method */
+/**
+ * Draw a single pixel to the sceen and update the depth buffer. If there is already 
+ * a closer pixel (i.e. one with a lower z value), then the pixel is not drawn.
+ * @method
+ * @param {number} x X coordinate
+ * @param {number} y Y coordinate
+ * @param {number} z Z coordinate
+ * @param {Color} color Color to be drawn.
+ */
 Scene.prototype.drawPixel = function(x, y, z, color){
     x = x + this._x_offset;
     y = y + this._y_offset;
@@ -1424,21 +1516,27 @@ Scene.prototype.drawPixel = function(x, y, z, color){
         }
     }
 };
-/** @method  */
-Scene.prototype.drawEdge = function(vector1, vector2, color){
+/**
+ * Draw a line segment between two points.
+ * @method
+ * @param {Vector} v1 First end point of line segment.
+ * @param {Vector} v2 Second end point of line segment.
+ * @param {Color} color Color to be drawn.
+ */
+Scene.prototype.drawEdge = function(v1, v2, color){
     var abs = Math.abs;
-    if (vector1.x >= vector2.x){
-        var temp = vector1;
-        vector1 = vector2;
-        vector2 = temp;
+    if (v1.x >= v2.x){
+        var temp = v1;
+        v1 = v2;
+        v2 = temp;
     }
-    var current_x = vector1.x;
-    var current_y = vector1.y;
-    var current_z = vector1.z;
-    var longest_dist = Math.max(abs(vector2.x - vector1.x), abs(vector2.y - vector1.y), abs(vector2.z - vector1.z));
-    var step_x = (vector2.x - vector1.x) / longest_dist;
-    var step_y = (vector2.y - vector1.y) / longest_dist;
-    var step_z = (vector2.z - vector1.z) / longest_dist;
+    var current_x = v1.x;
+    var current_y = v1.y;
+    var current_z = v1.z;
+    var longest_dist = Math.max(abs(v2.x - v1.x), abs(v2.y - v1.y), abs(v2.z - v1.z));
+    var step_x = (v2.x - v1.x) / longest_dist;
+    var step_y = (v2.y - v1.y) / longest_dist;
+    var step_z = (v2.z - v1.z) / longest_dist;
 
     for (var i = 0; i < longest_dist; i++){
         this.drawPixel(Math.floor(current_x), Math.floor(current_y), current_z, color);
@@ -1447,13 +1545,27 @@ Scene.prototype.drawEdge = function(vector1, vector2, color){
         current_z += step_z;
     }
 };
-/** @method */
-Scene.prototype.drawTriangle = function(vector1, vector2, vector3, color){
-    this.drawEdge(vector1, vector2, color);
-    this.drawEdge(vector2, vector3, color);
-    this.drawEdge(vector3, vector1, color);
+/**
+ * Draw the edges of a triangle.
+ * @method
+ * @param {Vector} v1 First vertex of triangle.
+ * @param {Vector} v2 Second vertex of triangle.
+ * @param {Vector} v3 Third vertex of triangle.
+ * @param {Color} color Color to be drawn.
+ */
+Scene.prototype.drawTriangle = function(v1, v2, v3, color){
+    this.drawEdge(v1, v2, color);
+    this.drawEdge(v2, v3, color);
+    this.drawEdge(v3, v1, color);
 };
-/** @method */
+/**
+ * Draw a filled triangle in a uniform color.
+ * @method
+ * @param {Vector} v1 First vertex of triangle.
+ * @param {Vector} v2 Second vertex of triangle.
+ * @param {Vector} v3 Third vertex of triangle.
+ * @param {Color} color Color to be drawn.
+ */
 Scene.prototype.fillTriangle = function(v1, v2, v3, color){
     // TODO: This method chugs when close to a face. See if this can be fixed.
     // Is this just because it's looping over so many extraneous points?
@@ -1525,7 +1637,10 @@ Scene.prototype.fillTriangle = function(v1, v2, v3, color){
         }
     }
 };
-/** @method */
+/**
+ * Render a single frame of the scene.
+ * @method
+ */
 Scene.prototype.renderScene = function(){
     // TODO: Simplify this function.
     this._back_buffer_image = this._back_buffer_ctx.createImageData(this.width, this.height);
@@ -1597,15 +1712,26 @@ Scene.prototype.renderScene = function(){
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.drawImage(this._back_buffer, 0, 0, this.canvas.width, this.canvas.height);
 };
-/** @method */
+/**
+ * Add a mesh to the scene.
+ * @method
+ * @param {Mesh} mesh
+ */
 Scene.prototype.addMesh = function(mesh){
     this.meshes[mesh.name] = mesh;
 };
-/** @method */
+/**
+ * Remove a mesh to the scene.
+ * @method
+ * @param {Mesh} mesh
+ */
 Scene.prototype.removeMesh = function(mesh){
     delete this.meshes[mesh.name];
 };
-/** @method */
+/**
+ * Update the scene
+ * @method
+ */
 Scene.prototype.update = function(){
     if (this._key_count > 0){
         this.fire('keydown');
@@ -1620,7 +1746,7 @@ Scene.prototype.update = function(){
 
 module.exports = Scene;
 
-},{"../utilities/keycodes.js":11,"./camera.js":3,"./events.js":5,"linearalgea":2}],7:[function(_dereq_,module,exports){
+},{"../utilities/keycodes.js":11,"../utilities/mixin.js":12,"./camera.js":3,"./events.js":5,"linearalgea":2}],7:[function(_dereq_,module,exports){
 /**
  * @license
  * Copyright (c) 2014 Eben Packwood. All rights reserved.
@@ -1816,6 +1942,17 @@ var KEYCODES = {
 };
 
 module.exports = KEYCODES;
+},{}],12:[function(_dereq_,module,exports){
+function mixin(receiver, supplier) {
+    for (var property in supplier) {
+        if (supplier.hasOwnProperty(property)) {
+            receiver[property] = supplier[property];
+        }
+    }
+    return receiver;
+}
+
+module.exports = mixin;
 },{}]},{},[7])
 (7)
 });
