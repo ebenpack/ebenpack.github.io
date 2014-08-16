@@ -198,6 +198,115 @@
  <span class="p">}</span>
 </pre></div>
 </td></tr></table>
+
+<p>Addendum: I was curious about the relative performance of the iterative and recursive mergesort implementations. As you can see, the iterative approach is much faster, and I believe it uses quite a bit less memory as well.</p>
+<div id="graph">
+    <style scoped>
+        path {
+            stroke-width: 1;
+            fill: none;
+        }
+
+        .iter{
+            stroke: steelblue;
+        }
+
+        .recurse{
+            stroke: rgb(223, 94, 98);
+        }
+
+        .axis {
+          shape-rendering: crispEdges;
+        }
+
+        .x.axis line {
+          stroke: lightgrey;
+        }
+
+        .x.axis .minor {
+          stroke-opacity: .5;
+        }
+
+        .x.axis path {
+          display: none;
+        }
+
+        .y.axis line, .y.axis path {
+          fill: none;
+          stroke: #000;
+        }
+    </style>
+    <svg viewBox="0 0 1000 400">
+        <g transform="translate(80,80)">
+            <g class="x axis" transform="translate(0,240)">
+                <g class="tick" transform="translate(0,0)">
+                    <line y2="-240" x2="0"></line>
+                    <text y="10" x="0" dy=".71em" style="text-anchor: middle;">2⁹</text>
+                </g>
+                <g class="tick" transform="translate(120,0)">
+                    <line y2="-240" x2="0"></line>
+                    <text y="10" x="0" dy=".71em" style="text-anchor: middle;">2¹⁰</text>
+                </g>
+                <g class="tick" transform="translate(240,0)">
+                    <line y2="-240" x2="0"></line>
+                    <text y="10" x="0" dy=".71em" style="text-anchor: middle;">2¹¹</text>
+                </g>
+                <g class="tick" transform="translate(360,0)">
+                    <line y2="-240" x2="0"></line>
+                    <text y="10" x="0" dy=".71em" style="text-anchor: middle;">2¹²</text>
+                </g>
+                <g class="tick" transform="translate(480,0)">
+                    <line y2="-240" x2="0"></line>
+                    <text y="10" x="0" dy=".71em" style="text-anchor: middle;">2¹³</text>
+                </g>
+                <g class="tick" transform="translate(599.9999999999999,0)">
+                    <line y2="-240" x2="0"></line>
+                    <text y="10" x="0" dy=".71em" style="text-anchor: middle;">2¹⁴</text>
+                </g>
+                <g class="tick" transform="translate(720,0)">
+                    <line y2="-240" x2="0"></line>
+                    <text y="10" x="0" dy=".71em" style="text-anchor: middle;">2¹⁵</text>
+                </g>
+                <g class="tick" transform="translate(840,0)">
+                    <line y2="-240" x2="0"></line>
+                    <text y="10" x="0" dy=".71em" style="text-anchor: middle;">2¹⁶</text>
+                </g>
+                <path class="domain" d="M0,-240V0H840V-240"></path>
+            </g>
+            <text class="y label" text-anchor="end" y="6" dy=".75em" transform="rotate(-90)">execution time (miliseconds)</text>
+            <text class="x label" text-anchor="end" x="200" y="280" dx=".75em">array length</text>
+            <rect x="140" y="55" width="10" height="10" style="fill: steelblue;"></rect>
+            <rect x="140" y="25" width="10" height="10" style="fill: rgb(223, 94, 98);"></rect>
+            <text text-anchor="start" x="160" y="65">Iterative</text>
+            <text text-anchor="start" x="160" y="35">Recursive</text>
+            <g class="y axis" transform="translate(-25,0)">
+                <g class="tick" transform="translate(0,240)">
+                    <line x2="-6" y2="0"></line>
+                    <text x="-9" y="0" dy=".32em" style="text-anchor: end;">0</text>
+                </g>
+                <g class="tick" transform="translate(0,188.4978540772532)">
+                    <line x2="-6" y2="0"></line>
+                    <text x="-9" y="0" dy=".32em" style="text-anchor: end;">100</text>
+                </g>
+                <g class="tick" transform="translate(0,136.99570815450642)">
+                    <line x2="-6" y2="0"></line>
+                    <text x="-9" y="0" dy=".32em" style="text-anchor: end;">200</text>
+                </g>
+                <g class="tick" transform="translate(0,85.49356223175965)">
+                    <line x2="-6" y2="0"></line>
+                    <text x="-9" y="0" dy=".32em" style="text-anchor: end;">300</text>
+                </g>
+                <g class="tick" transform="translate(0,33.99141630901286)">
+                    <line x2="-6" y2="0"></line>
+                    <text x="-9" y="0" dy=".32em" style="text-anchor: end;">400</text>
+                </g>
+                <path class="domain" d="M-6,0H0V240H-6"></path>
+            </g>
+            <path class="iter" d="M0,240L0,240L0,240L0,240L0,240L0,240L0,240L0,240L0,240L0,239.48497854077254L120,238.96995708154506L240,236.90987124463518L360,233.8197424892704L480,228.6695278969957L599.9999999999999,215.27896995708156L720,195.1931330472103L840,146.78111587982832"></path>
+            <path class="recurse" d="M0,240L0,240L0,240L0,240L0,240L0,239.48497854077254L0,240L0,240L0,239.48497854077254L0,238.4549356223176L120,237.42489270386267L240,233.3047210300429L360,225.57939914163092L480,214.24892703862662L599.9999999999999,185.40772532188842L720,121.54506437768241L840,0"></path>
+        </g>
+    </svg>
+</div>
       </div>
       <footer class="post-footer">
         <div class="meta">
