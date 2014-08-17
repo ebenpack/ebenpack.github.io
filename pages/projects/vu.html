@@ -23,16 +23,18 @@
       <h1>VU</h1>
       <canvas id="canvas" width="600px" height="400px" style="background-color:black;"></canvas>
 
-<p><audio id="audio" preload="auto" controls>
-  <source src="http://www.ebenpackwood.com/audio/piano-sonata-no13.ogg" type="audio/ogg" />
-  <source src="http://www.ebenpackwood.com/audio/piano-sonata-no13.mp3" type="audio/mpeg" />
-</audio>
+<div>
+    <p>Drop an audio file onto the canvas above (some <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats">filetype restrictions</a> may apply). You can also use the audio file that is loaded by default. Once the status reads 'Ready!', click the canvas to begin playback.</p>
+</div>
+
 <div>
     <p>Click on the canvas to give it focus. Move with WASDRF keys. Look around with QETG.</p>
     <p>N.B. The web audio API isn't very well supported at the moment, so this demo works best in Chrome. Firefox does work, but it may require a refresh.</p>
 </div>
+
 <script src="http://www.ebenpackwood.com/js/wireframe.js"></script>
-<script src="http://www.ebenpackwood.com/js/vu.demo.js"></script></p>
+
+<script src="http://www.ebenpackwood.com/js/vu.demo.js"></script>
       </section> <!-- /#page-main -->
 
         <aside id="page-side" class="page-side">
