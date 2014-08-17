@@ -29,7 +29,7 @@ hr {
 }
 
 hr:after,
-#page-foot:before {
+.page-foot:before {
     visibility: visible;
     content: '\2042';
     display: block;
@@ -64,63 +64,63 @@ article:last-of-type:after {
 }
 
 
-#page-head {
+.page-head {
     text-align: center;
     padding-top: .5em;
 }
 
-#page-head h1 {
+.page-head h1 {
     font-size: 4em;
 }
 
-#page-head h1 a:hover {
+.page-head h1 a:hover {
     text-decoration: none;
 }
 
-#page-side {
+.page-side {
     line-height: 1.2em;
 }
 
-#page-side ul {
+.page-side ul {
     padding: 0 0 0 1.3em;
     margin: .4em 0 .6em .4em;
     list-style-type: square;
 }
 
-#page-side li a {
+.page-side li a {
     color: #555;
 }
 
-#page-side li.active {
+.page-side li.active {
     color: firebrick;
 }
 
-#page-side li.active a {
+.page-side li.active a {
     color: #222;
 }
 
-#page-foot {
+.page-foot {
     font-size: .8em;
     text-align: center;
 }
 
-#pagination {
+.pagination {
     display: block;
     margin-bottom: 4em;
     text-align: center;
 }
 
-#tag-cloud li {
+.tag-cloud li {
     margin: .2em 1em;
 }
 
-#tag-cloud li a {
+.tag-cloud li a {
     text-decoration: none;
     color: #222;
 }
 
 
-#tag-cloud li:hover a {
+.tag-cloud li:hover a {
     color: black;
 }
 
@@ -195,7 +195,7 @@ figure * { border: none; margin: auto; padding: auto; }
         font-size: 14px;
     }
 
-    #page-head h1 {
+    .page-head h1 {
         font-size: 2.5em;
     }
 }
@@ -210,20 +210,20 @@ h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
     color: black;
 }
 
-#page {
+.page {
     margin-top: 2em;
 }
 
-#page-body {
+.page-body {
     overflow: hidden;
 }
 
-#page-main h1 {
+.page-main h1 {
     margin-top: 0;
     padding-top: 0;
 }
 
-#page-side h2 {
+.page-side h2 {
     margin-top: 0;
     font-size: 1.5em;
 }

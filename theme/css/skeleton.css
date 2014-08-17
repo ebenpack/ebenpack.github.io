@@ -7,35 +7,35 @@ html, body {
     padding: 0;
 }
 
-#page {
+.page {
     max-width: 900px;
     min-width: 240px;
     margin: 0 auto;
     padding: 0;
 }
 
-#page-head,
-#page-body,
-#page-foot {
+.page-head,
+.page-body,
+.page-foot {
     clear: both;
     margin: 0;
     padding: 0;
 }
 
-#page-body { margin: 0 1em; }
+.page-body { margin: 0 1em; }
 
-#page-main, #page-side {
+.page-main, .page-side {
     border-width: 0;
 }
 
-#page-side {
+.page-side {
     float: left;
     width: 25%;
     height: 100%;
     margin-top: 0;
 }
 
-#page-main {
+.page-main {
     float: right;
     height: 100%;
     width: 74%;
@@ -44,14 +44,14 @@ html, body {
 
 
 @media screen and (max-width: 550px) {
-    #page-main,
-    #page-side {
+    .page-main,
+    .page-side {
         width: auto;
         clear: both;
         float: none;
     }
 
-    #page-side ul {
+    .page-side ul {
         column-count: 2;
         -moz-column-count: 2;
         -webkit-column-count: 2;
@@ -61,7 +61,7 @@ html, body {
 }
 
 @media screen and (max-width: 490px) {
-    #page-side ul {
+    .page-side ul {
         column-count: auto;
         -moz-column-count: auto;
         -webkit-column-count: auto;
