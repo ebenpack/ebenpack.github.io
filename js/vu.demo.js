@@ -4,7 +4,6 @@
     var Scene = wireframe.engine.Scene;
     var scene = new Scene({canvas_id: 'canvas', width:600, height:400});
     var mesh;
-    var current_audio;
     var ROWS = 20;
     var COLS = 16;
 
@@ -144,11 +143,11 @@
         }
 
         function decodeAudio(buffer){
-            audioctx.decodeAudioData(buffer, function(buffer) {
+            audioctx.decodeAudioData(buffer, function(decoded) {
                 // Remove clicklistener to avoid adding multiple
                 // event listeners
                 start_button.removeEventListener('click', clicklistener);
-                soundReady(buffer);
+                soundReady(decoded);
             }, onError);
         }
 
@@ -157,7 +156,7 @@
             request.open('GET', url, true);
             request.responseType = 'arraybuffer';
             request.onload = function() {
-                current_audio = request.response;
+                playtime = 0;
                 decodeAudio(request.response);
             };
             request.send();
@@ -179,7 +178,6 @@
             // Since buffersource is one-time use, we need
             // to reinitialize if we want to play again after pausing
             initAudio();
-            decodeAudio();
         }
 
         function soundReady(buffer){
@@ -209,7 +207,6 @@
             var reader = new FileReader();
         
             reader.onload = function(e) {
-                current_audio = e.target.result;
                 decodeAudio(e.target.result);
             };
             reader.readAsArrayBuffer(files[0]);
@@ -238,10 +235,10 @@
                 last_update = current_time;
             }
 
-            var barHeight;
+            var freq_height;
             for(var i = 0; i < COLS; i++) {
-                barHeight = array[i]/2;
-                mesh.vertices[i].y = -barHeight;
+                freq_height = array[i]/2;
+                mesh.vertices[i].y = -freq_height;
             }
 
             scene.renderScene();
