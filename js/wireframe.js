@@ -431,13 +431,6 @@ module.exports = Colour;
 },{}],2:[function(_dereq_,module,exports){
 (function (global){
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.linearalgea=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
-/**
- * @license
- * Copyright (c) 2014 Eben Packwood. All rights reserved.
- * MIT License
- *
- */
-
 var Vector = _dereq_('./vector.js');
 var Matrix = _dereq_('./matrix.js');
 
@@ -449,6 +442,15 @@ math.Matrix = Matrix;
 module.exports = math;
 
 },{"./matrix.js":2,"./vector.js":3}],2:[function(_dereq_,module,exports){
+var Vector = _dereq_('./vector.js');
+
+/**
+ * @license
+ * Copyright (c) 2014 Eben Packwood. All rights reserved.
+ * MIT License
+ *
+ */
+
 /** 
  * 4x4 matrix.
  * @constructor
@@ -460,7 +462,7 @@ function Matrix(){
     this.length = 16;
 }
 /**
- * Compare matrix with self for equality.
+ * Compare matrices for equality.
  * @method
  * @param {Matrix} matrix
  * @return {boolean}
@@ -474,7 +476,7 @@ Matrix.prototype.equal = function(matrix){
     return true;
 };
 /**
- * Add matrix to self.
+ * Add matrices. Returns a new Matrix.
  * @method
  * @param {Matrix} matrix
  * @return {Matrix}
@@ -487,7 +489,18 @@ Matrix.prototype.add = function(matrix){
     return new_matrix;
 };
 /**
- * Subtract matrix from self.
+ * Add matrices. Result is assigned to result parameter.
+ * @method
+ * @param {Matrix} matrix
+ * @param {Matrix} result
+ */
+Matrix.prototype.addLG = function(matrix, result){
+    for (var i = 0, len = this.length; i < len; i++){
+        result[i] = this[i] + matrix[i];
+    }
+};
+/**
+ * Subtract matrices. Returns a new Matrix.
  * @method
  * @param {Matrix} matrix
  * @return {Matrix}
@@ -500,7 +513,18 @@ Matrix.prototype.subtract = function(matrix){
     return new_matrix;
 };
 /**
- * Multiply self by scalar.
+ * Subtract matrices. Result is assigned to result parameter.
+ * @method
+ * @param {Matrix} matrix
+ * @param {Matrix} result
+ */
+Matrix.prototype.subtractLG = function(matrix, result){
+    for (var i = 0, len = this.length; i < len; i++){
+        result[i] = this[i] - matrix[i];
+    }
+};
+/**
+ * Multiply matrix by scalar. Returns a new Matrix.
  * @method
  * @param {number} scalar
  * @return {Matrix}
@@ -513,7 +537,18 @@ Matrix.prototype.multiplyScalar = function(scalar){
     return new_matrix;
 };
 /**
- * Multiply self by matrix.
+ * Multiply matrix by scalar. Result is assigned to result parameter.
+ * @method
+ * @param {number} scalar
+ * @param {Matrix} result
+ */
+Matrix.prototype.multiplyScalarLG = function(scalar, result){
+    for (var i = 0, len = this.length; i < len; i++){
+        result[i] = this[i] * scalar;
+    }
+};
+/**
+ * Multiply matrices. Returns a new Matrix.
  * @method
  * @param {Matrix} matrix
  * @return {Matrix}
@@ -539,7 +574,31 @@ Matrix.prototype.multiply = function(matrix){
     return new_matrix;
 };
 /**
- * Negate self.
+ * Multiply matrices. Result is assigned to result parameter.
+ * @method
+ * @param {Matrix} matrix
+ * @param {Matrix} result
+ */
+Matrix.prototype.multiplyLG = function(matrix, result){
+    result[0] = (this[0] * matrix[0]) + (this[1] * matrix[4]) + (this[2] * matrix[8]) + (this[3] * matrix[12]);
+    result[1] = (this[0] * matrix[1]) + (this[1] * matrix[5]) + (this[2] * matrix[9]) + (this[3] * matrix[13]);
+    result[2] = (this[0] * matrix[2]) + (this[1] * matrix[6]) + (this[2] * matrix[10]) + (this[3] * matrix[14]);
+    result[3] = (this[0] * matrix[3]) + (this[1] * matrix[7]) + (this[2] * matrix[11]) + (this[3] * matrix[15]);
+    result[4] = (this[4] * matrix[0]) + (this[5] * matrix[4]) + (this[6] * matrix[8]) + (this[7] * matrix[12]);
+    result[5] = (this[4] * matrix[1]) + (this[5] * matrix[5]) + (this[6] * matrix[9]) + (this[7] * matrix[13]);
+    result[6] = (this[4] * matrix[2]) + (this[5] * matrix[6]) + (this[6] * matrix[10]) + (this[7] * matrix[14]);
+    result[7] = (this[4] * matrix[3]) + (this[5] * matrix[7]) + (this[6] * matrix[11]) + (this[7] * matrix[15]);
+    result[8] = (this[8] * matrix[0]) + (this[9] * matrix[4]) + (this[10] * matrix[8]) + (this[11] * matrix[12]);
+    result[9] = (this[8] * matrix[1]) + (this[9] * matrix[5]) + (this[10] * matrix[9]) + (this[11] * matrix[13]);
+    result[10] = (this[8] * matrix[2]) + (this[9] * matrix[6]) + (this[10] * matrix[10]) + (this[11] * matrix[14]);
+    result[11] = (this[8] * matrix[3]) + (this[9] * matrix[7]) + (this[10] * matrix[11]) + (this[11] * matrix[15]);
+    result[12] = (this[12] * matrix[0]) + (this[13] * matrix[4]) + (this[14] * matrix[8]) + (this[15] * matrix[12]);
+    result[13] = (this[12] * matrix[1]) + (this[13] * matrix[5]) + (this[14] * matrix[9]) + (this[15] * matrix[13]);
+    result[14] = (this[12] * matrix[2]) + (this[13] * matrix[6]) + (this[14] * matrix[10]) + (this[15] * matrix[14]);
+    result[15] = (this[12] * matrix[3]) + (this[13] * matrix[7]) + (this[14] * matrix[11]) + (this[15] * matrix[15]);
+};
+/**
+ * Negate matrix. Returns a new Matrix.
  * @method
  * @param {number} scalar
  * @return {Matrix}
@@ -552,7 +611,18 @@ Matrix.prototype.negate = function(){
     return new_matrix;
 };
 /**
- * Transpose self.
+ * Negate matrix. Result is assigned to result parameter.
+ * @method
+ * @param {number} scalar
+ * @param {Matrix} result
+ */
+Matrix.prototype.negateLG = function(result){
+    for (var i = 0, len = this.length; i < len; i++){
+        result[i] = -this[i];
+    }
+};
+/**
+ * Transpose matrix. Returns a new Matrix.
  * @method
  * @return {Matrix}
  */
@@ -576,9 +646,41 @@ Matrix.prototype.transpose = function(){
     new_matrix[15] = this[15];
     return new_matrix;
 };
+/**
+ * Transpose matrix. Result is assigned to result parameter.
+ * @method
+ * @return {Matrix}
+ */
+Matrix.prototype.transposeLG = function(result){
+    result[0] = this[0];
+    result[1] = this[4];
+    result[2] = this[8];
+    result[3] = this[12];
+    result[4] = this[1];
+    result[5] = this[5];
+    result[6] = this[9];
+    result[7] = this[13];
+    result[8] = this[2];
+    result[9] = this[6];
+    result[10] = this[10];
+    result[11] = this[14];
+    result[12] = this[3];
+    result[13] = this[7];
+    result[14] = this[11];
+    result[15] = this[15];
+};
+/**
+ * Write zeros to all elements of the matrix.
+ * @method
+ */
+Matrix.prototype.empty = function(){
+    for (var i = 0, len = this.length; i < len; i++){
+        this[i] = 0;
+    }
+};
 
 /**
- * Constructs a rotation matrix, rotating by theta around the x-axis
+ * Constructs a rotation matrix, rotating by theta around the x-axis. Returns a new Matrix.
  * @method
  * @static
  * @param {number} theta
@@ -597,7 +699,25 @@ Matrix.rotationX = function(theta){
     return rotation_matrix;
 };
 /**
- * Constructs a rotation matrix, rotating by theta around the y-axis
+ * Constructs a rotation matrix, rotating by theta around the x-axis. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {number} theta
+ * @param {Matrix} result
+ */
+Matrix.rotationXLG = function(theta, result){
+    var cos = Math.cos(theta);
+    var sin = Math.sin(theta);
+    result.empty();
+    result[0] = 1;
+    result[5] = cos;
+    result[6] = -sin;
+    result[9] = sin;
+    result[10] = cos;
+    result[15] = 1;
+};
+/**
+ * Constructs a rotation matrix, rotating by theta around the y-axis. Returns a new Matrix.
  * @method
  * @static
  * @param {number} theta
@@ -616,7 +736,25 @@ Matrix.rotationY = function(theta){
     return rotation_matrix;
 };
 /**
- * Constructs a rotation matrix, rotating by theta around the z-axis
+ * Constructs a rotation matrix, rotating by theta around the y-axis. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {number} theta
+ * @param {Matrix} result
+ */
+Matrix.rotationYLG = function(theta, result){
+    var cos = Math.cos(theta);
+    var sin = Math.sin(theta);
+    result.empty();
+    result[0] = cos;
+    result[2] = sin;
+    result[5] = 1;
+    result[8] = -sin;
+    result[10] = cos;
+    result[15] = 1;
+};
+/**
+ * Constructs a rotation matrix, rotating by theta around the z-axis. Returns a new Matrix.
  * @method
  * @static
  * @param {number} theta
@@ -635,7 +773,25 @@ Matrix.rotationZ = function(theta){
     return rotation_matrix;
 };
 /**
- * Constructs a rotation matrix, rotating by theta around the axis
+ * Constructs a rotation matrix, rotating by theta around the z-axis. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {number} theta
+ * @param {Matrix} result
+ */
+Matrix.rotationZLG = function(theta, result){
+    var cos = Math.cos(theta);
+    var sin = Math.sin(theta);
+    result.empty();
+    result[0] = cos;
+    result[1] = -sin;
+    result[4] = sin;
+    result[5] = cos;
+    result[10] = 1;
+    result[15] = 1;
+};
+/**
+ * Constructs a rotation matrix, rotating by theta around the axis. Returns a new Matrix.
  * @method
  * @static
  * @param {Vector} axis
@@ -667,7 +823,38 @@ Matrix.rotationAxis = function(axis, theta){
     return rotation_matrix;
 };
 /**
- * Constructs a rotation matrix from pitch, yaw, and roll
+ * Constructs a rotation matrix, rotating by theta around the axis. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {Vector} axis
+ * @param {number} theta
+ * @param {Matrix} result
+ */
+Matrix.rotationAxisLG = function(axis, theta, result){
+    axis.normalizeLG(temp_vector);
+    var sin = Math.sin(theta);
+    var cos = Math.cos(theta);
+    var cos1 = 1-cos;
+    var ux = temp_vector.x;
+    var uy = temp_vector.y;
+    var uz = temp_vector.z;
+    var xy = ux * uy;
+    var xz = ux * uz;
+    var yz = uy * uz;
+    result.empty();
+    result[0] = cos + ((ux*ux)*cos1);
+    result[1] = (xy*cos1) - (uz*sin);
+    result[2] = (xz*cos1)+(uy*sin);
+    result[4] = (xy*cos1)+(uz*sin);
+    result[5] = cos+((uy*uy)*cos1);
+    result[6] = (yz*cos1)-(ux*sin);
+    result[8] = (xz*cos1)-(uy*sin);
+    result[9] = (yz*cos1)+(ux*sin);
+    result[10] = cos + ((uz*uz)*cos1);
+    result[15] = 1;
+};
+/**
+ * Constructs a rotation matrix from pitch, yaw, and roll. Returns a new Matrix.
  * @method
  * @static
  * @param {number} pitch
@@ -679,7 +866,29 @@ Matrix.rotation = function(pitch, yaw, roll){
     return Matrix.rotationX(roll).multiply(Matrix.rotationZ(yaw)).multiply(Matrix.rotationY(pitch));
 };
 /**
- * Constructs a translation matrix from x, y, and z distances
+ * Constructs a rotation matrix from pitch, yaw, and roll. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {number} pitch
+ * @param {number} yaw
+ * @param {number} roll
+ * @param {Matrix} result
+ */
+Matrix.rotationLG = function(pitch, yaw, roll, result){
+    // TODO: Can I get away with using fewer temporary matrices?
+    temp_matrix1.empty();
+    temp_matrix2.empty();
+    temp_matrix3.empty();
+    temp_matrix4.empty();
+    result.empty();    
+    Matrix.rotationXLG(roll, temp_matrix1);
+    Matrix.rotationZLG(yaw, temp_matrix2);
+    Matrix.rotationYLG(pitch, temp_matrix3);
+    temp_matrix1.multiplyLG(temp_matrix2, temp_matrix4);
+    temp_matrix4.multiplyLG(temp_matrix3, result);
+};
+/**
+ * Constructs a translation matrix from x, y, and z distances. Returns a new Matrix.
  * @method
  * @static
  * @param {number} xtrans
@@ -695,7 +904,22 @@ Matrix.translation = function(xtrans, ytrans, ztrans){
     return translation_matrix;
 };
 /**
- * Constructs a scaling matrix from x, y, and z scale
+ * Constructs a translation matrix from x, y, and z distances. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {number} xtrans
+ * @param {number} ytrans
+ * @param {number} ztrans
+ * @return {Matrix}
+ */
+Matrix.translationLG = function(xtrans, ytrans, ztrans, result){
+    Matrix.identityLG(result);
+    result[12] = xtrans;
+    result[13] = ytrans;
+    result[14] = ztrans;
+};
+/**
+ * Constructs a scaling matrix from x, y, and z scale. Returns a new Matrix.
  * @method
  * @static
  * @param {number} xtrans
@@ -712,7 +936,23 @@ Matrix.scale = function(xscale, yscale, zscale){
     return scaling_matrix;
 };
 /**
- * Constructs an identity matrix
+ * Constructs a scaling matrix from x, y, and z scale. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {number} xtrans
+ * @param {number} ytrans
+ * @param {number} ztrans
+ * @param {Matrix} result
+ */
+Matrix.scaleLG = function(xscale, yscale, zscale, result){
+    Matrix.zeroLG(result);
+    result[0] = xscale;
+    result[5] = yscale;
+    result[10] = zscale;
+    result[15] = 1;
+};
+/**
+ * Constructs an identity matrix. Returns a new Matrix.
  * @method
  * @static
  * @return {Matrix}
@@ -726,7 +966,22 @@ Matrix.identity = function(){
     return identity;
 };
 /**
- * Constructs a zero matrix
+ * Constructs an identity matrix. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {Matrix} result
+ */
+Matrix.identityLG = function(result){
+    for (var i = 0; i < 16; i++){
+       result[i] = 0; 
+    }
+    result[0] = 1;
+    result[5] = 1;
+    result[10] = 1;
+    result[15] = 1;
+};
+/**
+ * Constructs a zero matrix. Returns a new Matrix.
  * @method
  * @static
  * @return {Matrix}
@@ -735,7 +990,18 @@ Matrix.zero = function(){
     return new Matrix();
 };
 /**
- * Constructs a new matrix from an array
+ * Constructs a zero matrix. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @return {Matrix}
+ */
+Matrix.zeroLG = function(result){
+    for (var i = 0; i < 16; i++){
+       result[i] = 0; 
+    }
+};
+/**
+ * Constructs a new matrix from an array. Returns a new Matrix.
  * @method
  * @static
  * @return {Matrix}
@@ -747,9 +1013,34 @@ Matrix.fromArray = function(arr){
     }
     return new_matrix;
 };
+/**
+ * Constructs a new matrix from an array. Result is assigned to result parameter.
+ * @method
+ * @static
+ * @param {Matrix} result
+ */
+Matrix.fromArrayLG = function(arr, result){
+    for (var i = 0; i < 16; i++){
+        result[i] = arr[i];
+    }
+};
+
+var temp_matrix1 = new Matrix();
+var temp_matrix2 = new Matrix();
+var temp_matrix3 = new Matrix();
+var temp_matrix4 = new Matrix();
+var temp_vector = new Vector(0,0,0);
 
 module.exports = Matrix;
-},{}],3:[function(_dereq_,module,exports){
+
+},{"./vector.js":3}],3:[function(_dereq_,module,exports){
+/**
+ * @license
+ * Copyright (c) 2014 Eben Packwood. All rights reserved.
+ * MIT License
+ *
+ */
+
 /**
  * 3D vector.
  * @constructor
@@ -769,7 +1060,7 @@ function Vector(x, y, z){
     }
 }
 /**
- * Add vector to self.
+ * Add vectors. Returns a new Vector.
  * @method
  * @param {Vector} vector
  * @return {Vector}
@@ -778,7 +1069,18 @@ Vector.prototype.add = function(vector){
     return new Vector(this.x + vector.x, this.y + vector.y, this.z + vector.z);
 };
 /**
- * Subtract vector from self.
+ * Add vectors. Result is assigned to result parameter.
+ * @method
+ * @param {Vector} vector
+ * @param {Vector} result
+ */
+Vector.prototype.addLG = function(vector, result){
+    result.x = this.x + vector.x;
+    result.y = this.y + vector.y;
+    result.z = this.z + vector.z;
+};
+/**
+ * Subtract vectors. Returns a new Vector.
  * @method
  * @param {Vector} vector
  * @return {Vector}
@@ -787,7 +1089,18 @@ Vector.prototype.subtract = function(vector){
     return new Vector(this.x - vector.x, this.y - vector.y, this.z - vector.z);
 };
 /**
- * Compare vector with self for equality
+ * Subtract vectors. Result is assigned to result parameter.
+ * @method
+ * @param {Vector} vector
+ * @param {Vector} result
+ */
+Vector.prototype.subtractLG = function(vector, result){
+    result.x = this.x - vector.x;
+    result.y = this.y - vector.y;
+    result.z = this.z - vector.z;
+};
+/**
+ * Compare vectors for equality
  * @method
  * @param {Vector} vector
  * @return {boolean}
@@ -796,7 +1109,7 @@ Vector.prototype.equal = function(vector){
     return this.x === vector.x && this.y === vector.y && this.z === vector.z;
 };
 /**
- * Find angle between two vectors.
+ * Calculate angle between two vectors.
  * @method
  * @param {Vector} vector
  * @return {number}
@@ -815,7 +1128,26 @@ Vector.prototype.angle = function(vector){
     return Math.acos(theta);
 };
 /**
- * Find the cos of the angle between two vectors.
+ * Calculate angle between two vectors. Low garbage (doesn't create any intermediate Vectors).
+ * @method
+ * @param {Vector} vector
+ * @return {number}
+ */
+Vector.prototype.angleLG = function(vector){
+    this.normalizeLG(temp_vector1);
+    vector.normalizeLG(temp_vector2);
+    var amag = temp_vector1.magnitude();
+    var bmag = temp_vector2.magnitude();
+    if (amag === 0 || bmag === 0){
+        return 0;
+    }
+    var theta = temp_vector1.dot(temp_vector2) / (amag * bmag );
+    if (theta < -1) {theta = -1;}
+    if (theta > 1) {theta = 1;}
+    return Math.acos(theta);
+};
+/**
+ * Calculate the cosine of the angle between two vectors.
  * @method
  * @param {Vector} vector
  * @return {number}
@@ -834,7 +1166,26 @@ Vector.prototype.cosAngle = function(vector){
     return theta;
 };
 /**
- * Find magnitude of a vector.
+ * Calculate the cosine of the angle between two vectors. Low garbage (doesn't create any intermediate Vectors).
+ * @method
+ * @param {Vector} vector
+ * @return {number}
+ */
+Vector.prototype.cosAngleLG = function(vector){
+    this.normalizeLG(temp_vector1);
+    vector.normalizeLG(temp_vector2);
+    var amag = temp_vector1.magnitude();
+    var bmag = temp_vector2.magnitude();
+    if (amag === 0 || bmag === 0){
+        return 0;
+    }
+    var theta = temp_vector1.dot(temp_vector2) / (amag * bmag );
+    if (theta < -1) {theta = -1;}
+    if (theta > 1) {theta = 1;}
+    return theta;
+};
+/**
+ * Calculate magnitude of a vector.
  * @method
  * @return {number}
  */
@@ -842,7 +1193,7 @@ Vector.prototype.magnitude = function(){
     return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z));
 };
 /**
- * Find magnitude squared of a vector.
+ * Calculate magnitude squared of a vector.
  * @method
  * @return {number}
  */
@@ -850,7 +1201,7 @@ Vector.prototype.magnitudeSquared = function(){
     return (this.x * this.x) + (this.y * this.y) + (this.z * this.z);
 };
 /**
- * Find dot product of self and vector.
+ * Calculate dot product of two vectors.
  * @method
  * @param {Vector} vector
  * @return {number}
@@ -859,7 +1210,7 @@ Vector.prototype.dot = function(vector){
     return (this.x * vector.x) + (this.y * vector.y) + (this.z * vector.z);
 };
 /**
- * Find cross product of self and vector.
+ * Calculate cross product of two vectors. Returns a new Vector.
  * @method
  * @param {Vector} vector
  * @return {Vector}
@@ -872,20 +1223,46 @@ Vector.prototype.cross = function(vector){
     );
 };
 /**
- * Normalize self.
+ * Calculate cross product of two vectors. Result is assigned to result parameter.
+ * @method
+ * @param {Vector} vector
+ * @param {Vector} result
+ */
+Vector.prototype.crossLG = function(vector, result){
+    result.x = (this.y * vector.z) - (this.z * vector.y);
+    result.y = (this.z * vector.x) - (this.x * vector.z);
+    result.z = (this.x * vector.y) - (this.y * vector.x);
+};
+/**
+ * Normalize vector. Returns a new Vector.
  * @method
  * @return {Vector}
- * @throws {ZeroDivisionError}
  */
 Vector.prototype.normalize = function(){
     var magnitude = this.magnitude();
     if (magnitude === 0) {
-        return this;
+        return new Vector(this.x, this.y, this.z);
     }
     return new Vector(this.x / magnitude, this.y / magnitude, this.z / magnitude);
 };
 /**
- * Scale self by scale.
+ * Normalize vector. Result is assigned to result parameter.
+ * @method
+ * @param {Vector} result
+ */
+Vector.prototype.normalizeLG = function(result){
+    var magnitude = this.magnitude();
+    if (magnitude === 0) {
+        result.x = this.x;
+        result.y = this.y;
+        result.z = this.z;
+    }
+    result.x = this.x / magnitude;
+    result.y = this.y / magnitude;
+    result.z = this.z / magnitude;
+};
+/**
+ * Scale vector by scaling factor. Returns a new Vector.
  * @method
  * @param {number} scale
  * @return {Vector}
@@ -894,14 +1271,36 @@ Vector.prototype.scale = function(scale){
     return new Vector(this.x * scale, this.y * scale, this.z * scale);
 };
 /**
- * Negates self
- * @return {Vector} [description]
+ * Scale vector by scaling factor. Result is assigned to result parameter.
+ * @method
+ * @param {number} scale
+ * @param {Vector} result
+ */
+Vector.prototype.scaleLG = function(scale, result){
+    result.x = this.x * scale;
+    result.y = this.y * scale;
+    result.z = this.z * scale;
+};
+/**
+ * Negate vector. Returns a new Vector.
+ * @method
+ * @return {Vector}
  */
 Vector.prototype.negate = function(){
     return new Vector(-this.x, -this.y, -this.z);
 };
 /**
- * Project self onto vector
+ * Negate vector. Result is assigned to result parameter.
+ * @method
+ * @param {Vector} result
+ */
+Vector.prototype.negateLG = function(result){
+    result.x = -this.x;
+    result.y = -this.y;
+    result.z = -this.z;
+};
+/**
+ * Calculate vector projection of two vectors.
  * @method
  * @param {Vector} vector
  * @return {number}
@@ -911,7 +1310,18 @@ Vector.prototype.vectorProjection = function(vector){
     return vector.scale(this.dot(vector) / (mag * mag));
 };
 /**
- * Project self onto vector
+ * Calculate vector projection of two vectors. Does not construct any new Vectors in the course of its operation.
+ * @method
+ * @param {Vector} vector
+ * @param {Vector} temp A temporary vector used in one of the intermediary steps of the calculation.
+ * @return {number}
+ */
+Vector.prototype.vectorProjectionLG = function(vector, result){
+    var mag = vector.magnitude();
+    vector.scaleLG(this.dot(vector) / (mag * mag), result);
+};
+/**
+ * Calculate scalar projection of two vectors.
  * @method
  * @param {Vector} vector
  * @return {number}
@@ -920,7 +1330,7 @@ Vector.prototype.scalarProjection = function(vector){
     return this.dot(vector) / vector.magnitude();
 };
 /**
- * Perform linear tranformation on self.
+ * Perform linear tranformation on a vector. Returns a new Vector.
  * @method
  * @param {Matrix} transform_matrix
  * @return {Vector}
@@ -933,7 +1343,22 @@ Vector.prototype.transform = function(transform_matrix){
     return new Vector(x / w, y / w, z / w);
 };
 /**
- * Rotate self by theta around axis
+ * Perform linear tranformation on a vector.  Result is assigned to result parameter.
+ * @method
+ * @param {Matrix} transform_matrix
+ * @param {Vector} result
+ */
+Vector.prototype.transformLG = function(transform_matrix, result){
+    var x = (this.x * transform_matrix[0]) + (this.y * transform_matrix[4]) + (this.z * transform_matrix[8]) + transform_matrix[12];
+    var y = (this.x * transform_matrix[1]) + (this.y * transform_matrix[5]) + (this.z * transform_matrix[9]) + transform_matrix[13];
+    var z = (this.x * transform_matrix[2]) + (this.y * transform_matrix[6]) + (this.z * transform_matrix[10]) + transform_matrix[14];
+    var w = (this.x * transform_matrix[3]) + (this.y * transform_matrix[7]) + (this.z * transform_matrix[11]) + transform_matrix[15];
+    result.x = x / w;
+    result.y = y / w;
+    result.z = z / w;
+};
+/**
+ * Rotate vector by theta around axis. Returns a new Vector.
  * @method
  * @param {Vector} axis
  * @param {number} theta
@@ -956,7 +1381,32 @@ Vector.prototype.rotate = function(axis, theta){
     return new Vector(x, y, z);
 };
 /**
- * Rotate self by theta around x-axis
+ * Rotate vector by theta around axis. Result is assigned to result parameter.
+ * @method
+ * @param {Vector} axis
+ * @param {number} theta
+ * @param {Vector} result
+ */
+Vector.prototype.rotateLG = function(axis, theta, result){
+    axis.normalizeLG(result);
+    var sin = Math.sin(theta);
+    var cos = Math.cos(theta);
+    var cos1 = 1-cos;
+    var ux = result.x;
+    var uy = result.y;
+    var uz = result.z;
+    var xy = result.x * result.y;
+    var xz = result.x * result.z;
+    var yz = result.y * result.z;
+    var x = ((cos + ((ux*ux)*cos1)) * this.x) + (((xy*cos1) - (uz*sin)) * this.y) + (((xz*cos1)+(uy*sin)) * this.z);
+    var y = (((xy*cos1)+(uz*sin)) * this.x) + ((cos+((uy*uy)*cos1)) * this.y) + (((yz*cos1)-(ux*sin)) * this.z);
+    var z = (((xz*cos1)-(uy*sin)) * this.x) + (((yz*cos1)+(ux*sin)) * this.y) + ((cos + ((ux*ux)*cos1)) * this.z);
+    result.x = x;
+    result.y = y;
+    result.z = z;
+};
+/**
+ * Rotate vector by theta around x-axis. Returns a new Vector.
  * @method
  * @param {number} theta
  * @return {Vector}
@@ -970,7 +1420,23 @@ Vector.prototype.rotateX = function(theta){
     return new Vector(x, y, z);
 };
 /**
- * Rotate self by theta around y-axis
+ * Rotate vector by theta around x-axis. Result is assigned to result parameter.
+ * @method
+ * @param {number} theta
+ * @param {Vector} result
+ */
+Vector.prototype.rotateXLG = function(theta, result){
+    var sin = Math.sin(theta);
+    var cos = Math.cos(theta);
+    var x = this.x;
+    var y = (cos * this.y) - (sin * this.z);
+    var z = (sin * this.y) + (cos * this.z);
+    result.x = x;
+    result.y = y;
+    result.z = z;
+};
+/**
+ * Rotate vector by theta around y-axis. Returns a new Vector.
  * @method
  * @param {number} theta
  * @return {Vector}
@@ -984,7 +1450,23 @@ Vector.prototype.rotateY = function(theta){
     return new Vector(x, y, z);
 };
 /**
- * Rotate self by theta around z-axis
+ * Rotate vector by theta around y-axis. Result is assigned to result parameter.
+ * @method
+ * @param {number} theta
+ * @param {Vector} result
+ */
+Vector.prototype.rotateYLG = function(theta, result){
+    var sin = Math.sin(theta);
+    var cos = Math.cos(theta);
+    var x = (cos *this.x) + (sin * this.z);
+    var y = this.y;
+    var z = -(sin * this.x) + (cos * this.z);
+    result.x = x;
+    result.y = y;
+    result.z = z;
+};
+/**
+ * Rotate vector by theta around z-axis. Returns a new Vector.
  * @method
  * @param {number} theta
  * @return {Vector}
@@ -998,7 +1480,23 @@ Vector.prototype.rotateZ = function(theta){
     return new Vector(x, y, z);
 };
 /**
- * Rotate self by pitch, yaw, roll
+ * Rotate vector by theta around z-axis. Result is assigned to result parameter.
+ * @method
+ * @param {number} theta
+ * @param {Vector} result
+ */
+Vector.prototype.rotateZLG = function(theta, result){
+    var sin = Math.sin(theta);
+    var cos = Math.cos(theta);
+    var x = (cos * this.x) - (sin * this.y);
+    var y = (sin * this.x) + (cos * this.y);
+    var z = this.z;
+    result.x = x;
+    result.y = y;
+    result.z = z;
+};
+/**
+ * Rotate vector by pitch, yaw, and roll. Returns a new Vector.
  * @method
  * @param {number} pitch
  * @param {number} yaw
@@ -1008,8 +1506,26 @@ Vector.prototype.rotateZ = function(theta){
 Vector.prototype.rotatePitchYawRoll = function(pitch_amnt, yaw_amnt, roll_amnt) {
     return this.rotateX(roll_amnt).rotateY(pitch_amnt).rotateZ(yaw_amnt);
 };
+/** 
+ * Rotate vector by pitch, yaw, and roll. Result is assigned to result parameter.
+ * @method
+ * @param {number} pitch
+ * @param {number} yaw
+ * @param {number} roll
+ * @param {Vector} temp
+ * @param {Vector} result
+ */
+Vector.prototype.rotatePitchYawRollLG = function(pitch_amnt, yaw_amnt, roll_amnt, result) {
+    this.rotateXLG(roll_amnt, result);
+    result.rotateYLG(pitch_amnt, result);
+    result.rotateZLG(yaw_amnt, result);
+};
+
+var temp_vector1 = new Vector(0,0,0);
+var temp_vector2 = new Vector(0,0,0);
 
 module.exports = Vector;
+
 },{}]},{},[1])
 (1)
 });
@@ -1320,6 +1836,31 @@ function Scene(options){
     this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this), false);
     this.initializeDepthBuffer();
     this.update();
+
+
+
+    this._light_direction = new Vector(0,0,0);
+    this._wv1 = new Matrix();
+    this._wv2 = new Matrix();
+    this._wv3 = new Matrix();
+    this._v1 = new Vector(0,0,0);
+    this._v2 = new Vector(0,0,0);
+    this._v3 = new Vector(0,0,0);
+    this._v1t = new Vector(0,0,0);
+    this._v2t = new Vector(0,0,0);
+    this._v3t = new Vector(0,0,0);
+    this._wvp_matrix = new Matrix();
+    this._world_matrix = new Matrix();
+    this._rotation_matrix = new Matrix();
+    this._translation_matrix = new Matrix();
+    this._scale_matrix = new Matrix();
+    this._cam_to_vert = new Vector(0,0,0);
+    this._temp_matrix = new Matrix();
+    this._side1 = new Vector(0,0,0);
+    this._side2 = new Vector(0,0,0);
+    this._norm = new Vector(0,0,0);
+
+
 }
 mixin(Scene.prototype, EventTarget);
 /**
@@ -1654,9 +2195,12 @@ Scene.prototype.renderScene = function(){
             var scale = mesh.scale;
             var rotation = mesh.rotation;
             var position = mesh.position;
-            var world_matrix = Matrix.scale(scale.x, scale.y, scale.z).multiply(
-                Matrix.rotation(rotation.pitch, rotation.yaw, rotation.roll).multiply(
-                    Matrix.translation(position.x, position.y, position.z)));
+            // Build world matrix
+            Matrix.scaleLG(scale.x, scale.y, scale.z, this._scale_matrix);
+            Matrix.rotationLG(rotation.pitch, rotation.yaw, rotation.roll, this._rotation_matrix);
+            Matrix.translationLG(position.x, position.y, position.z, this._translation_matrix);
+            this._scale_matrix.multiplyLG(this._rotation_matrix, this._world_matrix);
+            this._world_matrix.multiplyLG(this._translation_matrix, this._world_matrix);
             for (var k = 0; k < mesh.faces.length; k++){
                 var face = mesh.faces[k].face;
                 var color = mesh.faces[k].color;
@@ -1667,21 +2211,26 @@ Scene.prototype.renderScene = function(){
                 // Calculate the normal
                 // TODO: Can this be calculated just once, and then transformed into
                 // camera space?
-                var cam_to_vert = this.camera.position.subtract(v1.transform(world_matrix));
-                var side1 = v2.transform(world_matrix).subtract(v1.transform(world_matrix));
-                var side2 = v3.transform(world_matrix).subtract(v1.transform(world_matrix));
-                var norm = side1.cross(side2);
-                if (norm.magnitude() <= 0.00000001){
-                    norm = norm;
-                } else {
-                    norm = norm.normalize();
+                v1.transformLG(this._world_matrix, this._v1t);
+                v2.transformLG(this._world_matrix, this._v2t);
+                v3.transformLG(this._world_matrix, this._v3t);
+
+                this.camera.position.subtractLG(this._v1t, this._cam_to_vert);
+
+                this._v2t.subtractLG(this._v1t, this._side1);
+                this._v3t.subtractLG(this._v1t, this._side2);
+                this._side1.crossLG(this._side2, this._norm);
+                if (this._norm.magnitude() >= 0.00000001){
+                    this._norm.normalizeLG(this._norm);
                 }
                 // Backface culling.
-                if (!this._backface_culling || cam_to_vert.dot(norm) >= 0) {
-                    var wvp_matrix = world_matrix.multiply(camera_matrix).multiply(projection_matrix);
-                    var wv1 = v1.transform(wvp_matrix);
-                    var wv2 = v2.transform(wvp_matrix);
-                    var wv3 = v3.transform(wvp_matrix);
+                if (!this._backface_culling || this._cam_to_vert.dot(this._norm) >= 0) {
+                    //var wvp_matrix = world_matrix.multiply(camera_matrix).multiply(projection_matrix);
+                    this._world_matrix.multiplyLG(camera_matrix, this._temp_matrix);
+                    this._temp_matrix.multiplyLG(projection_matrix, this._wvp_matrix);
+                    v1.transformLG(this._wvp_matrix, this._wv1);
+                    v2.transformLG(this._wvp_matrix, this._wv2);
+                    v3.transformLG(this._wvp_matrix, this._wv3);
                     var draw = true;
 
                     // Draw surface normals
@@ -1691,17 +2240,19 @@ Scene.prototype.renderScene = function(){
                     // TODO: Fix frustum culling
                     // This is really stupid frustum culling... this can result in some faces not being
                     // drawn when they should, e.g. when a triangles vertices straddle the frustrum.
-                    if (this.offscreen(wv1) && this.offscreen(wv2) && this.offscreen(wv3)){
+                    if (this.offscreen(this._wv1) && this.offscreen(this._wv2) && this.offscreen(this._wv3)){
                         draw = false;
                     }
                     if (draw){
                         if (this._draw_mode === 0){
-                            this.drawTriangle(wv1, wv2, wv3, color.rgb);
+                            this.drawTriangle(this._wv1, this._wv2, this._wv3, color.rgb);
                         } else if (this._draw_mode === 1){
-                            var light_direction = light.subtract(v1.transform(world_matrix)).normalize();
-                            var illumination_angle = norm.dot(light_direction);
+                            
+                            light.subtractLG(this._v1t, this._light_direction);
+                            this._light_direction.normalizeLG(this._light_direction);
+                            var illumination_angle = this._norm.dot(this._light_direction);
                             color = color.lighten(illumination_angle*15);
-                            this.fillTriangle(wv1, wv2, wv3, color.rgb);
+                            this.fillTriangle(this._wv1, this._wv2, this._wv3, color.rgb);
                         }
                     }
                 }
