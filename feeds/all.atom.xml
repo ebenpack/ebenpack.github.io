@@ -164,7 +164,7 @@
 &lt;div id="graph"&gt;
     &lt;style scoped&gt;
         path {
-            stroke-width: 1;
+            stroke-width: 3;
             fill: none;
         }
 
