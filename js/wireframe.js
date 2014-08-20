@@ -431,6 +431,14 @@ module.exports = Colour;
 },{}],2:[function(_dereq_,module,exports){
 (function (global){
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.linearalgea=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+/**
+ * @license
+ * Copyright (c) 2014 Eben Packwood. All rights reserved.
+ * MIT License
+ *
+ */
+
+/** @ignore */
 var Vector = _dereq_('./vector.js');
 var Matrix = _dereq_('./matrix.js');
 
@@ -443,13 +451,6 @@ module.exports = math;
 
 },{"./matrix.js":2,"./vector.js":3}],2:[function(_dereq_,module,exports){
 var Vector = _dereq_('./vector.js');
-
-/**
- * @license
- * Copyright (c) 2014 Eben Packwood. All rights reserved.
- * MIT License
- *
- */
 
 /** 
  * 4x4 matrix.
@@ -678,6 +679,18 @@ Matrix.prototype.empty = function(){
         this[i] = 0;
     }
 };
+/**
+ * Copy matrix values to another matrix.
+ * @method
+ * @param result
+ *
+ */
+Matrix.prototype.copy = function(result) {
+    for (var i = 0; i < 16; i++) {
+        result[i] = this[i];
+    }
+};
+
 
 /**
  * Constructs a rotation matrix, rotating by theta around the x-axis. Returns a new Matrix.
@@ -1024,6 +1037,16 @@ Matrix.fromArrayLG = function(arr, result){
         result[i] = arr[i];
     }
 };
+/**
+ * Copy values from one matrix to another.
+ * @param matrix1
+ * @param matrix2
+ */
+Matrix.copy = function(matrix1, matrix2){
+    for (var i = 0; i < 16; i++) {
+        matrix2[i] = matrix1[i];
+    }
+};
 
 var temp_matrix1 = new Matrix();
 var temp_matrix2 = new Matrix();
@@ -1034,13 +1057,6 @@ var temp_vector = new Vector(0,0,0);
 module.exports = Matrix;
 
 },{"./vector.js":3}],3:[function(_dereq_,module,exports){
-/**
- * @license
- * Copyright (c) 2014 Eben Packwood. All rights reserved.
- * MIT License
- *
- */
-
 /**
  * 3D vector.
  * @constructor
@@ -1546,13 +1562,24 @@ function Camera(width, height, position){
     this.position = position || new Vector(1,1,20);
     this.up = new Vector(0, 1, 0);
     this.rotation = {'yaw': 0, 'pitch': 0, 'roll': 0};
-    this.view_matrix = this.createViewMatrix();
+    this.view_matrix = new Matrix();
     this.width = width;
     this.height = height;
     this.near = 0.1;
     this.far = 1000;
     this.fov = 90;
-    this.perspectiveFov = this.calculatePerspectiveFov();
+    this.perspectiveFov = new Matrix();
+
+    this._xaxis = new Vector(0,0,0);
+    this._yaxis = new Vector(0,0,0);
+    this._zaxis = new Vector(0,0,0);
+    this._direction = new Vector(0,0,0);
+    this._temp_vector1 = new Vector(0,0,0);
+    this._temp_vector2 = new Vector(0,0,0);
+    this._temp_matrix = new Matrix();
+
+    this.calculatePerspectiveFov();
+    this.createViewMatrix();
 }
 /** @method */
 Camera.prototype.direction = function() {
@@ -1560,8 +1587,9 @@ Camera.prototype.direction = function() {
     var cos_pitch = Math.cos(this.rotation.pitch);
     var sin_yaw = Math.sin(this.rotation.yaw);
     var cos_yaw = Math.cos(this.rotation.yaw);
-
-    return new Vector(-cos_pitch * sin_yaw, sin_pitch, -cos_pitch * cos_yaw);
+    this._direction.x = -cos_pitch * sin_yaw;
+    this._direction.y = sin_pitch;
+    this._direction.z = -cos_pitch * cos_yaw;
 };
 /**
  * Builds a perspective projection matrix based on a field of view.
@@ -1573,17 +1601,14 @@ Camera.prototype.calculatePerspectiveFov = function() {
     var aspect = this.width / this.height;
     var near = this.near;
     var far = this.far;
-    var matrix = Matrix.zero();
     var height = (1/Math.tan(fov/2)) * this.height;
     var width = height * aspect;
 
-    matrix[0] = width;
-    matrix[5] = height;
-    matrix[10] = far/(near-far) ;
-    matrix[11] = -1;
-    matrix[14] = near*far/(near-far);
-
-    return matrix;
+    this.perspectiveFov[0] = width;
+    this.perspectiveFov[5] = height;
+    this.perspectiveFov[10] = far/(near-far) ;
+    this.perspectiveFov[11] = -1;
+    this.perspectiveFov[14] = near*far/(near-far);
 };
 /** @method */
 Camera.prototype.createViewMatrix = function(){
@@ -1595,48 +1620,22 @@ Camera.prototype.createViewMatrix = function(){
     var cos_yaw = Math.cos(yaw);
     var sin_yaw = Math.sin(yaw);
 
-    var xaxis = new Vector(cos_yaw, 0, -sin_yaw );
-    var yaxis = new Vector(sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch );
-    var zaxis = new Vector(sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw );
+    this._xaxis.x = cos_yaw;
+    this._xaxis.y = 0;
+    this._xaxis.z = -sin_yaw;
+    this._yaxis.x = sin_yaw * sin_pitch;
+    this._yaxis.y = cos_pitch;
+    this._yaxis.z = cos_yaw * sin_pitch;
+    this._zaxis.x = sin_yaw * cos_pitch;
+    this._zaxis.y = -sin_pitch;
+    this._zaxis.z = cos_pitch * cos_yaw;
 
-    var view_matrix = Matrix.fromArray([
-        xaxis.x, yaxis.x, zaxis.x, 0,
-        xaxis.y, yaxis.y, zaxis.y, 0,
-        xaxis.z, yaxis.z, zaxis.z, 0,
-        -(xaxis.dot(eye) ), -( yaxis.dot(eye) ), -( zaxis.dot(eye) ), 1
-    ]);
-    return view_matrix;
-};
-/** @method */
-Camera.prototype.moveTo = function(x, y, z){
-    this.position = new Vector(x,y,z);
-    this.view_matrix = this.createViewMatrix();
-};
-/**
- * Move camera position by the x, y, and z amounts passed.
- * @method
- * @param {number} x
- * @param {number} y
- * @param {number} z
- */
-Camera.prototype.move = function(x, y, z){
-    this.position.x += x;
-    this.position.y += y;
-    this.position.z += z;
-    this.view_matrix = this.createViewMatrix();
-};
-
-/** @method */
-Camera.prototype.moveRight = function(amount){
-    var right = this.up.cross(this.direction()).normalize().scale(amount);
-    this.position = this.position.subtract(right);
-    this.view_matrix = this.createViewMatrix();
-};
-/** @method */
-Camera.prototype.moveLeft = function(amount){
-    var left = this.up.cross(this.direction()).normalize().scale(amount);
-    this.position = this.position.add(left);
-    this.view_matrix = this.createViewMatrix();
+    Matrix.fromArrayLG([
+        this._xaxis.x, this._yaxis.x, this._zaxis.x, 0,
+        this._xaxis.y, this._yaxis.y, this._zaxis.y, 0,
+        this._xaxis.z, this._yaxis.z, this._zaxis.z, 0,
+        -(this._xaxis.dot(eye) ), -( this._yaxis.dot(eye) ), -( this._zaxis.dot(eye) ), 1
+    ], this.view_matrix);
 };
 /**
  * Move camera rotation by the x and y amounts passed.
@@ -1659,7 +1658,7 @@ Camera.prototype.look = function(x, y){
     else if (this.rotation.pitch > (TWOPI)){
         this.rotation.pitch = this.rotation.pitch - (TWOPI);
     }
-    this.view_matrix = this.createViewMatrix();
+    this.createViewMatrix();
 };
 
 Camera.prototype.turnRight = function(amount){
@@ -1667,7 +1666,7 @@ Camera.prototype.turnRight = function(amount){
     if (this.rotation.yaw < 0){
         this.rotation.yaw = this.rotation.yaw + (TWOPI);
     }
-    this.view_matrix = this.createViewMatrix();
+    this.createViewMatrix();
 };
 /** @method */
 Camera.prototype.turnLeft = function(amount){
@@ -1675,14 +1674,14 @@ Camera.prototype.turnLeft = function(amount){
     if (this.rotation.yaw > (TWOPI)){
         this.rotation.yaw = this.rotation.yaw - (TWOPI);
     }
-    this.view_matrix = this.createViewMatrix();
+    this.createViewMatrix();
 };
 Camera.prototype.lookUp = function(amount){
     this.rotation.pitch -= amount;
     if (this.rotation.pitch > (TWOPI)){
         this.rotation.pitch = this.rotation.pitch - (TWOPI);
     }
-    this.view_matrix = this.createViewMatrix();
+    this.createViewMatrix();
 };
 /** @method */
 Camera.prototype.lookDown = function(amount){
@@ -1690,31 +1689,76 @@ Camera.prototype.lookDown = function(amount){
     if (this.rotation.pitch < 0){
         this.rotation.pitch = this.rotation.pitch + (TWOPI);
     }
-    this.view_matrix = this.createViewMatrix();
+    this.createViewMatrix();
+};
+/** @method */
+Camera.prototype.moveTo = function(x, y, z){
+    this.position.x = x;
+    this.position.y = y;
+    this.position.z = z;
+    this.createViewMatrix();
+};
+/**
+ * Move camera position by the x, y, and z amounts passed.
+ * @method
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
+ */
+Camera.prototype.move = function(x, y, z){
+    this.position.x += x;
+    this.position.y += y;
+    this.position.z += z;
+    this.createViewMatrix();
+};
+
+/** @method */
+Camera.prototype.moveRight = function(amount){
+    this.direction();
+    this._direction.normalizeLG(this._temp_vector1);
+    this._temp_vector1.scaleLG(amount, this._temp_vector2);
+    this.up.crossLG(this._temp_vector2, this._temp_vector1);
+    this.position.subtractLG(this._temp_vector1, this.position);
+    this.createViewMatrix();
+};
+/** @method */
+Camera.prototype.moveLeft = function(amount){
+    this.direction();
+    this._direction.normalizeLG(this._temp_vector1);
+    this._temp_vector1.scaleLG(amount, this._temp_vector2);
+    this.up.crossLG(this._temp_vector2, this._temp_vector1);
+    this.position.addLG(this._temp_vector1, this.position);
+    this.createViewMatrix();
 };
 /** @method */
 Camera.prototype.moveUp = function(amount){
-    var up = this.up.normalize().scale(amount);
-    this.position = this.position.subtract(up);
-    this.view_matrix = this.createViewMatrix();
+    this.up.normalizeLG(this._temp_vector1);
+    this._temp_vector1.scaleLG(amount, this._temp_vector2);
+    this.position.subtractLG(this._temp_vector2, this.position);
+    this.createViewMatrix();
 };
 /** @method */
 Camera.prototype.moveDown = function(amount){
-    var up = this.up.normalize().scale(amount);
-    this.position = this.position.add(up);
-    this.view_matrix = this.createViewMatrix();
+    this.up.normalizeLG(this._temp_vector1);
+    this._temp_vector1.scaleLG(amount, this._temp_vector2);
+    this.position.addLG(this._temp_vector2, this.position);
+    this.createViewMatrix();
 };
 /** @method */
 Camera.prototype.moveForward = function(amount){
-    var forward = this.direction().scale(amount);
-    this.position = this.position.add(forward);
-    this.view_matrix = this.createViewMatrix();
+    this.direction();
+    this._direction.normalizeLG(this._temp_vector1);
+    this._temp_vector1.scaleLG(amount, this._temp_vector2);
+    this.position.addLG(this._temp_vector2, this.position);
+    this.createViewMatrix();
 };
 /** @method */
 Camera.prototype.moveBackward = function(amount){
-    var backward = this.direction().scale(amount);
-    this.position = this.position.subtract(backward);
-    this.view_matrix = this.createViewMatrix();
+    this.direction();
+    this._direction.normalizeLG(this._temp_vector1);
+    this._temp_vector1.scaleLG(amount, this._temp_vector2);
+    this.position.subtractLG(this._temp_vector2, this.position);
+    this.createViewMatrix();
 };
 
 module.exports = Camera;
@@ -1723,12 +1767,8 @@ module.exports = Camera;
 var Scene = _dereq_('./scene.js');
 var Camera = _dereq_('./camera.js');
 
-var engine = Object.create(null);
-
-engine.Scene = Scene;
-engine.Camera = Camera;
-
-module.exports = engine;
+module.exports.Scene = Scene;
+module.exports.Camera = Camera;
 },{"./camera.js":3,"./scene.js":6}],5:[function(_dereq_,module,exports){
 /**
  * Event handler.
@@ -2305,15 +2345,13 @@ module.exports = Scene;
  *
  */
 
+/** @ignore */
 var geometry = _dereq_('./geometry/geometry.js');
 var engine = _dereq_('./engine/engine.js');
 
-var wireframe = Object.create(null);
 
-wireframe.geometry = geometry;
-wireframe.engine = engine;
-
-module.exports = wireframe;
+module.exports.geometry = geometry;
+module.exports.engine = engine;
 
 },{"./engine/engine.js":4,"./geometry/geometry.js":9}],8:[function(_dereq_,module,exports){
 var Color = _dereq_('colour');
@@ -2336,12 +2374,8 @@ module.exports = Face;
 var Mesh = _dereq_('./mesh.js');
 var Face = _dereq_('./face.js');
 
-var geometry = Object.create(null);
-
-geometry.Mesh = Mesh;
-geometry.Face = Face;
-
-module.exports = geometry;
+module.exports.Mesh = Mesh;
+module.exports.Face = Face;
 
 },{"./face.js":8,"./mesh.js":10}],10:[function(_dereq_,module,exports){
 var Vector = _dereq_('linearalgea').Vector;
