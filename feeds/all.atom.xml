@@ -1,5 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Eben Packwood</title><link href="http://www.ebenpackwood.com/" rel="alternate"></link><link href="http://www.ebenpackwood.com/feeds/all.atom.xml" rel="self"></link><id>http://www.ebenpackwood.com/</id><updated>2014-07-30T21:00:00-04:00</updated><entry><title>Too Much Recursion!</title><link href="http://www.ebenpackwood.com/posts/too-much-recursion.html" rel="alternate"></link><updated>2014-07-30T21:00:00-04:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-07-30:posts/too-much-recursion.html</id><summary type="html">&lt;p&gt;I was reading 'Data Structures and Algorithms in JavaScript' by Michael McMillan the other day. While the book as a whole is absolutely riddled with errors, this passage struck me as being particularly egregious.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Eben Packwood</title><link href="http://www.ebenpackwood.com/" rel="alternate"></link><link href="http://www.ebenpackwood.com/feeds/all.atom.xml" rel="self"></link><id>http://www.ebenpackwood.com/</id><updated>2014-08-22T13:52:00-04:00</updated><entry><title>Sorting with CSS</title><link href="http://www.ebenpackwood.com/posts/css-sort.html" rel="alternate"></link><updated>2014-08-22T13:52:00-04:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-08-22:posts/css-sort.html</id><summary type="html">&lt;p&gt;Prompted by the following question asked on the webdev subreddit:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Hello, is it possible to sort something by popularity using only CSS and HTML ? Or do i need to use something else like JS etc. ? Thank you for answers. I would be really thankful if someone could provide some material that contains information about how to do it. - /u/justanewboy&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I have devised the following solution:&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;html&lt;/span&gt; &lt;span class="na"&gt;lang=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;en&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;head&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;meta&lt;/span&gt; &lt;span class="na"&gt;charset=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;title&amp;gt;&lt;/span&gt;Document&lt;span class="nt"&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;style&amp;gt;&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;height&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;20px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;position&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;absolute&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;1&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;20px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;40px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;4&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;60px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;5&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;80px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;6&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;100px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;7&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;120px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;8&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;140px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;9&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;160px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+        &lt;span class="nc"&gt;.sorted&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;data-sort&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;10&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="k"&gt;top&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;180px&lt;/span&gt;&lt;span class="p"&gt;;}&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;/style&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/head&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;body&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;container&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;styel=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;position: relative; height:200px;&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;2&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;2&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;3&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;3&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;1&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;1&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;6&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;6&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;4&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;4&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;10&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;10&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;9&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;9&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;8&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;8&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;5&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;5&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;lt;div&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sorted&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;data-sort=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;7&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;7&lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/body&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/html&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;Here's an example of it in action.&lt;/p&gt;
+&lt;div class="container" style="position: relative; height:200px; width:100%;"&gt;
+    &lt;style scoped&gt;
+        .sorted {height:20px;}
+        .sorted {position: absolute;}
+        .sorted[data-sort='1'] {top:0;}
+        .sorted[data-sort='2'] {top:20px;}
+        .sorted[data-sort='3'] {top:40px;}
+        .sorted[data-sort='4'] {top:60px;}
+        .sorted[data-sort='5'] {top:80px;}
+        .sorted[data-sort='6'] {top:100px;}
+        .sorted[data-sort='7'] {top:120px;}
+        .sorted[data-sort='8'] {top:140px;}
+        .sorted[data-sort='9'] {top:160px;}
+        .sorted[data-sort='10'] {top:180px;}
+    &lt;/style&gt;
+    &lt;div class="sorted" data-sort="2"&gt;2&lt;/div&gt;
+    &lt;div class="sorted" data-sort="3"&gt;3&lt;/div&gt;
+    &lt;div class="sorted" data-sort="1"&gt;1&lt;/div&gt;
+    &lt;div class="sorted" data-sort="6"&gt;6&lt;/div&gt;
+    &lt;div class="sorted" data-sort="4"&gt;4&lt;/div&gt;
+    &lt;div class="sorted" data-sort="10"&gt;10&lt;/div&gt;
+    &lt;div class="sorted" data-sort="9"&gt;9&lt;/div&gt;
+    &lt;div class="sorted" data-sort="8"&gt;8&lt;/div&gt;
+    &lt;div class="sorted" data-sort="5"&gt;5&lt;/div&gt;
+    &lt;div class="sorted" data-sort="7"&gt;7&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Have a look at the HTML and you'll see that these items are not represented in the markup in the order that you're seeing them on the page (assuming you're using a modern browser, and you don't have any sort of user stylesheet overriding these rules).&lt;/p&gt;
+&lt;p&gt;Of course it should go without saying that you should almost certainly never, ever do such a thing. But it's still interesting to see what CSS is capable of these days. To put it in bold letters: &lt;strong&gt;CSS sort is nowhere close to cross-browser compatible, and is almost certainly inappropriate for all real-world situations&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;That said, I'm not sure if this could be generalized a bit more (i.e. to obviate the repetition of &lt;code&gt;.sorted[data-sort='x'] {top:(20*x)px;}&lt;/code&gt;), but I'll be sure to edit this post with any new results I discover.&lt;/p&gt;
+&lt;p&gt;And finally, I apologize if this is old news. I couldn't find anything similar, but I would not be surprised if this isn't a new discovery. If you know of prior art, let me know by submitting an issue on &lt;a href="https://github.com/ebenpack/ebenpack.github.io/issues"&gt;github&lt;/a&gt;.&lt;/p&gt;</summary><category term="HTML"></category><category term="CSS"></category></entry><entry><title>Too Much Recursion!</title><link href="http://www.ebenpackwood.com/posts/too-much-recursion.html" rel="alternate"></link><updated>2014-07-30T21:00:00-04:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-07-30:posts/too-much-recursion.html</id><summary type="html">&lt;p&gt;I was reading 'Data Structures and Algorithms in JavaScript' by Michael McMillan the other day. While the book as a whole is absolutely riddled with errors, this passage struck me as being particularly egregious.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;It is customary, though not necessary, to implement Mergesort as a recursive algorithm. However, &lt;strong&gt;it is not possible to do so in JavaScript, as the recursion goes too deep for the language to handle&lt;/strong&gt;. [emphasis mine]&lt;/p&gt;
 &lt;/blockquote&gt;
