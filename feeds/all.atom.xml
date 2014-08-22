@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Eben Packwood</title><link href="http://www.ebenpackwood.com/" rel="alternate"></link><link href="http://www.ebenpackwood.com/feeds/all.atom.xml" rel="self"></link><id>http://www.ebenpackwood.com/</id><updated>2014-08-22T13:52:00-04:00</updated><entry><title>Sorting with CSS</title><link href="http://www.ebenpackwood.com/posts/css-sort.html" rel="alternate"></link><updated>2014-08-22T13:52:00-04:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-08-22:posts/css-sort.html</id><summary type="html">&lt;p&gt;Prompted by the following question asked on the webdev subreddit:&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Eben Packwood</title><link href="http://www.ebenpackwood.com/" rel="alternate"></link><link href="http://www.ebenpackwood.com/feeds/all.atom.xml" rel="self"></link><id>http://www.ebenpackwood.com/</id><updated>2014-08-22T13:52:00-04:00</updated><entry><title>Sorting with CSS</title><link href="http://www.ebenpackwood.com/posts/css-sort.html" rel="alternate"></link><updated>2014-08-22T13:52:00-04:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-08-22:posts/css-sort.html</id><summary type="html">&lt;p&gt;Prompted by the following question asked on reddit.com/u/webdev:&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Hello, is it possible to sort something by popularity using only CSS and HTML ? Or do i need to use something else like JS etc. ? Thank you for answers. I would be really thankful if someone could provide some material that contains information about how to do it. - /u/justanewboy&lt;/p&gt;
+&lt;p&gt;Hello, is it possible to sort something by popularity using only CSS and HTML? Or do i need to use something else like JS etc.?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;/u/justanewboy&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;I have devised the following solution:&lt;/p&gt;
 &lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
