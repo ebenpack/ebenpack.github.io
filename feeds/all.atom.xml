@@ -562,21 +562,8 @@
                 &lt;polygon points="345,345 335,295 295,335"&gt;&lt;/polygon&gt;
             &lt;/g&gt;
         &lt;/defs&gt;
-         &lt;defs&gt;
-            &lt;!-- Hatching pattern --&gt;
-            &lt;pattern id="diagonalHatch" patternUnits="userSpaceOnUse" width="50" height="50" patternTransform="rotate(-45)"&gt;
-            &lt;rect x="0" y="0" width="100" height="100" fill="white"/&gt;
-            &lt;path d="M -1,50 H 200" stroke="#000000" stroke-width="20"/&gt;
-            &lt;/pattern&gt;
-        &lt;/defs&gt;
-        &lt;defs&gt;
-            &lt;g id="arrow-group"&gt;
-                &lt;line x1="0" y1="0" x2="125" y2="125" stroke-width="10"&gt;&lt;/line&gt;
-                &lt;polygon points="155,155 145,105 105,145"&gt;&lt;/polygon&gt;
-            &lt;/g&gt;
-        &lt;/defs&gt;
     &lt;/svg&gt;
-    &lt;style&gt;
+    &lt;style scoped&gt;
         svg .particle-arrow {
             fill: red;
             stroke: red;
@@ -665,18 +652,18 @@
 &lt;div id="node-distribution-illustration"&gt;
     &lt;svg width="200" height="200" viewbox="-300 -300  1620 1620"&gt;
         &lt;!-- Directions --&gt;
-        &lt;defs&gt;
+&lt;!--         &lt;defs&gt;
             &lt;g id="arrow-group-large"&gt;
                 &lt;line x1="0" y1="0" x2="470" y2="470" stroke-width="10"&gt;&lt;/line&gt;
                 &lt;polygon points="485,485 475,435 435,475"&gt;&lt;/polygon&gt;
             &lt;/g&gt;
-        &lt;/defs&gt;
-        &lt;defs&gt;
+        &lt;/defs&gt; --&gt;
+&lt;!--         &lt;defs&gt;
             &lt;g id="arrow-group-large-short"&gt;
                 &lt;line x1="0" y1="0" x2="330" y2="330" stroke-width="10"&gt;&lt;/line&gt;
                 &lt;polygon points="345,345 335,295 295,335"&gt;&lt;/polygon&gt;
             &lt;/g&gt;
-        &lt;/defs&gt;
+        &lt;/defs&gt; --&gt;
         &lt;rect class="outer" width="990" height="990" x="20" y="20" stroke="black" stroke-width="20" fill="white" /&gt;
         &lt;!-- Ordinals --&gt;
         &lt;g class="arrow-3" transform="translate(515,515) rotate(0)"&gt;
@@ -945,7 +932,7 @@
 &lt;p&gt;The new equilibrium values after collision are calculated with the following equation \( n_{i}^{new} = n_{i}^{old}+\frac{1}{\tau}(n_{i}^{eq}-n_{i}^{old})\)&lt;/p&gt;
 &lt;p&gt;There are many options for handling boundary conditions, but for the sake of brevity we will only discuss a few of the highlights. One of the most important distinctions with boundary conditions is between slip and no-slip conditions. These describe the behavior of the fluid at the interface between fluid and solid boundary. The slip condition represents a non-zero relative velocity between the fluid and the boundary, while no-slip represents a zero velocity at the boundary.&lt;/p&gt;
 &lt;p&gt;In terms of implementation in a lattice Boltzmann simulation, these two boundary conditions would look like this: in this example, before streaming, we have three distribution functions of three different nodes, all with the same velocity. If boundary conditions were ignored, after streaming, each of these DFs would land within a boundary.&lt;/p&gt;
-&lt;div id="bounce-start-illustration"&gt;
+&lt;div id="bounce-start-illustration-no-slip"&gt;
     &lt;svg width="200" height="200" viewbox="0 0 1020 1020"&gt;
         &lt;!-- Boundary conditions, starting position --&gt;
         &lt;!-- First column --&gt;
@@ -1011,7 +998,7 @@
 &lt;/div&gt;
 
 &lt;p&gt;Boundary slip is a bit more complicated in terms of implementation. In the example below, we start as before, with three distribution functions of three different nodes, all headed in the same direction towards a boundary.&lt;/p&gt;
-&lt;div id="bounce-start-illustration"&gt;
+&lt;div id="bounce-start-illustration-slip"&gt;
     &lt;svg width="200" height="200" viewbox="0 0 1020 1020"&gt;
         &lt;!-- Boundary conditions, starting position --&gt;
         &lt;!-- First column --&gt;
