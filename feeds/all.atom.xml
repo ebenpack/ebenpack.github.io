@@ -515,6 +515,30 @@
 &lt;h2&gt;Conclusion, or whatever&lt;/h2&gt;
 &lt;p&gt;Though this project certainly had its low points, and there were a few moments when I seriously questioned whether what I had set out to do was even possible, ultimately I achieved my goal: I made a program that was far more functional and polished than I would have thought possible in such a small number of bytes, I learned a few interesting and useful things about JavaScript (and a couple of dirty, dirty hacks), and I got a different perspective on programming in general.&lt;/p&gt;
 &lt;p&gt;The French Oulipo are a group of writers and mathematicians who are primarily known for their constrained writing. Georges Perec, for example, wrote a 300 page lipogram novel, &lt;em&gt;La disparition&lt;/em&gt;, in which the letter 'e' is never used. Like, at all. Ever. In French, the letter 'e' has a slightly higher frequency than it does in English, so this was no small feat. While it can be maddening at times, as the Oulipo realized, imposing an arbitrary constraint upon yourself can force you to focus more clearly on what you are doing, and can lead to brilliant insights you might never have realized otherwise, as well as a deeper understanding of the boundaries of the system you're working in.&lt;/p&gt;</summary><category term="JavaScript"></category><category term="JS1K"></category><category term="Lattice Boltzmann"></category></entry><entry><title>Computational fluid dynamics made easy</title><link href="http://www.ebenpackwood.com/posts/lattice-boltzmann.html" rel="alternate"></link><updated>2014-02-16T12:49:00-05:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-02-16:posts/lattice-boltzmann.html</id><summary type="html">&lt;div style="height:0"&gt;
+    &lt;style scoped&gt;
+        svg .particle-arrow {
+            fill: red;
+            stroke: red;
+        }
+
+        svg .arrow-1 {
+            fill: red;
+            stroke: red;
+        }
+        svg .arrow-2 {
+            fill: blue;
+            stroke: blue;
+        }
+        svg .arrow-3 {
+            fill: black;
+            stroke: black;
+        }
+
+        svg .triangle {
+            fill: black;
+            stroke: black;
+        }
+    &lt;/style&gt;
     &lt;svg width="0" height="0"&gt;
         &lt;!-- Definitions --&gt;
         &lt;defs&gt;
@@ -563,30 +587,6 @@
             &lt;/g&gt;
         &lt;/defs&gt;
     &lt;/svg&gt;
-    &lt;style scoped&gt;
-        svg .particle-arrow {
-            fill: red;
-            stroke: red;
-        }
-
-        svg .arrow-1 {
-            fill: red;
-            stroke: red;
-        }
-        svg .arrow-2 {
-            fill: blue;
-            stroke: blue;
-        }
-        svg .arrow-3 {
-            fill: black;
-            stroke: black;
-        }
-
-        svg .triangle {
-            fill: black;
-            stroke: black;
-        }
-    &lt;/style&gt;
 &lt;/div&gt;
 
 &lt;p&gt;Over the 2013 winter holidays I was looking for a project to work on. I had been interested in learning more about the canvas element for a while, so, with the snow driving o’er the fields, I decided to make a simple snow simulation to start learning some canvas basics. Once I had a simple snow program up and running in the canvas, I turned my attention to implementing a wind system that would allow users to interact with the snow, creating gusts of wind with their mouse. My initial naive attempts—which mostly involved a mesh of nodes which contained a single wind vector, and some mechanism to propagate those vectors to the next node in their direction of travel—were fairly unsatisfactory, so I began to look for ways to improve the wind system. After some cursory googling, I started looking in earnest at computational fluid dynamics. This led me to the Navier-Stokes equations, which seemed just a little too complicated for what I was after. Navier-Stokes led me to lattice-gas automata (LGA), which, while conceptually quite simple, has some inherent issues. Finally, LGA led to the lattice Boltzmann methods (LBM).&lt;/p&gt;

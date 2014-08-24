@@ -324,3 +324,28 @@ blockquote p {
 
 @media screen and (max-width: 490px) {
 }
+
+/* Boltzmann SVG styles */
+
+svg .particle-arrow {
+    fill: red;
+    stroke: red;
+}
+
+svg .arrow-1 {
+    fill: red;
+    stroke: red;
+}
+svg .arrow-2 {
+    fill: blue;
+    stroke: blue;
+}
+svg .arrow-3 {
+    fill: black;
+    stroke: black;
+}
+
+svg .triangle {
+    fill: black;
+    stroke: black;
+}

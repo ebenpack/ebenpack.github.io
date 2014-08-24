@@ -7,7 +7,7 @@
     <title>Computational fluid dynamics made easy — Eben Packwood</title>
     <!--[if lte IE 8]><script type="text/javascript" src="http://www.ebenpackwood.com/theme/js/html5shiv.js"></script><![endif]-->
     <link rel="canonical" href="http://www.ebenpackwood.com/posts/lattice-boltzmann.html" >
-    <link rel="stylesheet" type="text/css" href="http://www.ebenpackwood.com/theme/css/style.min.css?f9767b9f" />
+    <link rel="stylesheet" type="text/css" href="http://www.ebenpackwood.com/theme/css/style.min.css?59a5d914" />
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <!--[if lte IE 8]><link rel="shortcut icon" type="image/x-icon" href="http://www.ebenpackwood.com/favicon.ico" /><![endif]-->
     <link rel="alternate" type="application/atom+xml"
@@ -39,6 +39,30 @@
       </header>
       <div class="post-content"> 
         <div style="height:0">
+    <style scoped>
+        svg .particle-arrow {
+            fill: red;
+            stroke: red;
+        }
+
+        svg .arrow-1 {
+            fill: red;
+            stroke: red;
+        }
+        svg .arrow-2 {
+            fill: blue;
+            stroke: blue;
+        }
+        svg .arrow-3 {
+            fill: black;
+            stroke: black;
+        }
+
+        svg .triangle {
+            fill: black;
+            stroke: black;
+        }
+    </style>
     <svg width="0" height="0">
         <!-- Definitions -->
         <defs>
@@ -87,30 +111,6 @@
             </g>
         </defs>
     </svg>
-    <style scoped>
-        svg .particle-arrow {
-            fill: red;
-            stroke: red;
-        }
-
-        svg .arrow-1 {
-            fill: red;
-            stroke: red;
-        }
-        svg .arrow-2 {
-            fill: blue;
-            stroke: blue;
-        }
-        svg .arrow-3 {
-            fill: black;
-            stroke: black;
-        }
-
-        svg .triangle {
-            fill: black;
-            stroke: black;
-        }
-    </style>
 </div>
 
 <p>Over the 2013 winter holidays I was looking for a project to work on. I had been interested in learning more about the canvas element for a while, so, with the snow driving o’er the fields, I decided to make a simple snow simulation to start learning some canvas basics. Once I had a simple snow program up and running in the canvas, I turned my attention to implementing a wind system that would allow users to interact with the snow, creating gusts of wind with their mouse. My initial naive attempts—which mostly involved a mesh of nodes which contained a single wind vector, and some mechanism to propagate those vectors to the next node in their direction of travel—were fairly unsatisfactory, so I began to look for ways to improve the wind system. After some cursory googling, I started looking in earnest at computational fluid dynamics. This led me to the Navier-Stokes equations, which seemed just a little too complicated for what I was after. Navier-Stokes led me to lattice-gas automata (LGA), which, while conceptually quite simple, has some inherent issues. Finally, LGA led to the lattice Boltzmann methods (LBM).</p>
