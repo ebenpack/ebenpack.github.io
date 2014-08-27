@@ -496,9 +496,22 @@ Matrix.prototype.add = function(matrix){
  * @param {Matrix} result
  */
 Matrix.prototype.addLG = function(matrix, result){
-    for (var i = 0, len = this.length; i < len; i++){
-        result[i] = this[i] + matrix[i];
-    }
+    result[0] = this[0] + matrix[0];
+    result[1] = this[1] + matrix[1];
+    result[2] = this[2] + matrix[2];
+    result[3] = this[3] + matrix[3];
+    result[4] = this[4] + matrix[4];
+    result[5] = this[5] + matrix[5];
+    result[6] = this[6] + matrix[6];
+    result[7] = this[7] + matrix[7];
+    result[8] = this[8] + matrix[8];
+    result[9] = this[9] + matrix[9];
+    result[10] = this[10] + matrix[10];
+    result[11] = this[11] + matrix[11];
+    result[12] = this[12] + matrix[12];
+    result[13] = this[13] + matrix[13];
+    result[14] = this[14] + matrix[14];
+    result[15] = this[15] + matrix[15];
 };
 /**
  * Subtract matrices. Returns a new Matrix.
@@ -520,9 +533,22 @@ Matrix.prototype.subtract = function(matrix){
  * @param {Matrix} result
  */
 Matrix.prototype.subtractLG = function(matrix, result){
-    for (var i = 0, len = this.length; i < len; i++){
-        result[i] = this[i] - matrix[i];
-    }
+    result[0] = this[0] - matrix[0];
+    result[1] = this[1] - matrix[1];
+    result[2] = this[2] - matrix[2];
+    result[3] = this[3] - matrix[3];
+    result[4] = this[4] - matrix[4];
+    result[5] = this[5] - matrix[5];
+    result[6] = this[6] - matrix[6];
+    result[7] = this[7] - matrix[7];
+    result[8] = this[8] - matrix[8];
+    result[9] = this[9] - matrix[9];
+    result[10] = this[10] - matrix[10];
+    result[11] = this[11] - matrix[11];
+    result[12] = this[12] - matrix[12];
+    result[13] = this[13] - matrix[13];
+    result[14] = this[14] - matrix[14];
+    result[15] = this[15] - matrix[15];
 };
 /**
  * Multiply matrix by scalar. Returns a new Matrix.
@@ -544,9 +570,22 @@ Matrix.prototype.multiplyScalar = function(scalar){
  * @param {Matrix} result
  */
 Matrix.prototype.multiplyScalarLG = function(scalar, result){
-    for (var i = 0, len = this.length; i < len; i++){
-        result[i] = this[i] * scalar;
-    }
+    result[0] = this[0] * scalar;
+    result[1] = this[1] * scalar;
+    result[2] = this[2] * scalar;
+    result[3] = this[3] * scalar;
+    result[4] = this[4] * scalar;
+    result[5] = this[5] * scalar;
+    result[6] = this[6] * scalar;
+    result[7] = this[7] * scalar;
+    result[8] = this[8] * scalar;
+    result[9] = this[9] * scalar;
+    result[10] = this[10] * scalar;
+    result[11] = this[11] * scalar;
+    result[12] = this[12] * scalar;
+    result[13] = this[13] * scalar;
+    result[14] = this[14] * scalar;
+    result[15] = this[15] * scalar;
 };
 /**
  * Multiply matrices. Returns a new Matrix.
@@ -618,9 +657,22 @@ Matrix.prototype.negate = function(){
  * @param {Matrix} result
  */
 Matrix.prototype.negateLG = function(result){
-    for (var i = 0, len = this.length; i < len; i++){
-        result[i] = -this[i];
-    }
+    result[0] = -this[0];
+    result[1] = -this[1];
+    result[2] = -this[2];
+    result[3] = -this[3];
+    result[4] = -this[4];
+    result[5] = -this[5];
+    result[6] = -this[6];
+    result[7] = -this[7];
+    result[8] = -this[8];
+    result[9] = -this[9];
+    result[10] = -this[10];
+    result[11] = -this[11];
+    result[12] = -this[12];
+    result[13] = -this[13];
+    result[14] = -this[14];
+    result[15] = -this[15];
 };
 /**
  * Transpose matrix. Returns a new Matrix.
@@ -721,12 +773,21 @@ Matrix.rotationX = function(theta){
 Matrix.rotationXLG = function(theta, result){
     var cos = Math.cos(theta);
     var sin = Math.sin(theta);
-    result.empty();
     result[0] = 1;
+    result[1] = 0;
+    result[2] = 0;
+    result[3] = 0;
+    result[4] = 0;
     result[5] = cos;
     result[6] = -sin;
+    result[7] = 0;
+    result[8] = 0;
     result[9] = sin;
     result[10] = cos;
+    result[11] = 0;
+    result[12] = 0;
+    result[13] = 0;
+    result[14] = 0;
     result[15] = 1;
 };
 /**
@@ -758,12 +819,21 @@ Matrix.rotationY = function(theta){
 Matrix.rotationYLG = function(theta, result){
     var cos = Math.cos(theta);
     var sin = Math.sin(theta);
-    result.empty();
     result[0] = cos;
+    result[1] = 0;
     result[2] = sin;
+    result[3] = 0;
+    result[4] = 0;
     result[5] = 1;
+    result[6] = 0;
+    result[7] = 0;
     result[8] = -sin;
+    result[9] = 0;
     result[10] = cos;
+    result[11] = 0;
+    result[12] = 0;
+    result[13] = 0;
+    result[14] = 0;
     result[15] = 1;
 };
 /**
@@ -795,12 +865,21 @@ Matrix.rotationZ = function(theta){
 Matrix.rotationZLG = function(theta, result){
     var cos = Math.cos(theta);
     var sin = Math.sin(theta);
-    result.empty();
     result[0] = cos;
     result[1] = -sin;
+    result[2] = 0;
+    result[3] = 0;
     result[4] = sin;
     result[5] = cos;
+    result[6] = 0;
+    result[7] = 0;
+    result[8] = 0;
+    result[9] = 0;
     result[10] = 1;
+    result[11] = 0;
+    result[12] = 0;
+    result[13] = 0;
+    result[14] = 0;
     result[15] = 1;
 };
 /**
@@ -854,16 +933,21 @@ Matrix.rotationAxisLG = function(axis, theta, result){
     var xy = ux * uy;
     var xz = ux * uz;
     var yz = uy * uz;
-    result.empty();
     result[0] = cos + ((ux*ux)*cos1);
     result[1] = (xy*cos1) - (uz*sin);
     result[2] = (xz*cos1)+(uy*sin);
+    result[3] = 0;
     result[4] = (xy*cos1)+(uz*sin);
     result[5] = cos+((uy*uy)*cos1);
     result[6] = (yz*cos1)-(ux*sin);
+    result[7] = 0;
     result[8] = (xz*cos1)-(uy*sin);
     result[9] = (yz*cos1)+(ux*sin);
     result[10] = cos + ((uz*uz)*cos1);
+    result[11] = 0;
+    result[12] = 0;
+    result[13] = 0;
+    result[14] = 0;
     result[15] = 1;
 };
 /**
@@ -889,11 +973,6 @@ Matrix.rotation = function(pitch, yaw, roll){
  */
 Matrix.rotationLG = function(pitch, yaw, roll, result){
     // TODO: Can I get away with using fewer temporary matrices?
-    temp_matrix1.empty();
-    temp_matrix2.empty();
-    temp_matrix3.empty();
-    temp_matrix4.empty();
-    result.empty();    
     Matrix.rotationXLG(roll, temp_matrix1);
     Matrix.rotationZLG(yaw, temp_matrix2);
     Matrix.rotationYLG(pitch, temp_matrix3);
@@ -926,10 +1005,21 @@ Matrix.translation = function(xtrans, ytrans, ztrans){
  * @return {Matrix}
  */
 Matrix.translationLG = function(xtrans, ytrans, ztrans, result){
-    Matrix.identityLG(result);
+    result[0] = 1;
+    result[1] = 0;
+    result[2] = 0;
+    result[3] = 0;
+    result[4] = 0;
+    result[5] = 1;
+    result[6] = 0;
+    result[7] = 0;
+    result[8] = 0;
+    result[9] = 0;
+    result[10] = 1;
     result[12] = xtrans;
     result[13] = ytrans;
     result[14] = ztrans;
+    result[15] = 1;
 };
 /**
  * Constructs a scaling matrix from x, y, and z scale. Returns a new Matrix.
@@ -958,10 +1048,21 @@ Matrix.scale = function(xscale, yscale, zscale){
  * @param {Matrix} result
  */
 Matrix.scaleLG = function(xscale, yscale, zscale, result){
-    Matrix.zeroLG(result);
     result[0] = xscale;
+    result[1] = 0;
+    result[2] = 0;
+    result[3] = 0;
+    result[4] = 0;
     result[5] = yscale;
+    result[6] = 0;
+    result[7] = 0;
+    result[8] = 0;
+    result[9] = 0;
     result[10] = zscale;
+    result[11] = 0;
+    result[12] = 0;
+    result[13] = 0;
+    result[14] = 0;
     result[15] = 1;
 };
 /**
@@ -985,12 +1086,21 @@ Matrix.identity = function(){
  * @param {Matrix} result
  */
 Matrix.identityLG = function(result){
-    for (var i = 0; i < 16; i++){
-       result[i] = 0; 
-    }
     result[0] = 1;
+    result[1] = 0;
+    result[2] = 0;
+    result[3] = 0;
+    result[4] = 0;
     result[5] = 1;
+    result[6] = 0;
+    result[7] = 0;
+    result[8] = 0;
+    result[9] = 0;
     result[10] = 1;
+    result[11] = 0;
+    result[12] = 0;
+    result[13] = 0;
+    result[14] = 0;
     result[15] = 1;
 };
 /**
@@ -1009,9 +1119,22 @@ Matrix.zero = function(){
  * @return {Matrix}
  */
 Matrix.zeroLG = function(result){
-    for (var i = 0; i < 16; i++){
-       result[i] = 0; 
-    }
+    result[0] = 0;
+    result[1] = 0;
+    result[2] = 0;
+    result[3] = 0;
+    result[4] = 0;
+    result[5] = 0;
+    result[6] = 0;
+    result[7] = 0;
+    result[8] = 0;
+    result[9] = 0;
+    result[10] = 0;
+    result[11] = 0;
+    result[12] = 0;
+    result[13] = 0;
+    result[14] = 0;
+    result[15] = 0;
 };
 /**
  * Constructs a new matrix from an array. Returns a new Matrix.
@@ -1033,9 +1156,22 @@ Matrix.fromArray = function(arr){
  * @param {Matrix} result
  */
 Matrix.fromArrayLG = function(arr, result){
-    for (var i = 0; i < 16; i++){
-        result[i] = arr[i];
-    }
+    result[0] = arr[0];
+    result[1] = arr[1];
+    result[2] = arr[2];
+    result[3] = arr[3];
+    result[4] = arr[4];
+    result[5] = arr[5];
+    result[6] = arr[6];
+    result[7] = arr[7];
+    result[8] = arr[8];
+    result[9] = arr[9];
+    result[10] = arr[10];
+    result[11] = arr[11];
+    result[12] = arr[12];
+    result[13] = arr[13];
+    result[14] = arr[14];
+    result[15] = arr[15];
 };
 /**
  * Copy values from one matrix to another.
@@ -2043,6 +2179,18 @@ Scene.prototype.initializeDepthBuffer = function(){
     }
 };
 /**
+ * Clear back buffer image.
+ * @method
+ */
+Scene.prototype._clear_back_buffer_image = function(){
+    // Clear back buffer image, instead of using createImageData to reduce garbage.
+    // This method only sets alpha for every pixel to 0, which takes 1/4 the time of a full clear.
+    var back_buf_data = this._back_buffer_image.data;
+    for (var i = 3; i < back_buf_data.length; i+=4){
+        back_buf_data[i] = 0;
+    }
+};
+/**
  * Determine id vector is offscreen.
  * @method
  * @param {Vector} vector
@@ -2224,7 +2372,7 @@ Scene.prototype.fillTriangle = function(v1, v2, v3, color){
  */
 Scene.prototype.renderScene = function(){
     // TODO: Simplify this function.
-    this._back_buffer_image = this._back_buffer_ctx.createImageData(this.width, this.height);
+    this._clear_back_buffer_image();
     this.initializeDepthBuffer();
     var camera_matrix = this.camera.view_matrix;
     var projection_matrix = this.camera.perspectiveFov;
