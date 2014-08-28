@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.ebenpackwood.com/</loc>
-<lastmod>2014-08-27T14:11:29-00:00</lastmod>
+<lastmod>2014-08-28T18:11:03-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.ebenpackwood.com/archives.html</loc>
-<lastmod>2014-08-27T14:11:29-00:00</lastmod>
+<lastmod>2014-08-28T18:11:03-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.ebenpackwood.com/tags.html</loc>
-<lastmod>2014-08-27T14:11:29-00:00</lastmod>
+<lastmod>2014-08-28T18:11:03-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.ebenpackwood.com/categories.html</loc>
-<lastmod>2014-08-27T14:11:29-00:00</lastmod>
+<lastmod>2014-08-28T18:11:03-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -34,6 +34,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.ebenpackwood.com/pages/projects.html</loc>
 <lastmod>2014-02-15T20:28:00-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.ebenpackwood.com/posts/low-garbage-canvas.html</loc>
+<lastmod>2014-08-28T09:30:00-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -75,7 +82,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.ebenpackwood.com/category/javascript.html</loc>
-<lastmod>2014-07-30T21:00:00-00:00</lastmod>
+<lastmod>2014-08-28T09:30:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -89,7 +96,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.ebenpackwood.com/tag/javascript.html</loc>
-<lastmod>2014-07-30T21:00:00-00:00</lastmod>
+<lastmod>2014-08-28T09:30:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -117,7 +124,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.ebenpackwood.com/author/ebenpack.html</loc>
-<lastmod>2014-08-22T13:52:00-00:00</lastmod>
+<lastmod>2014-08-28T09:30:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

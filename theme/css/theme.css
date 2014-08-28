@@ -325,6 +325,15 @@ blockquote p {
 @media screen and (max-width: 490px) {
 }
 
+/* SVG chart line */
+
+.chartline {
+    stroke: steelblue;
+    stroke-width: 3;
+    fill: none;
+}
+
+
 /* Boltzmann SVG styles */
 
 svg .particle-arrow {
