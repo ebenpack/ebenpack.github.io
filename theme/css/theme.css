@@ -328,9 +328,13 @@ blockquote p {
 /* SVG chart line */
 
 .chartline {
-    stroke: steelblue;
+    stroke: #5695C9;
     stroke-width: 3;
     fill: none;
+}
+.chartfill {
+    fill: #D0E9FF;
+    stroke: none;
 }
 
 
