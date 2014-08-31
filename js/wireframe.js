@@ -2322,8 +2322,12 @@ Scene.prototype.drawEdge = function(v1, v2, color){
  * @param {Color} color Color to be drawn.
  */
 Scene.prototype.quickLine = function(v1, v2){
-    this.ctx.moveTo(v1.x + this._x_offset, v1.y + this._y_offset);
-    this.ctx.lineTo(v2.x + this._x_offset, v2.y + this._y_offset);
+    var x1 = Math.round(v1.x + this._x_offset);
+    var y1 = Math.round(v1.y + this._y_offset);
+    var x2 = Math.round(v2.x + this._x_offset);
+    var y2 = Math.round(v2.y + this._y_offset);
+    this.ctx.moveTo(x1, y1);
+    this.ctx.lineTo(x2, y2);
 };
 /**
  * Draw the edges of a triangle.
