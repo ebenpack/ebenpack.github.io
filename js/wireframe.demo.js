@@ -241,4 +241,7 @@
     document.getElementById("togglebfcull").addEventListener('click', function(){
         scene.toggleBackfaceCulling();
     });
+    document.getElementById("toggleqdraw").addEventListener('click', function(){
+        scene.toggleQuickDraw();
+    });
 })();
