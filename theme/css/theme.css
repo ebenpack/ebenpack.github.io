@@ -327,7 +327,7 @@ blockquote p {
 
 /* SVG chart line */
 
-.chartline {
+.chartline{
     stroke: #5695C9;
     stroke-width: 3;
     fill: none;
@@ -335,6 +335,39 @@ blockquote p {
 .chartfill {
     fill: #D0E9FF;
     stroke: none;
+}
+path {
+    stroke-width: 3;
+    fill: none;
+}
+
+.iter, .chartline1{
+    stroke: steelblue;
+}
+
+.recurse, .chartline2{
+    stroke: rgb(223, 94, 98);
+}
+
+.axis {
+  shape-rendering: crispEdges;
+}
+
+.x.axis line {
+  stroke: lightgrey;
+}
+
+.x.axis .minor {
+  stroke-opacity: .5;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.y.axis line, .y.axis path {
+  fill: none;
+  stroke: #000;
 }
 
 
