@@ -355,6 +355,7 @@ path {
 
 .x.axis line {
   stroke: lightgrey;
+  stroke-width: 2px;
 }
 
 .x.axis .minor {
