@@ -33,6 +33,8 @@ function Colour(color, alpha){
     this.rgb = {'r': rgb.r, 'g': rgb.g, 'b': rgb.b};
     this.hsl = {'h': hsl.h, 's': hsl.s, 'l': hsl.l};
     this.alpha = alpha;
+    // Precompute and store string representation of color.
+    this._color_string = this._toString();
 }
 /**
  * Lighten a color by the given percentage.
@@ -68,7 +70,11 @@ Colour.prototype.darken = function(percent){
  * @method
  * @return {string}
  */
-Colour.prototype.toString = function(){
+Colour.prototype.toString = function() {
+    return this._color_string;
+};
+
+Colour.prototype._toString = function(){
     var r = this.rgb.r.toString(16);
     var g = this.rgb.g.toString(16);
     var b = this.rgb.b.toString(16);
@@ -2274,9 +2280,9 @@ Scene.prototype.drawPixel = function(x, y, z, color){
         if (z < this._depth_buffer[index]) {
             var image_data = this._back_buffer_image.data;
             var i = index * 4;
-            image_data[i] = color.r;
-            image_data[i+1] = color.g;
-            image_data[i+2] = color.b;
+            image_data[i] = color.rgb.r;
+            image_data[i+1] = color.rgb.g;
+            image_data[i+2] = color.rgb.b;
             image_data[i+3] = 255;
             this._depth_buffer[index] = z;
         }
@@ -2499,7 +2505,7 @@ Scene.prototype.renderScene = function(){
                     }
                     if (draw){
                         if (this._draw_mode === 0){
-                            this.drawTriangle(this._wv1, this._wv2, this._wv3, color.rgb);
+                            this.drawTriangle(this._wv1, this._wv2, this._wv3, color);
                         } else if (this._draw_mode === 1){
                             light.subtractLG(this._v1t, this._light_direction);
                             this._light_direction.normalizeLG(this._light_direction);
