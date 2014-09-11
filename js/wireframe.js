@@ -2511,7 +2511,7 @@ Scene.prototype.renderScene = function(){
                             this._light_direction.normalizeLG(this._light_direction);
                             var illumination_angle = this._norm.dot(this._light_direction);
                             color = color.lighten(illumination_angle*15);
-                            this.fillTriangle(this._wv1, this._wv2, this._wv3, color.rgb);
+                            this.fillTriangle(this._wv1, this._wv2, this._wv3, color);
                         }
                     }
                 }
