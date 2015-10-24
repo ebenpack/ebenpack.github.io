@@ -1,5 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Eben Packwood</title><link href="http://www.ebenpackwood.com/" rel="alternate"></link><link href="http://www.ebenpackwood.com/feeds/javascript.atom.xml" rel="self"></link><id>http://www.ebenpackwood.com/</id><updated>2014-08-31T12:34:00-04:00</updated><entry><title>Canvas Path Performance</title><link href="http://www.ebenpackwood.com/posts/canvas-path-performance.html" rel="alternate"></link><updated>2014-08-31T12:34:00-04:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-08-31:posts/canvas-path-performance.html</id><summary type="html">&lt;p&gt;If you've done much work with the HTML5 canvas API, and especially if you've ever looked into performance tuning your canvas apps, you've likely come across the advice to batch your canvas calls together. For example, you may have read that when drawing multiple lines or shapes, it's better to create a single path and only call your draw method once, drawing all lines and shapes in one go, than it is to draw each line or shape individually. In other words, this:&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Eben Packwood</title><link href="http://www.ebenpackwood.com/" rel="alternate"></link><link href="http://www.ebenpackwood.com/feeds/javascript.atom.xml" rel="self"></link><id>http://www.ebenpackwood.com/</id><updated>2015-10-24T10:14:00-04:00</updated><entry><title>Chrome DevTools Synchronous XHR Redirect Bug</title><link href="http://www.ebenpackwood.com/posts/chrome-devtools-synchronous-xhr-redirect-bug.html" rel="alternate"></link><updated>2015-10-24T10:14:00-04:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2015-10-24:posts/chrome-devtools-synchronous-xhr-redirect-bug.html</id><summary type="html">&lt;p&gt;There is an unusual, and potentially very frustrating bug in Chrome's DevTools (at least as of version 46.0.2490.80). It does not appear to have been documented elsewhere, so it is being recorded here in the hope that it may prevent some future hair-pulling.&lt;/p&gt;
+&lt;p&gt;When making synchronous XHR requests (*see note below) with 301, 302, etc. redirect responses, the network panel in Chrome's DevTools will collapse all redirected requests into a single request (which can potentially contain mixed elements of, at the very least, the first and last request). So, for example, if you make a synchronous Ajax request to &lt;code&gt;/1&lt;/code&gt;, which redirects to &lt;code&gt;/2&lt;/code&gt;, which finally redirects to &lt;code&gt;/3&lt;/code&gt; (where you get a nice 200 response), instead of seeing these three requests in the network panel, you will only see a single request to &lt;code&gt;/3&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Even more frustrating is that, if the request was a &lt;code&gt;POST&lt;/code&gt; or a &lt;code&gt;PUT&lt;/code&gt; or suchlike, the 'collapsed' request that is displayed in the network panel will appear as if it was made with the initial request method (&lt;code&gt;POST&lt;/code&gt;, &lt;code&gt;PUT&lt;/code&gt;, etc.), along with any submitted content (a JSON payload, or form data, e.g.), and it will appear as if this request was made directly to the final redirected URL. In actuality, however, the initial request will be the &lt;code&gt;POST&lt;/code&gt;/&lt;code&gt;PUT&lt;/code&gt;/whatever with the request body, and the final request will be a &lt;code&gt;GET&lt;/code&gt; request with (of course) no request body (plus any number of intermediary redirected &lt;code&gt;GET&lt;/code&gt; requests).&lt;/p&gt;
+&lt;p&gt;As a concrete example, see the quick and dirty node server below.&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;http&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;http&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="nx"&gt;http&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createServer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;loc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;parseInt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;start&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;loc&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;redir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;loc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;finish&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}).&lt;/span&gt;&lt;span class="nx"&gt;listen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;8000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+
+&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;start&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;writeHead&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Content-Type&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;text/html; charset=utf-8&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+    &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;end&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;&amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html lang=&amp;quot;en&amp;quot;&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta charset=&amp;quot;UTF-8&amp;quot;&amp;gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;&amp;lt;title&amp;gt;Synchronous XHR Bug&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;&amp;lt;script&amp;gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;var request = new XMLHttpRequest();&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;request.open(&amp;quot;POST&amp;quot;, &amp;quot;/1&amp;quot;, false);&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;request.send(JSON.stringify({foo:&amp;quot;bar&amp;quot;}));&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;if (request.status === 200) {&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;  console.log(request.responseText);&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;}&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;&amp;lt;/script&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&amp;#39;&lt;/span&gt;
+    &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;redir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;loc&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;writeHead&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;302&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;location&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;loc&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)});&lt;/span&gt;
+    &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;end&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;finish&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;writeHead&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Content-Type&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;application/javascript&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+    &lt;span class="nx"&gt;res&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;end&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;JSON&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;stringify&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="nx"&gt;baz&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;qux&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;}));&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;When a request is made to &lt;code&gt;/&lt;/code&gt;, a synchronous Ajax &lt;code&gt;POST&lt;/code&gt; request will be made to &lt;code&gt;/1&lt;/code&gt;, which will redirect (via a &lt;code&gt;GET&lt;/code&gt;) to &lt;code&gt;/2&lt;/code&gt;, which will redirect to... until finally &lt;code&gt;/5&lt;/code&gt; is reached, and the JSON string &lt;code&gt;{"baz":"qux"}&lt;/code&gt; is returned. Here is how this appears in Chrome DevTools network panel (note that this appears as a single &lt;code&gt;POST&lt;/code&gt; request directly to &lt;code&gt;/5&lt;/code&gt;):&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Chrome XHR redirect" src="http://www.ebenpackwood.com/images/chrome-xhr-redirect.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;And here is how the same request looks from Firefox's network panel:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Firefox XHR redirect" src="http://www.ebenpackwood.com/images/firefox-xhr-redirect.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Firefox gives a much more accurate depiction of the actual request that were made.&lt;/p&gt;
+&lt;p&gt;While this is unlikely to be a common source of issues, in the right circumstances it can be extremely frustrating. In my case, I was reverse-engineering an internal legacy system in order to provide an API façade which would be easier to work with. At one point, this system made a synchronous XHR &lt;code&gt;POST&lt;/code&gt; request to URL A, which redirected to URL B, which redirected to URL C. Chrome, however, was telling me that this was simply a single &lt;code&gt;POST&lt;/code&gt; to URL C, and my attempts to perform this particular action (e.g. via cURL or an HTTP request from node) were stymied. It took some time, and considerable frustration, to realize that my tools were simply lying to me.&lt;/p&gt;
+&lt;p&gt;* Note: Synchronous requests are generally discouraged, especially on the main thread. Even so, synchronous XHRs do still exist in the wild.&lt;/p&gt;</summary><category term="JavaScript"></category><category term="DevTools"></category></entry><entry><title>Canvas Path Performance</title><link href="http://www.ebenpackwood.com/posts/canvas-path-performance.html" rel="alternate"></link><updated>2014-08-31T12:34:00-04:00</updated><author><name>ebenpack</name></author><id>tag:www.ebenpackwood.com,2014-08-31:posts/canvas-path-performance.html</id><summary type="html">&lt;p&gt;If you've done much work with the HTML5 canvas API, and especially if you've ever looked into performance tuning your canvas apps, you've likely come across the advice to batch your canvas calls together. For example, you may have read that when drawing multiple lines or shapes, it's better to create a single path and only call your draw method once, drawing all lines and shapes in one go, than it is to draw each line or shape individually. In other words, this:&lt;/p&gt;
 &lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
 2
 3

@@ -165,6 +165,7 @@ a.goto {
 }
 
 pre, img, figure, table {
+    max-width: 100%;
     margin: 1em auto;
     overflow-x: auto;
 }
