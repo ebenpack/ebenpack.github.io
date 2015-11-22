@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=IE8" />
     <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no" />
-    <title>Eben Packwood — Lattice Boltzmann</title>
+    <title>Eben Packwood — VideoASCII</title>
     <!--[if lte IE 8]><script type="text/javascript" src="http://www.ebenpackwood.com/theme/js/html5shiv.js"></script><![endif]-->
-    <link rel="canonical" href="http://www.ebenpackwood.com/pages/projects/lattice-boltzmann.html" >
+    <link rel="canonical" href="http://www.ebenpackwood.com/pages/projects/videoascii.html" >
     <link rel="stylesheet" type="text/css" href="http://www.ebenpackwood.com/theme/css/style.min.css?22ccaac6" />
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <!--[if lte IE 8]><link rel="shortcut icon" type="image/x-icon" href="http://www.ebenpackwood.com/favicon.ico" /><![endif]-->
@@ -14,59 +14,65 @@
                            title="Eben Packwood — Flux Atom"
                            href="http://www.ebenpackwood.com/" /> 
 
-    <meta name="description" content="An implementation of the lattice Boltzmann method with JavaScript." />
+    <meta name="description" content="An ASCII video renderer." />
   </head>
   <body>
     <div id="page" class="page">   
       <div id="page-body" class="page-body">
         <section class="page-main" id="page-main" role="main">
-      <h1>Lattice Boltzmann</h1>
-      <div class="main" style="position:relative;">
-<div class="canvases" style="position: relative; height: 240px; width: 600px;">
-    <canvas id="boltzmann" style="background-color: #9044FF; position: absolute; left: 0; top: 0;" width='600' height='240'></canvas>
-    <canvas id="vectorcanvas" style="position: absolute; left: 0; top: 0;; pointer-events: none" width='600' height='240'></canvas>
-    <canvas id="particlecanvas" style="position: absolute; left: 0; top: 0; pointer-events: none" width='600' height='240'></canvas>
-    <canvas id="barriercanvas" style="position: absolute; left: 0; top: 0; pointer-events: none" width='600' height='240'></canvas>
-</div>
-<div id="controls" class="controls">   
-    <select id="drawmode">
-        <option value="speed">Speed</option>
-        <option value="xvelocity">X Velocity</option>
-        <option value="yvelocity">Y Velocity</option>
-        <option value="density">Density</option>
-        <option value="curl">Curl</option>
-        <option value="nothing">Nothing</option>
-    </select>
-    <label><input id="flowvectors" type="checkbox" name="flowvectors"> Flow Vectors</label>
-    <label><input id="flowparticles" type="checkbox" name="flowparticles"> Flow Particles</label>
-    <button id="play">Start</button>
-    <button id="reset">Reset</button>
-    <button id="clearbarriers">Clear barriers</button>
-    <br>
-    <br>
-    <label><input id="viscosity" type="range" name="viscosity" min="2" max="50"> Viscosity</label><br><br>
-    <label><input id="speed" type="range" name="anim-speed" min="1" max="15"> Animation Speed</label>
-    <br><br>
-    <label><input id="flow-speed" type="range" name="flow-speed" value="0" min="0" max="100"> Flow Speed</label>
-</div>
-<div style="border:1px solid gray; width: 600px; padding: 10px; margin-top:10px;">
-    <p><b>Left click</b> to drag fluid</p>
-    <p><b>Right click</b> to draw/erase barriers</p>
-</div>
-<div id="debug"></div>
-</div>
+      <h1>VideoASCII</h1>
+      <canvas id="canvas" width="300" height="300">
+    Sorry, this browser does not support canvas.
+</canvas>
 
-<script src="http://www.ebenpackwood.com/js/boltzmann.js"></script>
+<script src="http://www.ebenpackwood.com/js/videoascii.js"></script>
 
 <script>
-boltzman({
-    boltzId: "boltzmann",
-    latticeWidth: 200,
-    latticeHeight: 80,
-    vectorcanvasId: "vectorcanvas",
-    particlecanvasId: "particlecanvas",
-    barriercanvasId: "barriercanvas",
-});
+     (function(){
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        var video = document.createElement('video');
+
+        // Prepare canvas and display instruction
+        canvas.style.border = "4px dashed gray";
+        ctx.textAlign="center"; 
+        ctx.font="14pt Arial"; 
+        ctx.fillText("Drop video files here to asciify", 150, 150); 
+
+        function make_ascii(canvas, video){
+            // canvas.width = video.width;
+            // canvas.height = video.height;
+            canvas.style.border = "";
+            videoascii({
+                canvas: canvas,
+                video: video,
+                font_size: 8,
+                monochrome: false,
+                autoplay: true
+            });
+
+        }
+
+        // Register canvas drag 'n' drop handler
+        canvas.addEventListener("dragover", function (e) {
+            e.preventDefault();
+        }, false);
+        canvas.addEventListener("drop", function (e) {
+            var files = e.dataTransfer.files;
+            if (files.length > 0) {
+                var file = files[0];
+                if (typeof FileReader !== "undefined" && file.type.indexOf("video") != -1) {
+                    var reader = new FileReader();
+                    reader.onload = function (evt) {
+                        video.src = evt.target.result;
+                        make_ascii(canvas, video);
+                    };
+                reader.readAsDataURL(file);
+                }
+            }
+            e.preventDefault();
+        }, false);  
+    })()
 </script>
       </section> <!-- /#page-main -->
 
