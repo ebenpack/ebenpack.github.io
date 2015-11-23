@@ -34,16 +34,15 @@
 
         // Prepare canvas and display instruction
         canvas.style.border = "4px dashed gray";
-        ctx.textAlign="center"; 
-        ctx.font="14pt Arial"; 
+        ctx.textAlign = "center"; 
+        ctx.font = "14pt Arial"; 
         ctx.fillText("Drop video files here to asciify", 150, 150); 
 
         function make_ascii(canvas, videoSrc){
-            // canvas.width = video.width;
-            // canvas.height = video.height;
             canvas.style.border = "";
             videoascii({
                 canvas: canvas,
+                output_width: canvas.parentElement.offsetWidth,
                 videoSrc: videoSrc,
                 font_size: 8,
                 monochrome: false,
