@@ -25,7 +25,7 @@
     Sorry, this browser does not support canvas.
 </canvas>
 
-<script src="http://www.ebenpackwood.com/js/videoascii.js"></script>
+<script src="http://www.ebenpackwood.com/js/bundle.js"></script>
 
 <script>
      (function(){
@@ -40,7 +40,7 @@
 
         function make_ascii(canvas, videoSrc){
             canvas.style.border = "";
-            videoascii({
+            main.videoascii({
                 canvas: canvas,
                 output_width: canvas.parentElement.offsetWidth,
                 videoSrc: videoSrc,
