@@ -53,7 +53,7 @@ function asciify(inputWidth, inputHeight, outputWidth, outputHeight, monochrome,
                 }
                 var blockLuminanceAvg = blockLuminanceTotal / area;
                 var idx = Math.floor((asciiLuminanceMap.length - 1) * blockLuminanceAvg);
-                if (!monocrhome) {
+                if (!monochrome) {
                     var r = Math.floor(redTotal / area);
                     var g = Math.floor(greenTotal / area);
                     var b = Math.floor(blueTotal / area);
@@ -78,7 +78,7 @@ function asciify(inputWidth, inputHeight, outputWidth, outputHeight, monochrome,
     }
 
     function toggleMonochrome(){
-        monocrhome = !monocrhome;
+        monochrome = !monochrome;
     }
 
     return {
