@@ -23,7 +23,7 @@ function asciify(inputWidth, inputHeight, outputWidth, outputHeight, ctx, fontSi
     ctx.font = fontSize + "pt Courier";
     var fontWidth = ctx.measureText('W').width;
     var fontHeight = fontSize;
-    var fontArray = new Array(Math.round(width/fontWidth));
+    var fontArray = new Array(Math.round(outputWidth/fontWidth));
     resize(inputWidth, inputHeight, outputWidth, outputHeight);
 
     function drawMonochrome(imageData) {
@@ -105,6 +105,7 @@ function asciify(inputWidth, inputHeight, outputWidth, outputHeight, ctx, fontSi
         outputWidth = oWidth;
         outputHeight = oHeight;
         ratio = inputWidth / outputWidth;
+        fontArray = new Array(Math.round(outputWidth/fontWidth));
         inputSampleWidth = Math.floor(fontWidth * ratio);
         inputSampleHeight = Math.floor(fontHeight * ratio);
         incrementX = Math.max(1, Math.floor(inputSampleWidth * (1 - fidelity)));
