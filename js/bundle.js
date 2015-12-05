@@ -2033,22 +2033,21 @@ function videoascii(options){
     // in order to get pixel data into ImageData array.
     var buffer_canvas = document.createElement('canvas');
     var buffer_ctx = buffer_canvas.getContext('2d');
-    var ascii;
-
-    video.addEventListener('canplay', function(){
-        resize(output_width);
-        ctx.font = font_size + "pt Courier";
-        image_data = buffer_ctx.getImageData(0, 0, width, height);
-        ascii = asciify(
-            image_data.width,
-            image_data.height,
-            output_width,
-            output_height,
+    var ascii = asciify(
+            0,
+            0,
+            0,
+            0,
             ctx,
             10,
             false,
             0
         );
+
+    video.addEventListener('canplay', function(){
+        resize(output_width);
+        ctx.font = font_size + "pt Courier";
+        image_data = buffer_ctx.getImageData(0, 0, width, height);
 
         if (autoplay){
             start();
