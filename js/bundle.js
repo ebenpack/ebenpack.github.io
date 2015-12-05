@@ -78,6 +78,7 @@ function asciify(inputWidth, inputHeight, outputWidth, outputHeight, monochrome,
     }
 
     function toggleMonochrome(){
+        ctx.fillStyle = "black";
         monochrome = !monochrome;
     }
 
