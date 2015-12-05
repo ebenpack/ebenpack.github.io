@@ -2135,7 +2135,7 @@ function videoascii(options){
     }
     function toggleMonochrome(){
         monochrome = !monochrome;
-        draw = monochrome ? ascii.drawMonochrome : drawColor;
+        draw = monochrome ? ascii.drawMonochrome : ascii.drawColor;
     }
 
     return {
