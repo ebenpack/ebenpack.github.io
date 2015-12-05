@@ -8,78 +8,78 @@ exports.vu = _dereq_('vu');
 exports.conway = _dereq_('conway');
 exports.projectwavybits = _dereq_('projectwavybits');
 },{"astar":3,"boltzmann":4,"conway":5,"projectwavybits":6,"videoascii":7,"vu":8,"wireframe":9}],2:[function(_dereq_,module,exports){
-function luminance(r,g,b){
-    return (0.2126*r + 0.7152*g + 0.0722*b) / 255;
-    // TODO: try these other options, see which works best
-    // (0.299*R + 0.587*G + 0.114*B)
-    // sqrt( 0.299*R^2 + 0.587*G^2 + 0.114*B^2 )
-    // (R+R+B+G+G+G)/6
+function luminance(r, g, b) {
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
 }
 
-function asciify(raw_imageData, canvas, font_size, monochrome){
+function asciify(inputWidth, inputHeight, outputWidth, outputHeight, ctx, fontSize, monochrome, fidelity) {
     // Characters from 'darkest' to 'lightest'
-    var ascii_luminance_map = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft\/|()1{}[]?-_+~<>i!lI;:,\"^`\'. ";
-    // TODO: try these other options to see which works best
-    // ".:*IVFNM"
-    // " .'`,^:" + '";~-_+<>i!lI?/|()1{}[]rcvunxzjftLCJUYXZO0Qoahkbdpqwm*WMB8&%$#@
-    var canvas_ctx = canvas.getContext('2d');
-    var input_width = raw_imageData.width;
-    var input_height = raw_imageData.height;
-    var output_width = canvas.width;
-    var output_height = canvas.height;
-    var ratio = input_width / output_width;
+    var asciiLuminanceMap = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft\/|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
+    var ratio;
+    var inputSampleWidth;
+    var inputSampleHeight;
+    var incrementX;
+    var incrementY;
+    ctx.font = fontSize + "pt Courier";
+    var fontWidth = Math.round(ctx.measureText('W').width);
+    var fontHeight = fontSize;
+    resize(inputWidth, inputHeight, outputWidth, outputHeight);
 
-    canvas_ctx.font = font_size + "pt Courier";
-    var font_width = Math.round(canvas_ctx.measureText('W').width);
-    var font_height = font_size;
-
-    var input_sample_width = Math.floor(font_width * ratio);
-    var input_sample_height = Math.floor(font_height * ratio);
-
-    var image_data = raw_imageData.data;
-
-    // For each ascii character in the output
-    for (var x = 0; x < output_width; x+= font_width){
-        for (var y = 0; y < output_height; y+= font_height){
-            // Determine location and size of corresponding
-            // rectangle in input
-
-            // Loop over input sample, determine average RGB
-            // and luminance values
-            var block_luminance_total = 0;
-            var red_tot = 0;
-            var green_tot = 0;
-            var blue_tot = 0;
-            var area = 0;
-            for (var x2=0; x2<input_sample_width; x2++){
-                for (var y2=0; y2<input_sample_height; y2++){
-                    var index = ((Math.round(x*ratio)+x2) + ((Math.round(y*ratio)+y2) * input_width)) * 4;
-                    // TODO: 
-                    if (index<image_data.length){
-                        var red = image_data[index];
-                        var green = image_data[index+1];
-                        var blue = image_data[index+2];
-                        red_tot += red;
-                        green_tot += green;
-                        blue_tot += blue;
-                        block_luminance_total += luminance(red, green, blue);
-                        area += 1;
+    function draw(imageData) {
+        // For each ascii character in the output
+        for (var y = 0; y < outputHeight; y += fontHeight) {
+            for (var x = 0; x < outputWidth; x += fontWidth) {
+                // Loop over input sample, determine average RGB
+                // and luminance values
+                var blockLuminanceTotal = 0;
+                var redTotal = 0;
+                var greenTotal = 0;
+                var blueTotal = 0;
+                var area = 0;
+                for (var y2 = 0; y2 < inputSampleHeight; y2 += incrementY) {
+                    for (var x2 = 0; x2 < inputSampleWidth; x2 += incrementX) {
+                        var index = ((Math.round(x * ratio) + x2) + ((Math.round(y * ratio) + y2) * inputWidth)) * 4;
+                        if (index < imageData.length) {
+                            var red = imageData[index];
+                            var green = imageData[index + 1];
+                            var blue = imageData[index + 2];
+                            redTotal += red;
+                            greenTotal += green;
+                            blueTotal += blue;
+                            blockLuminanceTotal += luminance(red, green, blue);
+                            area += 1;
+                        }
                     }
                 }
+                var blockLuminanceAvg = blockLuminanceTotal / area;
+                var idx = Math.floor((asciiLuminanceMap.length - 1) * blockLuminanceAvg);
+                if (!monochrome) {
+                    var r = Math.floor(redTotal / area);
+                    var g = Math.floor(greenTotal / area);
+                    var b = Math.floor(blueTotal / area);
+                    ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                }
+                var character = asciiLuminanceMap[idx];
+                ctx.fillText(character, x, y);
             }
-            var block_luminance_avg = block_luminance_total / area;
-            var map_length = ascii_luminance_map.length;
-            var idx = Math.floor((map_length - 1) * block_luminance_avg);
-            if (!monochrome){
-                var r = Math.floor(red_tot / area);
-                var g = Math.floor(green_tot / area);
-                var b = Math.floor(blue_tot / area);
-                canvas_ctx.fillStyle = "rgb(" + r +"," +g +","+b + ")";
-            }
-            var character = ascii_luminance_map[idx];
-            canvas_ctx.fillText(character, x, y);
         }
     }
+
+    function resize(iWidth, iHeight, oWidth, oHeight) {
+        inputWidth = iWidth;
+        inputHeight = iHeight;
+        outputWidth = oWidth;
+        outputHeight = oHeight;
+        ratio = inputWidth / outputWidth;
+        inputSampleWidth = Math.floor(fontWidth * ratio);
+        inputSampleHeight = Math.floor(fontHeight * ratio);
+        incrementX = Math.max(1, Math.floor(inputSampleWidth * (1 - fidelity)));
+        incrementY = Math.max(1, Math.floor(inputSampleHeight * (1 - fidelity)));
+    }
+    return {
+        draw: draw,
+        resize: resize,
+    };
 }
 
 module.exports = asciify;
@@ -2033,14 +2033,22 @@ function videoascii(options){
     // in order to get pixel data into ImageData array.
     var buffer_canvas = document.createElement('canvas');
     var buffer_ctx = buffer_canvas.getContext('2d');
-
+    var ascii;
 
     video.addEventListener('canplay', function(){
         resize(output_width);
-
         ctx.font = font_size + "pt Courier";
-       
         image_data = buffer_ctx.getImageData(0, 0, width, height);
+        ascii = asciify(
+            image_data.width,
+            image_data.height,
+            output_width,
+            output_height,
+            ctx,
+            10,
+            false,
+            0
+        );
 
         if (autoplay){
             start();
@@ -2060,7 +2068,7 @@ function videoascii(options){
         buffer_ctx.drawImage(video, 0, 0);
         image_data = buffer_ctx.getImageData(0, 0, width, height);
         ctx.clearRect(0, 0, output_width, output_height);
-        asciify(image_data, canvas, font_size, monochrome);
+        ascii.draw(image_data.data);
     }
 
     function start(){
@@ -2086,6 +2094,7 @@ function videoascii(options){
         output_height = Math.floor(output_width / aspect_ratio);
         canvas.width = output_width;
         canvas.height = output_height;
+        ascii.resize(width, height, output_width, output_height);
     }
     function restart(){
         video.currentTime = 0;
