@@ -12,7 +12,7 @@ function luminance(r, g, b) {
     return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
 }
 
-function asciify(inputWidth, inputHeight, outputWidth, outputHeight, ctx, fontSize, fidelity) {
+function asciify(inputWidth, inputHeight, outputWidth, outputHeight, monochrome, ctx, fontSize, fidelity) {
     // Characters from 'darkest' to 'lightest'
     var asciiLuminanceMap = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft\/|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
     var ratio;
@@ -23,44 +23,9 @@ function asciify(inputWidth, inputHeight, outputWidth, outputHeight, ctx, fontSi
     ctx.font = fontSize + "pt Courier";
     var fontWidth = ctx.measureText('W').width;
     var fontHeight = fontSize;
-    var fontArray = new Array(Math.round(outputWidth/fontWidth));
     resize(inputWidth, inputHeight, outputWidth, outputHeight);
 
-    function drawMonochrome(imageData) {
-        // For each ascii character in the output
-        for (var y = 0; y < outputHeight; y += fontHeight) {
-            for (var x = 0, i = 0; x < outputWidth; x += fontWidth, i++) {
-                // Loop over input sample, determine average RGB
-                // and luminance values
-                var blockLuminanceTotal = 0;
-                var redTotal = 0;
-                var greenTotal = 0;
-                var blueTotal = 0;
-                var area = 0;
-                for (var y2 = 0; y2 < inputSampleHeight; y2 += incrementY) {
-                    for (var x2 = 0; x2 < inputSampleWidth; x2 += incrementX) {
-                        var index = ((Math.round(x * ratio) + x2) + ((Math.round(y * ratio) + y2) * inputWidth)) * 4;
-                        if (index < imageData.length) {
-                            var red = imageData[index];
-                            var green = imageData[index + 1];
-                            var blue = imageData[index + 2];
-                            redTotal += red;
-                            greenTotal += green;
-                            blueTotal += blue;
-                            blockLuminanceTotal += luminance(red, green, blue);
-                            area += 1;
-                        }
-                    }
-                }
-                var blockLuminanceAvg = blockLuminanceTotal / area;
-                var idx = Math.floor((asciiLuminanceMap.length - 1) * blockLuminanceAvg);
-                fontArray[i] = asciiLuminanceMap[idx];
-            }
-            ctx.fillText(fontArray.join(''), 0, y);
-        }
-    }
-
-    function drawColor(imageData) {
+    function draw(imageData) {
         // For each ascii character in the output
         for (var y = 0; y < outputHeight; y += fontHeight) {
             for (var x = 0; x < outputWidth; x += fontWidth) {
@@ -88,11 +53,12 @@ function asciify(inputWidth, inputHeight, outputWidth, outputHeight, ctx, fontSi
                 }
                 var blockLuminanceAvg = blockLuminanceTotal / area;
                 var idx = Math.floor((asciiLuminanceMap.length - 1) * blockLuminanceAvg);
-
-                var r = Math.floor(redTotal / area);
-                var g = Math.floor(greenTotal / area);
-                var b = Math.floor(blueTotal / area);
-                ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                if (!monocrhome) {
+                    var r = Math.floor(redTotal / area);
+                    var g = Math.floor(greenTotal / area);
+                    var b = Math.floor(blueTotal / area);
+                    ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                }
                 var character = asciiLuminanceMap[idx];
                 ctx.fillText(character, x, y);
             }
@@ -105,15 +71,19 @@ function asciify(inputWidth, inputHeight, outputWidth, outputHeight, ctx, fontSi
         outputWidth = oWidth;
         outputHeight = oHeight;
         ratio = inputWidth / outputWidth;
-        fontArray = new Array(Math.round(outputWidth/fontWidth));
         inputSampleWidth = Math.floor(fontWidth * ratio);
         inputSampleHeight = Math.floor(fontHeight * ratio);
         incrementX = Math.max(1, Math.floor(inputSampleWidth * (1 - fidelity)));
         incrementY = Math.max(1, Math.floor(inputSampleHeight * (1 - fidelity)));
     }
+
+    function toggleMonochrome(){
+        monocrhome = !monocrhome;
+    }
+
     return {
-        drawMonochrome: drawMonochrome,
-        drawColor: drawColor,
+        toggleMonochrome: toggleMonochrome,
+        draw: draw,
         resize: resize,
     };
 }
@@ -2074,12 +2044,11 @@ function videoascii(options){
             0,
             0,
             0,
+            monochrome,
             ctx,
             10,
-            false,
-            0
+            0.001
         );
-    var draw = monochrome ? ascii.drawMonochrome : ascii.drawColor;
     video.addEventListener('canplay', function(){
         resize(output_width);
         ctx.font = font_size + "pt Courier";
@@ -2103,7 +2072,7 @@ function videoascii(options){
         buffer_ctx.drawImage(video, 0, 0);
         image_data = buffer_ctx.getImageData(0, 0, width, height);
         ctx.clearRect(0, 0, output_width, output_height);
-        draw(image_data.data);
+        ascii.draw(image_data.data);
     }
 
     function start(){
@@ -2135,8 +2104,7 @@ function videoascii(options){
         video.currentTime = 0;
     }
     function toggleMonochrome(){
-        monochrome = !monochrome;
-        draw = monochrome ? ascii.drawMonochrome : ascii.drawColor;
+        ascii.toggleMonochrome();
     }
 
     return {
