@@ -1,13 +1,343 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.main=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+var lispish = _dereq_('lispish.js');
+
+function initLispish(input, ref) {
+    // Use a trie for autocompletion.
+    function addTrie(T, name, namespace) {
+        function stringifyName(name, namespace) {
+            return lispish.cons.print(
+                lispish.list.concat(
+                    lispish.list.concat(
+                        namespace,
+                        lispish.list.list('.')
+                    ), name
+                ), {
+                    prefix: '',
+                    suffix: '',
+                    separator: ''
+                }
+            );
+        }
+
+        function helper(T, name, namespace, fullName) {
+            if (lispish.cons.cdr(name) === null) {
+                if (T === null) {
+                    return lispish.alist.alist(
+                        lispish.cons.car(name),
+                        lispish.alist.alist(
+                            '_value',
+                            lispish.list.list(
+                                stringifyName(fullName, namespace)
+                            )
+                        )
+                    );
+                } else {
+                    if (lispish.alist.get(T, lispish.cons.car(name)) === null) {
+                        return lispish.alist.put(
+                            T,
+                            lispish.cons.car(name),
+                            lispish.alist.alist(
+                                '_value',
+                                lispish.list.list(
+                                    stringifyName(fullName, namespace)
+                                )
+                            )
+                        );
+                    } else {
+                        return lispish.alist.put(
+                            T,
+                            lispish.cons.car(name),
+                            lispish.alist.put(
+                                lispish.alist.get(
+                                    T,
+                                    lispish.cons.car(name)
+                                ),
+                                '_value',
+                                lispish.list.push(
+                                    lispish.alist.get(
+                                        lispish.alist.get(
+                                            T,
+                                            lispish.cons.car(name)
+                                        ),
+                                        '_value'
+                                    ),
+                                    stringifyName(fullName, namespace)
+                                )
+                            )
+                        );
+                    }
+                }
+            } else {
+                if (T === null) {
+                    if (lispish.alist.get(T, lispish.cons.car(name)) === null) {
+                        return lispish.alist.alist(
+                            lispish.cons.car(name),
+                            helper(
+                                null,
+                                lispish.cons.cdr(name),
+                                namespace,
+                                fullName
+                            )
+                        );
+                    } else {
+                        return lispish.alist.alist(
+                            lispish.cons.car(name),
+                            helper(
+                                lispish.alist.get(T, lispish.cons.car(name)),
+                                lispish.cons.cdr(name),
+                                namespace,
+                                fullName
+                            )
+                        );
+                    }
+                } else {
+                    if (lispish.alist.get(T, lispish.cons.car(name)) === null) {
+                        return lispish.alist.put(
+                            T,
+                            lispish.cons.car(name),
+                            helper(
+                                null,
+                                lispish.cons.cdr(name),
+                                namespace,
+                                fullName
+                            )
+                        );
+                    } else {
+                        return lispish.alist.put(
+                            T,
+                            lispish.cons.car(name),
+                            helper(
+                                lispish.alist.get(T, lispish.cons.car(name)),
+                                lispish.cons.cdr(name),
+                                namespace,
+                                fullName
+                            )
+                        );
+                    }
+                }
+            }
+        }
+        return helper(
+            T,
+            lispish.list.map(name, function(letter) {
+                return letter.toLowerCase();
+            }),
+            namespace,
+            name
+        );
+    }
+
+    function getTrie(T, str) {
+        function getLeaves(T, list) {
+            if (T === null) {
+                return list;
+            } else {
+                return lispish.alist.map(T, function(key, val) {
+                    if (key === '_value') {
+                        return val;
+                    } else {
+                        return getLeaves(val, list);
+                    }
+                });
+            }
+        }
+
+        function descendToNode(T, word) {
+            if (T === null) {
+                return null;
+            } else if (lispish.cons.cdr(word) === null) {
+                return lispish.alist.get(T, lispish.cons.car(word));
+            } else {
+                return descendToNode(
+                    lispish.alist.get(T, lispish.cons.car(word)),
+                    lispish.cons.cdr(word)
+                );
+            }
+        }
+        var f = getLeaves(descendToNode(T, str), null);
+        return lispish.list.flatten(f);
+    }
+    // Throw everything into the global namespace
+    // and collect function names for autocompletion
+    // and for sidebar.
+    var docu = {};
+    var autocomplete = null;
+    var namespace;
+    for (namespace in lispish) {
+        docu[namespace] = [];
+        window[namespace] = {};
+        for (var p in lispish[namespace]) {
+            window[namespace][p] = lispish[namespace][p];
+            if (!(p[0] === 'c' && p[p.length - 1] === 'r' && p.length > 3)) {
+                docu[namespace].push(p);
+                autocomplete = addTrie(
+                    autocomplete,
+                    lispish.list.list(p.split('')),
+                    lispish.list.list(namespace.split(''))
+                );
+            }
+        }
+    }
+
+    function getCompletions(T, text) {
+        return list.reduce(
+            list.sort(
+                getTrie(
+                    T,
+                    lispish.list.list(text.toLowerCase().split(''))
+                )
+            ),
+            function(curr, prev) {
+                return prev.concat(curr);
+            }, []
+        );
+    }
+    var lispishCompleter = {
+        getCompletions: function(editor, session, pos, prefix, callback) {
+            if (prefix.length === 0) {
+                callback(null, []);
+                return;
+            } else {
+                var completions = getCompletions(autocomplete, prefix.toLowerCase());
+                completions.sort();
+                completions.forEach(function(curr, idx, arr) {
+                    arr[idx] = {
+                        caption: curr,
+                        snippet: curr + '($1)',
+                        meta: "lispish"
+                    };
+                });
+                callback(null, completions);
+                return;
+            }
+        }
+    };
+
+    var editor = ace.edit("input");
+    var langTools = ace.require("ace/ext/language_tools");
+    langTools.setCompleters([lispishCompleter]);
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/javascript");
+    editor.setOptions({
+        fontSize: "16px",
+        enableSnippets: true,
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true
+    });
+
+    var ref = document.getElementById(ref);
+    editor.commands.addCommand({
+        name: 'evaluate',
+        bindKey: {
+            win: 'Ctrl-Return',
+            mac: 'Command-Return'
+        },
+        exec: recalculate,
+        readOnly: true // false if this command should not apply in readOnly mode
+    });
+
+    function recalculate(editor) {
+        var code = editor.getValue(),
+            lines = code.split("\n"),
+            chunks,
+            lastChunk;
+
+        while (lines[lines.length - 1].match(/^\s*$/)) {
+            lines.pop();
+        }
+
+        if (lines.length === 0) {
+            return;
+        }
+
+        chunks = lines.reduce(
+            function(acc, line, index) {
+                if (line.match(/^\s*$/)) {
+                    // do nothing
+                } else if (line.match(/\/\/=>/)) {
+                    acc[acc.length - 1].push("//=> " + index);
+                    acc.push(acc[acc.length - 1].slice(0));
+                } else acc[acc.length - 1].push(line);
+
+                return acc;
+            }, [
+                []
+            ]);
+
+        chunks = chunks.filter(function(item) {
+            return item.length > 0;
+        });
+
+        if (chunks.length === 0) {
+            return;
+        }
+
+        chunks = chunks.map(function(chunk) {
+            var wantsResult = chunk[chunk.length - 1].match(/\/\/=>/),
+                resultPosition = wantsResult ? parseInt(chunk.pop().split(' ')[1]) : lines.length,
+                result;
+
+            try {
+                result = JSON.stringify(eval(chunk.join('\n')));
+                if (wantsResult) {
+                    lines[resultPosition] = '//=> ' + result;
+                }
+            } catch (error) {
+                lines[resultPosition] = '//=> ' + error.name + ': ' + error.message;
+            }
+        });
+
+        code = lines.join('\n');
+
+        editor.setValue(code);
+
+        editor.gotoLine(editor.session.getLength(), editor.session.getLine(editor.session.getLength() - 1).length);
+
+    }
+
+    function makeLink(elmt, namespace) {
+        var outer = document.createElement('div');
+        var lnk = document.createElement('a');
+        lnk.href = '#';
+        lnk.textContent = elmt;
+        lnk.addEventListener('click', function(e) {
+            e.preventDefault();
+            elmt === '//=>' ? editor.insert(elmt) : editor.insert((typeof namespace === 'undefined' ? '' : namespace + '.') + elmt + '()');
+        });
+        outer.appendChild(lnk);
+        return outer;
+    }
+
+    function heading(txt) {
+        var header = document.createElement('h3');
+        header.textContent = txt;
+        header.className = 'namespace';
+        return header;
+    }
+    var input = document.getElementById(input);
+    for (namespace in docu) {
+        if (docu.hasOwnProperty(namespace)) {
+
+            ref.appendChild(heading(namespace));
+            docu[namespace].sort();
+            docu[namespace].forEach(function(elmt) {
+                ref.appendChild(makeLink(elmt, namespace));
+            });
+        }
+    }
+    ref.appendChild(heading('evaluate'));
+    ref.appendChild(makeLink('//=>'));
+}
 
 exports.astar = _dereq_('astar');
 exports.wireframe = _dereq_('wireframe');
 exports.videoascii = _dereq_('videoascii');
 exports.boltzmann = _dereq_('boltzmann');
+exports.initLispish = initLispish;
 exports.vu = _dereq_('vu');
 exports.conway = _dereq_('conway');
 exports.projectwavybits = _dereq_('projectwavybits');
-},{"astar":3,"boltzmann":4,"conway":5,"projectwavybits":6,"videoascii":7,"vu":8,"wireframe":9}],2:[function(_dereq_,module,exports){
+},{"astar":3,"boltzmann":4,"conway":5,"lispish.js":43,"projectwavybits":44,"videoascii":45,"vu":46,"wireframe":47}],2:[function(_dereq_,module,exports){
 function luminance(r, g, b) {
     return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
 }
@@ -532,7 +862,7 @@ function boltzmann(config) {
         flow_particles.length = 0;
         for (var y = 1; y < 8; y++) {
             for (var x = 1; x < 20; x++) {
-                if (!Lbarrier[(y * 10)*latticeWidth+(x * 10)]) {
+                if (!Lbarrier[(y * 10) * latticeWidth + (x * 10)]) {
                     flow_particles.push({
                         'x': x * 10,
                         'y': y * 10
@@ -552,8 +882,8 @@ function boltzmann(config) {
             var ly = Math.floor(p.y);
             if (lx >= 0 && lx < latticeWidth &&
                 ly >= 0 && ly < latticeHeight) {
-                var ux = Lux[ly*latticeWidth+lx];
-                var uy = Luy[ly*latticeWidth+lx];
+                var ux = Lux[ly * latticeWidth + lx];
+                var uy = Luy[ly * latticeWidth + lx];
                 p.x += ux;
                 p.y += uy;
             }
@@ -575,12 +905,12 @@ function boltzmann(config) {
             // Clear all
             for (y = 0; y < latticeHeight; y++) {
                 for (x = 0; x < latticeWidth; x++) {
-                    Lbarrier[y*latticeWidth+x] = 0;
+                    Lbarrier[y * latticeWidth + x] = 0;
                 }
             }
             // Set new barriers from barrier array
             for (var i = 0; i < barrier.length; i++) {
-                Lbarrier[barrier[i].y*latticeWidth+barrier[i].x] = 1;
+                Lbarrier[barrier[i].y * latticeWidth + barrier[i].x] = 1;
             }
         } else {
             // Default barrier setup
@@ -590,7 +920,7 @@ function boltzmann(config) {
                         y === 0 || y === latticeHeight - 1 ||
                         (Math.abs((latticeWidth / 2) - x) < 10 &&
                             Math.abs((latticeHeight / 2) - y) < 10)) {
-                        Lbarrier[y*latticeWidth+x] = 1;
+                        Lbarrier[y * latticeWidth + x] = 1;
                     }
                 }
             }
@@ -611,49 +941,49 @@ function boltzmann(config) {
         var temp8 = L8;
         var wid = latticeWidth;
         var hei = latticeHeight;
-        for (y=hei-2; y>0; y--) {
-            for (x=1; x<wid-1; x++) {
-                idx = y*wid+x;
-                temp2[idx] = temp2[(y-1)*wid+x];
-                temp6[idx] = temp6[(y-1)*wid+(x+1)];
+        for (y = hei - 2; y > 0; y--) {
+            for (x = 1; x < wid - 1; x++) {
+                idx = y * wid + x;
+                temp2[idx] = temp2[(y - 1) * wid + x];
+                temp6[idx] = temp6[(y - 1) * wid + (x + 1)];
             }
         }
-        
-        for (y=hei-2; y>0; y--) {
-            for (x=wid-2; x>0; x--) {
-                idx = y*wid+x;
-                temp1[idx] = temp1[y*wid+(x-1)];
-                temp5[idx] = temp5[(y-1)*wid+(x-1)];
+
+        for (y = hei - 2; y > 0; y--) {
+            for (x = wid - 2; x > 0; x--) {
+                idx = y * wid + x;
+                temp1[idx] = temp1[y * wid + (x - 1)];
+                temp5[idx] = temp5[(y - 1) * wid + (x - 1)];
             }
         }
-        
-        for (y=1; y<hei-1; y++) {
-            for (x=wid-2; x>0; x--) {
-                idx = y*wid+x;
-                temp4[idx] = temp4[(y+1)*wid+x];
-                temp8[idx] = temp8[(y+1)*wid+(x-1)];
+
+        for (y = 1; y < hei - 1; y++) {
+            for (x = wid - 2; x > 0; x--) {
+                idx = y * wid + x;
+                temp4[idx] = temp4[(y + 1) * wid + x];
+                temp8[idx] = temp8[(y + 1) * wid + (x - 1)];
             }
         }
-        
-        for (y=1; y<hei-1; y++) {
-            for (x=1; x<wid-1; x++) {
-                idx = y*wid+x;
-                temp3[idx] = temp3[y*wid+(x+1)];
-                temp7[idx] = temp7[(y+1)*wid+(x+1)];
+
+        for (y = 1; y < hei - 1; y++) {
+            for (x = 1; x < wid - 1; x++) {
+                idx = y * wid + x;
+                temp3[idx] = temp3[y * wid + (x + 1)];
+                temp7[idx] = temp7[(y + 1) * wid + (x + 1)];
             }
         }
-        for (y=1; y<hei-1; y++) {
-            for (x=1; x<wid-1; x++) {
-                idx = y*wid+x;
+        for (y = 1; y < hei - 1; y++) {
+            for (x = 1; x < wid - 1; x++) {
+                idx = y * wid + x;
                 if (Lbarrier[idx]) {
-                    temp1[(y  )*wid+(x+1)] = temp3[idx];
-                    temp2[(y+1)*wid+(x  )] = temp4[idx];
-                    temp3[(y  )*wid+(x-1)] = temp1[idx];
-                    temp4[(y-1)*wid+(x  )] = temp2[idx];
-                    temp5[(y+1)*wid+(x+1)] = temp7[idx];
-                    temp6[(y+1)*wid+(x-1)] = temp8[idx];
-                    temp7[(y-1)*wid+(x-1)] = temp5[idx];
-                    temp8[(y-1)*wid+(x+1)] = temp6[idx];
+                    temp1[(y) * wid + (x + 1)] = temp3[idx];
+                    temp2[(y + 1) * wid + (x)] = temp4[idx];
+                    temp3[(y) * wid + (x - 1)] = temp1[idx];
+                    temp4[(y - 1) * wid + (x)] = temp2[idx];
+                    temp5[(y + 1) * wid + (x + 1)] = temp7[idx];
+                    temp6[(y + 1) * wid + (x - 1)] = temp8[idx];
+                    temp7[(y - 1) * wid + (x - 1)] = temp5[idx];
+                    temp8[(y - 1) * wid + (x + 1)] = temp6[idx];
                 }
             }
         }
@@ -682,7 +1012,7 @@ function boltzmann(config) {
         var hei = latticeHeight;
         for (var y = 1; y < hei - 1; y++) {
             for (var x = 1; x < wid - 1; x++) {
-                idx = y*wid+x;
+                idx = y * wid + x;
                 if (!tempbar[idx]) {
                     // Calculate macroscopic density (rho) and velocity (ux, uy)
                     // Thanks to Daniel V. Schroeder for this optimization
@@ -737,10 +1067,10 @@ function boltzmann(config) {
                     if (draw_mode == 4 && x > 0 && x < wid - 1 &&
                         y > 0 && y < hei - 1) {
                         tempcurl[idx] = (
-                            tempuy[y*wid+(x + 1)] -
-                            tempuy[y*wid+(x - 1)] -
-                            tempux[(y + 1)*wid+x] +
-                            tempux[(y - 1)*wid+x]
+                            tempuy[y * wid + (x + 1)] -
+                            tempuy[y * wid + (x - 1)] -
+                            tempux[(y + 1) * wid + x] +
+                            tempux[(y - 1) * wid + x]
                         );
                     }
                     // Set node equilibrium for each velocity
@@ -810,7 +1140,7 @@ function boltzmann(config) {
         var eight = one36th * rho * (1 + ux3 - uy3 + 4.5 * (u2 - uxuy2) - u215);
         for (var x = 0; x < latticeWidth - 1; x++) {
             idx1 = x;
-            idx2 = (latticeHeight - 1)*latticeWidth+x;
+            idx2 = (latticeHeight - 1) * latticeWidth + x;
             temp0[idx2] = temp0[idx1] = zero;
             temp1[idx2] = temp1[idx1] = one;
             temp2[idx2] = temp2[idx1] = two;
@@ -822,8 +1152,8 @@ function boltzmann(config) {
             temp8[idx2] = temp8[idx1] = eight;
         }
         for (var y = 0; y < latticeHeight - 1; y++) {
-            idx1 = y*latticeWidth;
-            idx2 = y*latticeWidth+(latticeWidth - 1);
+            idx1 = y * latticeWidth;
+            idx2 = y * latticeWidth + (latticeWidth - 1);
             temp0[idx2] = temp0[idx1] = zero;
             temp1[idx2] = temp1[idx1] = one;
             temp2[idx2] = temp2[idx1] = two;
@@ -1019,7 +1349,7 @@ function boltzmann(config) {
     function draw_barriers() {
         for (var x = 0; x < latticeWidth; x++) {
             for (var y = 0; y < latticeHeight; y++) {
-                if (Lbarrier[y*latticeWidth+x]) {
+                if (Lbarrier[y * latticeWidth + x]) {
                     barrierctx.beginPath();
                     barrierctx.rect(x * px_per_node, y * px_per_node, px_per_node, px_per_node);
                     barrierctx.fill();
@@ -1050,7 +1380,7 @@ function boltzmann(config) {
         }
         for (x = 0; x < latticeWidth; x++) {
             for (y = 0; y < latticeHeight; y++) {
-                var idx = y*latticeWidth+x;
+                var idx = y * latticeWidth + x;
                 var color_index;
                 if (!Lbarrier[idx]) {
                     // var color = {'r': 0, 'g': 0, 'b': 0, 'a': 0};
@@ -1128,6 +1458,55 @@ function boltzmann(config) {
     var flowvector;
     var flowparticle;
 
+    function moveHelper(newX, newY, oldX, oldY) {
+        var radius = 5;
+        var dx = (newX - oldX) / px_per_node / steps_per_frame;
+        var dy = (newY - oldY) / px_per_node / steps_per_frame;
+        // Ensure that push isn't too big
+        if (Math.abs(dx) > 0.1) {
+            dx = 0.1 * Math.abs(dx) / dx;
+        }
+        if (Math.abs(dy) > 0.1) {
+            dy = 0.1 * Math.abs(dy) / dy;
+        }
+        // Scale from canvas coordinates to lattice coordinates
+        var lattice_x = Math.floor(newX / px_per_node);
+        var lattice_y = Math.floor(newY / px_per_node);
+        for (var x = -radius; x <= radius; x++) {
+            for (var y = -radius; y <= radius; y++) {
+                // Push in circle around cursor. Make sure coordinates are in bounds.
+                if (lattice_x + x >= 0 && lattice_x + x < latticeWidth &&
+                    lattice_y + y >= 0 && lattice_y + y < latticeHeight &&
+                    !Lbarrier[(lattice_y + y) * latticeWidth + (lattice_x + x)] &&
+                    Math.sqrt((x * x) + (y * y)) < radius) {
+                    var idx = (lattice_y + y) * latticeWidth + (lattice_x + x);
+                    var ux = dx;
+                    var uy = dy;
+                    var rho = Ldensity[idx];
+                    var ux3 = 3 * ux;
+                    var uy3 = 3 * -uy;
+                    var ux2 = ux * ux;
+                    var uy2 = -uy * -uy;
+                    var uxuy2 = 2 * ux * -uy;
+                    var u2 = ux2 + uy2;
+                    var u215 = 1.5 * u2;
+                    L0[idx] = four9ths * rho * (1 - u215);
+                    L1[idx] = one9th * rho * (1 + ux3 + 4.5 * ux2 - u215);
+                    L2[idx] = one9th * rho * (1 + uy3 + 4.5 * uy2 - u215);
+                    L3[idx] = one9th * rho * (1 - ux3 + 4.5 * ux2 - u215);
+                    L4[idx] = one9th * rho * (1 - uy3 + 4.5 * uy2 - u215);
+                    L5[idx] = one36th * rho * (1 + ux3 + uy3 + 4.5 * (u2 + uxuy2) - u215);
+                    L6[idx] = one36th * rho * (1 - ux3 + uy3 + 4.5 * (u2 - uxuy2) - u215);
+                    L7[idx] = one36th * rho * (1 - ux3 - uy3 + 4.5 * (u2 + uxuy2) - u215);
+                    L8[idx] = one36th * rho * (1 + ux3 - uy3 + 4.5 * (u2 - uxuy2) - u215);
+                }
+            }
+        }
+        oldX = newX;
+        oldY = newY;
+    }
+
+
     /**
      * Push fluid with mouse 
      * @param {Object} e MouseEvent 'mousedown'
@@ -1148,51 +1527,9 @@ function boltzmann(config) {
          * @param {Object} e MouseEvent 'mousemove'
          */
         function moveListener(e) {
-            var radius = 5;
             var newX = e.hasOwnProperty('offsetX') ? e.offsetX : e.layerX;
             var newY = e.hasOwnProperty('offsetY') ? e.offsetY : e.layerY;
-            var dx = (newX - oldX) / px_per_node / steps_per_frame;
-            var dy = (newY - oldY) / px_per_node / steps_per_frame;
-            // Ensure that push isn't too big
-            if (Math.abs(dx) > 0.1) {
-                dx = 0.1 * Math.abs(dx) / dx;
-            }
-            if (Math.abs(dy) > 0.1) {
-                dy = 0.1 * Math.abs(dy) / dy;
-            }
-            // Scale from canvas coordinates to lattice coordinates
-            var lattice_x = Math.floor(newX / px_per_node);
-            var lattice_y = Math.floor(newY / px_per_node);
-            for (var x = -radius; x <= radius; x++) {
-                for (var y = -radius; y <= radius; y++) {
-                    // Push in circle around cursor. Make sure coordinates are in bounds.
-                    if (lattice_x + x >= 0 && lattice_x + x < latticeWidth &&
-                        lattice_y + y >= 0 && lattice_y + y < latticeHeight &&
-                        !Lbarrier[(lattice_y + y)*latticeWidth+(lattice_x + x)] &&
-                        Math.sqrt((x * x) + (y * y)) < radius) {
-                        var idx = (lattice_y + y)*latticeWidth+(lattice_x + x);
-                        var ux = dx;
-                        var uy = dy;
-                        var rho = Ldensity[idx];
-                        var ux3 = 3 * ux;
-                        var uy3 = 3 * -uy;
-                        var ux2 = ux * ux;
-                        var uy2 = -uy * -uy;
-                        var uxuy2 = 2 * ux * -uy;
-                        var u2 = ux2 + uy2;
-                        var u215 = 1.5 * u2;
-                        L0[idx] = four9ths * rho * (1 - u215);
-                        L1[idx] = one9th * rho * (1 + ux3 + 4.5 * ux2 - u215);
-                        L2[idx] = one9th * rho * (1 + uy3 + 4.5 * uy2 - u215);
-                        L3[idx] = one9th * rho * (1 - ux3 + 4.5 * ux2 - u215);
-                        L4[idx] = one9th * rho * (1 - uy3 + 4.5 * uy2 - u215);
-                        L5[idx] = one36th * rho * (1 + ux3 + uy3 + 4.5 * (u2 + uxuy2) - u215);
-                        L6[idx] = one36th * rho * (1 - ux3 + uy3 + 4.5 * (u2 - uxuy2) - u215);
-                        L7[idx] = one36th * rho * (1 - ux3 - uy3 + 4.5 * (u2 + uxuy2) - u215);
-                        L8[idx] = one36th * rho * (1 + ux3 - uy3 + 4.5 * (u2 - uxuy2) - u215);
-                    }
-                }
-            }
+            moveHelper(newX, newY, oldX, oldY);
             oldX = newX;
             oldY = newY;
         }
@@ -1227,7 +1564,7 @@ function boltzmann(config) {
         var lattice_x = Math.floor(mouse_x / px_per_node);
         var lattice_y = Math.floor(mouse_y / px_per_node);
         var draw;
-        var idx = lattice_y*latticeWidth+lattice_x;
+        var idx = lattice_y * latticeWidth + lattice_x;
         // Bitflip the barrier
         draw = Lbarrier[idx] = Lbarrier[idx] ^ 1;
 
@@ -1242,7 +1579,7 @@ function boltzmann(config) {
             lattice_x = Math.floor(mouse_x / px_per_node);
             lattice_y = Math.floor(mouse_y / px_per_node);
             // Draw/erase barrier
-            Lbarrier[lattice_y*latticeWidth+lattice_x] = draw;
+            Lbarrier[lattice_y * latticeWidth + lattice_x] = draw;
             new_barrier = true;
             if (!animation_id) {
                 // If stopped, we need to explicitly call drawFrame()
@@ -1268,6 +1605,48 @@ function boltzmann(config) {
         boltzcanvas.addEventListener('touchmove', moveListener, false);
         document.body.addEventListener('touchend', mouseupListener, false);
     }
+
+
+    var touches = {};
+    var rect = boltzcanvas.getBoundingClientRect();
+
+    function touchdownListener(e) {
+        var started = e.changedTouches;
+        for (var i = 0, len = started.length; i < len; i++) {
+            touches[started[i].identifier + '.x'] = started[i].clientX - rect.left;
+            touches[started[i].identifier + '.y'] = started[i].clientY - rect.top;
+        }
+    }
+    /**
+     * Push fluid with finger
+     * @param {Object} e MouseEvent 'touchmove'
+     */
+    function touchMoveListener(e) {
+        e.preventDefault();
+        var moved = e.changedTouches;
+        for (var i = 0, len = moved.length; i < len; i++) {
+            var oldX = touches[moved[i].identifier + '.x'];
+            var oldY = touches[moved[i].identifier + '.y'];
+            var newX = moved[i].clientX - rect.left;
+            var newY = moved[i].clientY - rect.top;
+            moveHelper(newX, newY, oldX, oldY);
+            touches[moved[i].identifier + '.x'] = newX;
+            touches[moved[i].identifier + '.y'] = newY;
+        }
+    }
+    /**
+     * Remove mousemove listeners
+     * @param {Object} e MouseEvent 'mouseup'
+     */
+    function touchupListener(e) {
+        var ended = e.changedTouches;
+        for (var i = 0, len = ended.length; i < 0; i++) {
+            delete touches[ended[i].identifier + '.x'];
+            delete touches[ended[i].identifier + '.y'];
+        }
+    }
+    boltzcanvas.addEventListener('touchmove', touchMoveListener, false);
+    document.body.addEventListener('touchend', touchupListener, false);
 
     /**
      * Change draw mode.
@@ -1395,7 +1774,7 @@ function boltzmann(config) {
     (function register() {
         // Register left click
         boltzcanvas.addEventListener('mousedown', mousedownListener, false);
-        boltzcanvas.addEventListener('touchstart', mousedownListener, false);
+        boltzcanvas.addEventListener('touchstart', touchdownListener, false);
         // Register right click 
         boltzcanvas.addEventListener('contextmenu', place_barrier, false);
         // Register dropdown
@@ -1843,6 +2222,903 @@ GameOfLife.prototype.update = function() {
 
 module.exports = GameOfLife;
 },{}],6:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var list = _dereq_('../list/list');
+var cons = _dereq_('../cons/cons');
+module.exports = function alist(key, value) {
+    return list(cons(key, value));
+};
+
+},{"../cons/cons":14,"../list/list":31}],7:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+var equal = _dereq_('../cons/equal');
+module.exports = function get(L, key) {
+    if (L === null) {
+        return null;
+    }
+    else {
+        if (equal(car(car(L)), key)) {
+            return cdr(car(L));
+        }
+        else {
+            return get(cdr(L), key);
+        }
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/equal":15}],8:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function map(L, fn) {
+    if (L === null) {
+        return L;
+    }
+    else if (cdr(car(L)) === null) {
+        return cons(fn(car(car(L)), null), null);
+    }
+    else {
+        return cons(fn(car(car(L)), cdr(car(L))), map(cdr(L), fn));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14}],9:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+var pair = _dereq_('../cons/pair');
+module.exports = function print(L) {
+    function getIndent(n) {
+        return Array(n * 4).join(' ');
+    }
+    function helperOne(L, indent) {
+        return '{\n' + helper(L, '', indent + 1) + '\n' + getIndent(indent) + '}';
+    }
+    function helper(L, spacer, indent) {
+        if (L === null) {
+            return '';
+        }
+        else {
+            if (pair(cdr(car(L)))) {
+                return spacer +
+                    getIndent(indent) +
+                    car(car(L)) +
+                    ': ' +
+                    helperOne(cdr(car(L)), indent) +
+                    helper(cdr(L), ',\n', indent);
+            }
+            else {
+                return spacer +
+                    getIndent(indent) +
+                    car(car(L)) +
+                    ': ' +
+                    cdr(car(L)) +
+                    helper(cdr(L), ',\n', indent);
+            }
+        }
+    }
+    return helperOne(L, 0);
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/pair":16}],10:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+var get = _dereq_('./get');
+module.exports = function put(L, key, value) {
+    function helper(L, key, value) {
+        if (car(car(L)) === key) {
+            return cons(cons(key, value), cdr(L));
+        }
+        else {
+            return cons(car(L), helper(cdr(L), key, value));
+        }
+    }
+    if (get(L, key) === null) {
+        return cons(cons(key, value), L);
+    }
+    else {
+        return helper(L, key, value);
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14,"./get":7}],11:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+module.exports = function car(cons) {
+    return cons.car;
+};
+
+},{}],12:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+module.exports = function cdr(cons) {
+    return cons.cdr;
+};
+
+},{}],13:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var car = _dereq_('./car');
+var cdr = _dereq_('./cdr');
+var compose = _dereq_('../fun/compose');
+function permute(S) {
+    function swap(s, x, y) {
+        var min = Math.min(x, y);
+        var max = Math.max(x, y);
+        return s.slice(0, min) + s[max] + s.slice(min + 1, max) + s[min] + s.slice(max + 1);
+    }
+    // TODO: Make more funcctional
+    function generate(n, S) {
+        var result = [];
+        if (n === 1) {
+            return S;
+        }
+        else {
+            for (var i = 0; i < n; i += 1) {
+                result = result.concat(generate(n - 1, S));
+                if (n % 2 === 0) {
+                    S = swap(S, i, n - 1);
+                }
+                else {
+                    S = swap(S, 0, n - 1);
+                }
+            }
+        }
+        return result;
+    }
+    return generate(S.length, S);
+}
+// In order to provide car/cdr composition shorthand
+// (e.g. caaar, cadadr, etc.), we define properties
+// on the cons prototype for many of these permutions.
+// This is a bit of a hack, as default getters aren't
+// supported in ES5. Proxies would allow us to achieve
+// this much more elegantly, but unfortunately they are
+// not well supported.
+// TODO: Make more functional
+var exportObj = {};
+for (var i = 0; i < 5; i++) {
+    for (var j = 0; j < 5; j++) {
+        var Ds = (new Array(i + 1).join('d'));
+        var As = (new Array(j + 1).join('a'));
+        var permutations = permute(As + Ds);
+        for (var p = 0, len = permutations.length; p < len; p++) {
+            var perm = permutations[p];
+            if (perm !== 'a' && perm !== 'd' && perm.length < 5 && !exportObj.hasOwnProperty('c' + perm + 'r')) {
+                exportObj[('c' + perm + 'r')] = (function (perm) {
+                    function helper(perm) {
+                        if (perm.length === 0) {
+                            return function (i) { return i; };
+                        }
+                        else {
+                            if (perm[0] === 'a') {
+                                return compose(helper(perm.slice(1)), car);
+                            }
+                            else if (perm[0] === 'd') {
+                                return compose(helper(perm.slice(1)), cdr);
+                            }
+                        }
+                    }
+                    return helper(perm);
+                })(perm);
+            }
+        }
+    }
+}
+module.exports = exportObj;
+
+},{"../fun/compose":20,"./car":11,"./cdr":12}],14:[function(_dereq_,module,exports){
+module.exports = function cons(car, cdr) {
+    return Object.freeze(Object.defineProperty(Object.defineProperty(Object.create(null), 'car', {
+        value: car
+    }), 'cdr', {
+        value: cdr
+    }));
+};
+
+},{}],15:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var pair = _dereq_('./pair');
+var cdr = _dereq_('./cdr');
+var car = _dereq_('./car');
+module.exports = function equal(a, b) {
+    // If a is a pair and b is not (or vice versa),
+    // these cannot be equal.
+    if (pair(a) !== pair(b)) {
+        return false;
+    }
+    // If car(a) is a pair and car(b) is not (or vice versa),
+    // these cannot be equal.
+    if (pair(a) && pair(car(a)) !== pair(b) && pair(car(b))) {
+        return false;
+    }
+    // If cdr(a) is a pair and cdr(b) is not (or vice versa),
+    // these cannot be equal.
+    if (pair(a) && pair(cdr(a)) !== pair(b) && pair(cdr(b))) {
+        return false;
+    }
+    // If a is a pair (which, if we have reached this point,
+    // means that b must also be a pair), recurse.
+    // Otherwise, test the equality of a and b directly.
+    if (pair(a)) {
+        return equal(car(a), car(b)) && equal(cdr(a), cdr(b));
+    }
+    else {
+        return a === b;
+    }
+};
+
+},{"./car":11,"./cdr":12,"./pair":16}],16:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+module.exports = function pair(c) {
+    return c !== null && typeof c === 'object' && 'car' in c && 'cdr' in c;
+};
+
+},{}],17:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var pair = _dereq_('./pair');
+var cdr = _dereq_('./cdr');
+var car = _dereq_('./car');
+module.exports = function print(c, options) {
+    var opts = options || {};
+    var prefix = typeof opts.prefix !== 'undefined' ? opts.prefix : '(';
+    var suffix = typeof opts.suffix !== 'undefined' ? opts.suffix : ')';
+    var separator = typeof opts.separator !== 'undefined' ? opts.separator : ',';
+    function printHelper(c, separator) {
+        var cdrResult = '';
+        var carResult = '';
+        if (pair(c)) {
+            var cdrL = cdr(c);
+            var carL = car(c);
+            if (pair(carL)) {
+                carResult = printHelper(carL, separator);
+            }
+            else if (carL !== null) {
+                carResult = carL.toString();
+            }
+            if (pair(cdrL)) {
+                cdrResult = printHelper(cdrL, separator);
+            }
+            else if (cdrL !== null) {
+                cdrResult = cdrL.toString();
+            }
+            if (carResult === '' || cdrResult === '') {
+                separator = '';
+            }
+        }
+        return prefix + carResult + separator + cdrResult + suffix;
+    }
+    return printHelper(c, separator);
+};
+
+},{"./car":11,"./cdr":12,"./pair":16}],18:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var apply = _dereq_('./apply');
+var args = _dereq_('../helpers/args');
+var list = _dereq_('../list/list');
+module.exports = function Y(f) {
+    return f((function (h) {
+        return function () {
+            var rest = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                rest[_i - 0] = arguments[_i];
+            }
+            return apply(f(h(h)), list(args(rest)));
+        };
+    })(function (h) {
+        return function () {
+            var rest = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                rest[_i - 0] = arguments[_i];
+            }
+            return apply(f(h(h)), list(args(rest)));
+        };
+    }));
+};
+
+},{"../helpers/args":22,"../list/list":31,"./apply":19}],19:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function apply(fn, args) {
+    function helper(fn, args) {
+        if (cdr(args) === null) {
+            return fn(car(args));
+        }
+        else {
+            return apply(fn.bind(null, car(args)), cdr(args));
+        }
+    }
+    return helper(fn, args);
+};
+
+},{"../cons/car":11,"../cons/cdr":12}],20:[function(_dereq_,module,exports){
+module.exports = function compose(a, b) {
+    return function (c) {
+        return a(b(c));
+    };
+};
+
+},{}],21:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var apply = _dereq_('./apply');
+module.exports = function curry(fn, arity) {
+    function helper(fn, arity, args) {
+        if (arity === 0) {
+            return apply(fn, args);
+        }
+        else {
+            return function (arg) {
+                return helper(fn, arity - 1, cons(arg, args));
+            };
+        }
+    }
+    if (typeof arity === 'undefined') {
+        return helper(fn, fn.length, null);
+    }
+    else {
+        return helper(fn, arity, null);
+    }
+};
+
+},{"../cons/cons":14,"./apply":19}],22:[function(_dereq_,module,exports){
+module.exports = function args(args) {
+    return Array.prototype.slice.call(args);
+};
+
+},{}],23:[function(_dereq_,module,exports){
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function concat(L1, L2) {
+    if (L1 === null) {
+        return L2;
+    }
+    else {
+        return cons(car(L1), concat(cdr(L1), L2));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14}],24:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var equal = _dereq_('../cons/equal');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function contains(L, a) {
+    if (L === null) {
+        return false;
+    }
+    else {
+        if (equal(car(L), a)) {
+            return true;
+        }
+        else {
+            return contains(cdr(L), a);
+        }
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/equal":15}],25:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cdr = _dereq_('../cons/cdr');
+module.exports = function dequeue(L) {
+    return cdr(L);
+};
+
+},{"../cons/cdr":12}],26:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+module.exports = function enqueue(L, val) {
+    return cons(val, L);
+};
+
+},{"../cons/cons":14}],27:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function every(L, fn) {
+    function helper(L, fn, idx) {
+        if (L === null) {
+            return true;
+        }
+        else {
+            if (!fn(car(L), idx)) {
+                return false;
+            }
+            else {
+                return helper(cdr(L), fn, idx + 1);
+            }
+        }
+    }
+    return helper(L, fn, 0);
+};
+
+},{"../cons/car":11,"../cons/cdr":12}],28:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function filter(L, fn) {
+    if (L === null) {
+        return L;
+    }
+    if (cdr(L) === null) {
+        if (fn(car(L))) {
+            return cons(car(L), null);
+        }
+        else {
+            return null;
+        }
+    }
+    else {
+        if (fn(car(L))) {
+            return cons(car(L), filter(cdr(L), fn));
+        }
+        else {
+            return filter(cdr(L), fn);
+        }
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14}],29:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+var pair = _dereq_('../cons/pair');
+var concat = _dereq_('./concat');
+module.exports = function flatten(L) {
+    if (L === null) {
+        return null;
+    }
+    else if (!pair(car(L))) {
+        return cons(car(L), flatten(cdr(L)));
+    }
+    else {
+        return concat(flatten(car(L)), flatten(cdr(L)));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14,"../cons/pair":16,"./concat":23}],30:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var reduce = _dereq_('./reduce');
+module.exports = function length(L) {
+    return reduce(L, function (curr, acc) { return acc + 1; }, 0);
+};
+
+},{"./reduce":37}],31:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var args = _dereq_('../helpers/args');
+module.exports = function list() {
+    var outerArgs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        outerArgs[_i - 0] = arguments[_i];
+    }
+    function helper(args) {
+        if (args.length === 0) {
+            return null;
+        }
+        else {
+            if (Array.isArray(args[0])) {
+                return cons(helper(args[0]), helper(args.slice(1)));
+            }
+            else {
+                return cons(args[0], helper(args.slice(1)));
+            }
+        }
+    }
+    if (outerArgs.length === 1 && Array.isArray(outerArgs[0])) {
+        return helper(outerArgs[0]);
+    }
+    else {
+        return helper(args(outerArgs));
+    }
+};
+
+},{"../cons/cons":14,"../helpers/args":22}],32:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function map(L, fn) {
+    if (L === null) {
+        return L;
+    }
+    else if (cdr(L) === null) {
+        return cons(fn(car(L)), null);
+    }
+    else {
+        return cons(fn(car(L)), map(cdr(L), fn));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14}],33:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function peek(L) {
+    if (L === null) {
+        return L;
+    }
+    if (cdr(L) === null) {
+        return car(L);
+    }
+    else {
+        return peek(cdr(L));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12}],34:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function pop(L) {
+    if (cdr(L) === null) {
+        return null;
+    }
+    else {
+        return cons(car(L), pop(cdr(L)));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14}],35:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function push(L, val) {
+    if (L === null) {
+        return cons(val, null);
+    }
+    else if (cdr(L) === null) {
+        return cons(car(L), cons(val, null));
+    }
+    else {
+        return cons(car(L), push(cdr(L), val));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14}],36:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+function abs(n) {
+    if (n < 0) {
+        return -n;
+    }
+    else {
+        return n;
+    }
+}
+module.exports = function range(m, n, step) {
+    function rangeHelper(m, n, step) {
+        if (m === n) {
+            return null;
+        }
+        else if (goodStep(m, n, step)) {
+            return cons(m, rangeHelper(m + step, n, step));
+        }
+        else {
+            return cons(m, null);
+        }
+    }
+    function goodStep(start, stop, step) {
+        return (abs(stop - start) > abs(stop - (start + step)));
+    }
+    function stepHelper(m, step, n) {
+        if (typeof n === 'undefined') {
+            if (goodStep(0, m, step)) {
+                return rangeHelper(0, m, step);
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            if (goodStep(m, n, step)) {
+                return rangeHelper(m, n, step);
+            }
+            else {
+                return null;
+            }
+        }
+    }
+    if (typeof step === 'undefined') {
+        return stepHelper(m, 1, n);
+    }
+    else {
+        return stepHelper(m, step, n);
+    }
+};
+
+},{"../cons/cons":14}],37:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function reduce(L, fn, acc) {
+    function reduceHelper(L, fn, acc) {
+        if (L === null) {
+            return acc;
+        }
+        else if (cdr(L) === null) {
+            return fn(car(L), acc);
+        }
+        else {
+            return reduceHelper(cdr(L), fn, fn(car(L), acc));
+        }
+    }
+    if (typeof acc === 'undefined') {
+        return reduceHelper(L, fn, 0);
+    }
+    else {
+        return reduceHelper(L, fn, acc);
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12}],38:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function reverse(L) {
+    function helper(L, rev) {
+        if (L === null) {
+            return rev;
+        }
+        else {
+            return helper(cdr(L), cons(car(L), rev));
+        }
+    }
+    return helper(L, null);
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14}],39:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+var length = _dereq_('./length');
+module.exports = function slice(L, m, n) {
+    function sliceHelper(L, m, n, current) {
+        if (current === n || m >= n) {
+            return null;
+        }
+        else if (current >= m) {
+            return cons(car(L), sliceHelper(cdr(L), m, n, current + 1));
+        }
+        else {
+            return sliceHelper(cdr(L), m, n, current + 1);
+        }
+    }
+    if (typeof n === 'undefined') {
+        return sliceHelper(L, m, length(L), 0);
+    }
+    else {
+        return sliceHelper(L, m, n, 0);
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14,"./length":30}],40:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function some(L, fn) {
+    function helper(L, fn, idx) {
+        if (L === null) {
+            return false;
+        }
+        else {
+            if (fn(car(L), idx)) {
+                return true;
+            }
+            else {
+                return helper(cdr(L), fn, idx + 1);
+            }
+        }
+    }
+    return helper(L, fn, 0);
+};
+
+},{"../cons/car":11,"../cons/cdr":12}],41:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+var length = _dereq_('./length');
+module.exports = function sort(L, fn) {
+    function merge(L1, L2, fn) {
+        if (L1 === null) {
+            return L2;
+        }
+        else if (L2 === null) {
+            return L1;
+        }
+        else if (fn(car(L1), car(L2))) {
+            return cons(car(L1), merge(cdr(L1), L2, fn));
+        }
+        else {
+            return cons(car(L2), merge(L1, cdr(L2), fn));
+        }
+    }
+    function split(L, lo, hi) {
+        function splitHelper(L, lo, hi, curr) {
+            if (curr < lo) {
+                return splitHelper(cdr(L), lo, hi, curr + 1);
+            }
+            else if (curr === hi) {
+                return null;
+            }
+            else {
+                return cons(car(L), splitHelper(cdr(L), lo, hi, curr + 1));
+            }
+        }
+        if (lo < hi && lo >= 0 && hi <= length(L)) {
+            return splitHelper(L, lo, hi, 0);
+        }
+        else {
+            return null;
+        }
+    }
+    function msort(L, fn, len) {
+        if (L === null || cdr(L) === null) {
+            return L;
+        }
+        else {
+            return merge(msort(split(L, 0, Math.floor(len / 2)), fn, Math.floor(len / 2)), msort(split(L, Math.floor(len / 2), len), fn, len - Math.floor(len / 2)), fn);
+        }
+    }
+    if (typeof fn === 'undefined') {
+        return msort(L, function (a, b) { return a < b; }, length(L));
+    }
+    else {
+        return msort(L, fn, length(L));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14,"./length":30}],42:[function(_dereq_,module,exports){
+/// <reference path="../typings/node/node.d.ts" />
+/// <reference path="../cons.d.ts" />
+var cons = _dereq_('../cons/cons');
+var car = _dereq_('../cons/car');
+var cdr = _dereq_('../cons/cdr');
+module.exports = function zip(L1, L2) {
+    if (L1 === null || L2 === null) {
+        return null;
+    }
+    else if (cdr(L1) === null || cdr(L2) === null) {
+        return null;
+    }
+    else {
+        return cons(cons(car(L1), car(L2)), zip(cdr(L1), cdr(L2)));
+    }
+};
+
+},{"../cons/car":11,"../cons/cdr":12,"../cons/cons":14}],43:[function(_dereq_,module,exports){
+/// <reference path="./typings/node/node.d.ts" />
+var cons = _dereq_('./cons/cons');
+var car = _dereq_('./cons/car');
+var cdr = _dereq_('./cons/cdr');
+var print = _dereq_('./cons/print');
+var equal = _dereq_('./cons/equal');
+var pair = _dereq_('./cons/pair');
+exports.cons = Object.create(null);
+exports.cons.cons = cons;
+exports.cons.car = car;
+exports.cons.cdr = cdr;
+exports.cons.print = print;
+exports.cons.equal = equal;
+exports.cons.pair = pair;
+// compositions (caar caadr, etc.)
+var compositions = _dereq_('./cons/compositions');
+Object.keys(compositions).forEach(function (key) {
+    exports.cons[key] = compositions[key];
+});
+// helpers
+var args = _dereq_('./helpers/args');
+exports.helpers = Object.create(null);
+exports.helpers.args = args;
+// list
+var list = _dereq_('./list/list');
+var length = _dereq_('./list/length');
+var range = _dereq_('./list/range');
+var map = _dereq_('./list/map');
+var reduce = _dereq_('./list/reduce');
+var filter = _dereq_('./list/filter');
+var peek = _dereq_('./list/peek');
+var push = _dereq_('./list/push');
+var pop = _dereq_('./list/pop');
+var zip = _dereq_('./list/zip');
+var some = _dereq_('./list/some');
+var every = _dereq_('./list/every');
+var reverse = _dereq_('./list/reverse');
+var concat = _dereq_('./list/concat');
+var enqueue = _dereq_('./list/enqueue');
+var dequeue = _dereq_('./list/dequeue');
+var slice = _dereq_('./list/slice');
+var sort = _dereq_('./list/sort');
+var contains = _dereq_('./list/contains');
+var flatten = _dereq_('./list/flatten');
+exports.list = Object.create(null);
+exports.list.list = list;
+exports.list.length = length;
+exports.list.range = range;
+exports.list.map = map;
+exports.list.reduce = reduce;
+exports.list.filter = filter;
+exports.list.peek = peek;
+exports.list.push = push;
+exports.list.pop = pop;
+exports.list.zip = zip;
+exports.list.some = some;
+exports.list.every = every;
+exports.list.reverse = reverse;
+exports.list.concat = concat;
+exports.list.enqueue = enqueue;
+exports.list.dequeue = dequeue;
+exports.list.slice = slice;
+exports.list.sort = sort;
+exports.list.contains = contains;
+exports.list.flatten = flatten;
+// alist
+var alist = _dereq_('./alist/alist');
+var put = _dereq_('./alist/put');
+var get = _dereq_('./alist/get');
+var alistPrint = _dereq_('./alist/print');
+var alistMap = _dereq_('./alist/map');
+exports.alist = Object.create(null);
+exports.alist.alist = alist;
+exports.alist.put = put;
+exports.alist.get = get;
+exports.alist.print = alistPrint;
+exports.alist.map = alistMap;
+// fun
+var compose = _dereq_('./fun/compose');
+var apply = _dereq_('./fun/apply');
+var curry = _dereq_('./fun/curry');
+var Y = _dereq_('./fun/Y');
+exports.fun = Object.create(null);
+exports.fun.compose = compose;
+exports.fun.apply = apply;
+exports.fun.curry = curry;
+exports.fun.Y = Y;
+
+},{"./alist/alist":6,"./alist/get":7,"./alist/map":8,"./alist/print":9,"./alist/put":10,"./cons/car":11,"./cons/cdr":12,"./cons/compositions":13,"./cons/cons":14,"./cons/equal":15,"./cons/pair":16,"./cons/print":17,"./fun/Y":18,"./fun/apply":19,"./fun/compose":20,"./fun/curry":21,"./helpers/args":22,"./list/concat":23,"./list/contains":24,"./list/dequeue":25,"./list/enqueue":26,"./list/every":27,"./list/filter":28,"./list/flatten":29,"./list/length":30,"./list/list":31,"./list/map":32,"./list/peek":33,"./list/pop":34,"./list/push":35,"./list/range":36,"./list/reduce":37,"./list/reverse":38,"./list/slice":39,"./list/some":40,"./list/sort":41,"./list/zip":42}],44:[function(_dereq_,module,exports){
 // WHAT TO DO WITH EXTRA BYTES
 // 1. OOB checks for mouse
 // 2. curl
@@ -1855,13 +3131,12 @@ module.exports = GameOfLife;
 // These are givens for the contest, but it helps to have
 // them here so Google closure doesn't use the names
 
-a = document.getElementsByTagName('canvas')[0];
-b = document.body;
-c = a.getContext("2d");
-d = function(e){ return function(){ e.parentNode.removeChild(e); }; }(a);
-Y=600;Z=99;
-
 function JS1K(){
+    var a = document.getElementsByTagName('canvas')[0];
+    var b = document.body;
+    var c = a.getContext("2d");
+    var d = function(e){ return function(){ e.parentNode.removeChild(e); }; }(a);
+    var Y=600;Z=99;
     with(Math)S=sqrt,P=pow,F=floor,A=abs;
     var lattice_dim = 99; // lattice dimensions. 99 saves me 1 byte vs 100. I'm seriously that desperate 
     var lattice_sq = lattice_dim*lattice_dim; // total # of nodes
@@ -2020,7 +3295,7 @@ function JS1K(){
 
 module.exports = JS1K;
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],45:[function(_dereq_,module,exports){
 var asciify = _dereq_('asciify');
 
 function videoascii(options){
@@ -2118,7 +3393,7 @@ function videoascii(options){
 }
 
 module.exports = videoascii;
-},{"asciify":2}],8:[function(_dereq_,module,exports){
+},{"asciify":2}],46:[function(_dereq_,module,exports){
 var wireframe = _dereq_('wireframe');
 
 function VU(){
@@ -2384,7 +3659,7 @@ function VU(){
     })();
     }
 module.exports = VU;
-},{"wireframe":9}],9:[function(_dereq_,module,exports){
+},{"wireframe":47}],47:[function(_dereq_,module,exports){
 (function (global){
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.wireframe=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 var hslToRgb, rgbToHsl, parseColor, cache;
