@@ -9,7 +9,7 @@ stack exec site clean
 stack exec site build
 
 # Get previous files
-git fetch -all
+git fetch --all
 git checkout -b publish --track origin/master
 
 # Overwrite existing files with new files
