@@ -5,31 +5,44 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
-        <title>Eben Packwood - 404</title>
-        <link rel="stylesheet" href="./css/normalize.css" />
-        <link rel="stylesheet" href="./css/syntax.css" />
-        <link rel="stylesheet" href="./css/default.css" />
-        <link rel="stylesheet" href="./css/theme.css" />
+        <meta name="description" content="A* pathfinding made with JavaScript." />
+        
+        <title>Eben Packwood - A*</title>
+        <link rel="stylesheet" href="../../css/normalize.css" />
+        <link rel="stylesheet" href="../../css/syntax.css" />
+        <link rel="stylesheet" href="../../css/default.css" />
+        <link rel="stylesheet" href="../../css/theme.css" />
     </head>
     <body>
         <div class="page">
             <header class="page-head">
                 <div class="logo">
-                    <a href="./">Eben Packwood</a>
+                    <a href="../../">Eben Packwood</a>
                 </div>
                 <nav>
-                    <a href="./">Home</a>
-                    <a href="./archives.html">Archive</a>
-                    <a href="./pages/projects.html">Projects</a>
+                    <a href="../../">Home</a>
+                    <a href="../../archives.html">Archive</a>
+                    <a href="../../pages/projects.html">Projects</a>
                     <a href="https://github.com/ebenpack">Github</a>
                 </nav>
             </header>
 
             <main role="main" class="page-body">
-                <h1>404</h1>
-                <h2>Whoopsy daisy...</h2>
-
-<p>It looks like that page cannot be found. Sorry about that.</p>
+                <h1>A*</h1>
+                <article>
+    <script src="../../js/bundle.js"></script>
+    <section>
+        <div class="main" style="position:relative;">
+    <canvas id="map" style="background-color: black;" width="600" height="240"></canvas>
+    <canvas id="particles" style="position: absolute; left: 0; top:0;" width="600" height="240"></canvas>
+</div>
+<script>
+    (function(){
+        var maze = new main.astar("map", "particles");
+    })();
+</script>
+    </section>
+</article>
 
             </main>
             <footer class="page-foot">
@@ -41,7 +54,7 @@
                 </p>
                 <p>
                     <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
-                        <img alt="Creative Commons License" style="border-width:0" src="./images/ccbyncnd.png">
+                        <img alt="Creative Commons License" style="border-width:0" src="../../images/ccbyncnd.png">
                     </a>
                 </p>
                 <p>
