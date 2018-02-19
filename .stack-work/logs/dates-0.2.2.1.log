@@ -1,9 +1,0 @@
-Configuring dates-0.2.2.1...
-Preprocessing library for dates-0.2.2.1..
-Building library for dates-0.2.2.1..
-[1 of 4] Compiling Data.Dates.Internal ( Data/Dates/Internal.hs, .stack-work/dist/x86_64-osx/Cabal-2.0.1.0/build/Data/Dates/Internal.o )
-[2 of 4] Compiling Data.Dates.Types ( Data/Dates/Types.hs, .stack-work/dist/x86_64-osx/Cabal-2.0.1.0/build/Data/Dates/Types.o )
-[3 of 4] Compiling Data.Dates.Formats ( Data/Dates/Formats.hs, .stack-work/dist/x86_64-osx/Cabal-2.0.1.0/build/Data/Dates/Formats.o )
-[4 of 4] Compiling Data.Dates       ( Data/Dates.hs, .stack-work/dist/x86_64-osx/Cabal-2.0.1.0/build/Data/Dates.o )
-Installing library in /Users/ebenpack/Desktop/my-site/.stack-work/install/x86_64-osx/lts-10.5/8.2.2/lib/x86_64-osx-ghc-8.2.2/dates-0.2.2.1-7OrNMV1FAkBB5aIOmBvfWj
-Registering library for dates-0.2.2.1..
