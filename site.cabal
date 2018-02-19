@@ -11,5 +11,6 @@ executable site
                   , pandoc
                   , containers
                   , regex-compat
+                  , dates
   ghc-options:      -threaded
   default-language: Haskell2010
