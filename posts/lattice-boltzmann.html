@@ -145,7 +145,7 @@
 </div>
 <p>While its conceptual simplicity is alluring, LGA has some major shortcomings, many of which LBM directly addresses. And while LBM sacrifices a small amount of LGA’s simplicity for the sake of increased accuracy and robustness, LBM is actually still surprisingly quite simple. Like LGA, LBM also consists of a lattice of nodes, but where LGA’s nodes have a finite set of possible states, LBM’s nodes contain a set of particle distribution functions (DFs). In other words, LBM is continuous where LGA is discrete.</p>
 <p>LBM comes in many flavors. It can easily be configured for one-, two-, or three-dimensional spaces, each of which has its own variants. In this example we will be discussing D2Q9, which means a two-dimensional lattice, with nine discrete distribution functions per node. Other common configurations include D1Q3, D1Q5, D3Q15, and D3Q19</p>
-<p>Each node in the lattice consists of a set of particle DFs. Together, these DFs represent a collection of particles, and are related to the probability of finding a particle at a node, at a given time, with a particular velocity. For D2Q9, there are nine DFs per node. The density of these DFs is represented by \(n_i\). Each DF is also associated with a velocity, represented by \( \vec{e}_{i}\). These velocities correspond to the four cardinal directions, the four ordinal directions, as well as the ‘at-rest’ velocity. These velocities are chosen such that they carry a particle from a node in the lattice to one of its neighboring nodes. For convenience, these velocities are each assigned a number, as seen below.</p>
+<p>Each node in the lattice consists of a set of particle DFs. Together, these DFs represent a collection of particles, and are related to the probability of finding a particle at a node, at a given time, with a particular velocity. For D2Q9, there are nine DFs per node. The density of these DFs is represented by \(n<em>i\). Each DF is also associated with a velocity, represented by \( \vec{e}</em>{i}\). These velocities correspond to the four cardinal directions, the four ordinal directions, as well as the ‘at-rest’ velocity. These velocities are chosen such that they carry a particle from a node in the lattice to one of its neighboring nodes. For convenience, these velocities are each assigned a number, as seen below.</p>
 <div id="node-distribution-illustration">
     <svg width="200" height="200" viewbox="-300 -300  1620 1620">
         <!-- Directions -->
@@ -163,7 +163,7 @@
         <g class="arrow-3" transform="translate(515,515) rotate(270)">
             <use xlink:href="#arrow-group-large"></use>
         </g>
-    
+
         <!-- Cardinals -->
         <g class="arrow-3" transform="translate(515,515) rotate(45)">
             <use xlink:href="#arrow-group-large-short"></use>
@@ -231,7 +231,7 @@
             <use xlink:href="#arrow-group"></use>
         </g>
         <circle cx="185" cy="845" r="30" stroke="black" stroke-width="10" fill="white"></circle>
-    
+
         <!-- Second column -->
         <rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="white"></rect>
         <g class="arrow-3" transform="translate(515,185) rotate(45)">
@@ -239,7 +239,7 @@
         </g>
         <circle cx="515" cy="185" r="30" stroke="black" stroke-width="10" fill="white"></circle>
         <rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white"></rect>
-    
+
         <!-- Ordinal directions -->
         <g class="arrow-1" transform="translate(515,515) rotate(0)">
             <use xlink:href="#arrow-group"></use>
@@ -253,7 +253,7 @@
         <g class="arrow-1" transform="translate(515,515) rotate(270)">
             <use xlink:href="#arrow-group"></use>
         </g>
-    
+
         <!-- Cardinal directions -->
         <g class="arrow-1" transform="translate(515,515) rotate(45)">
             <use xlink:href="#arrow-group-short"></use>
@@ -273,7 +273,7 @@
             <use xlink:href="#arrow-group-short"></use>
         </g>
         <circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"></circle>
-    
+
         <!-- Third column -->
         <rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="white"></rect>
         <g class="arrow-3" transform="translate(845,185) rotate(90)">
@@ -312,7 +312,7 @@
             <use xlink:href="#arrow-group"></use>
         </g>
         <circle cx="185" cy="845" r="30" stroke="black" stroke-width="10" fill="white"></circle>
-    
+
         <!-- Second column -->
         <rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="white"></rect>
         <g class="arrow-1" transform="translate(515,185) rotate(225)">
@@ -320,7 +320,7 @@
         </g>
         <circle cx="515" cy="185" r="30" stroke="black" stroke-width="10" fill="white"></circle>
         <rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white"></rect>
-    
+
         <!-- Ordinal directions -->
         <g class="arrow-3" transform="translate(515,515) rotate(0)">
             <use xlink:href="#arrow-group"></use>
@@ -334,7 +334,7 @@
         <g class="arrow-3" transform="translate(515,515) rotate(270)">
             <use xlink:href="#arrow-group"></use>
         </g>
-    
+
         <!-- Cardinal directions -->
         <g class="arrow-3" transform="translate(515,515) rotate(45)">
             <use xlink:href="#arrow-group-short"></use>
@@ -354,7 +354,7 @@
             <use xlink:href="#arrow-group-short"></use>
         </g>
         <circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"></circle>
-    
+
         <!-- Third column -->
         <rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="white"></rect>
         <g class="arrow-1" transform="translate(845,185) rotate(270)">
@@ -390,7 +390,7 @@
         </g>
         <circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"></circle>
         <rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white"></rect>
-    
+
         <!-- Second column -->
         <rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
         <rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white"></rect>
@@ -403,7 +403,7 @@
             <use xlink:href="#arrow-group"></use>
         </g>
         <circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"></circle>
-    
+
         <!-- Third column -->
         <rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
         <rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
@@ -422,7 +422,7 @@
         </g>
         <circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"></circle>
         <rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white"></rect>
-    
+
         <!-- Second column -->
         <rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
         <rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white"></rect>
@@ -435,7 +435,7 @@
             <use xlink:href="#arrow-group"></use>
         </g>
         <circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"></circle>
-    
+
         <!-- Third column -->
         <rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
         <rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
@@ -454,7 +454,7 @@
         </g>
         <circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"></circle>
         <rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white"></rect>
-    
+
         <!-- Second column -->
         <rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
         <rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white"></rect>
@@ -467,7 +467,7 @@
             <use xlink:href="#arrow-group"></use>
         </g>
         <circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"></circle>
-    
+
         <!-- Third column -->
         <rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
         <rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
@@ -483,7 +483,7 @@
         <rect class="inner" width="330" height="330" x="20" y="350" stroke="black" stroke-width="20" fill="white"></rect>
         <circle cx="185" cy="515" r="30" stroke="black" stroke-width="10" fill="white"></circle>
         <rect class="inner" width="330" height="330" x="20" y="680" stroke="black" stroke-width="20" fill="white"></rect>
-    
+
         <!-- Second column -->
         <rect class="inner" width="330" height="330" x="350" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
         <rect class="inner" width="330" height="330" x="350" y="350" stroke="black" stroke-width="20" fill="white"></rect>
@@ -499,7 +499,7 @@
         <circle cx="515" cy="515" r="30" stroke="black" stroke-width="10" fill="white"></circle>
         <rect class="inner" width="330" height="330" x="350" y="680" stroke="black" stroke-width="20" fill="white"></rect>
         <circle cx="515" cy="845" r="30" stroke="black" stroke-width="10" fill="white"></circle>
-    
+
         <!-- Third column -->
         <rect class="inner" width="330" height="330" x="680" y="20" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
         <rect class="inner" width="330" height="330" x="680" y="350" stroke="black" stroke-width="20" fill="url(#diagonalHatch)"></rect>
