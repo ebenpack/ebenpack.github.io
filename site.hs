@@ -85,7 +85,7 @@ main =
         makeItem "" >>= loadAndApplyTemplate "templates/index.html" indexCtx >>=
           loadAndApplyTemplate "templates/default.html" indexCtx >>=
           relativizeUrls
-    match "404.html" $ do
+    match "templates/404.html" $ do
       route idRoute
       compile $
         getResourceBody >>= applyAsTemplate postCtx >>=

@@ -7,7 +7,9 @@ title: Home
 $for(posts)$
 <article class="post">
     <header class="post-header">
-        <h2><a href="$url$" title="$title$">$title$</a></h2>
+        <h2>
+            <a href="$url$" title="$title$">$title$</a>
+        </h2>
     </header>
     <div class="meta">Posted $date$ by $author$</div>
     $if(teaser)$
@@ -23,26 +25,24 @@ $endfor$
 
 <nav id="pagination" class="pagination">
     $if(previousPageNum)$
-        <a id="first_page" class="first_page" href="$firstPageUrl$">&lt;&lt;</a>
-        <a id="prev_page" class="prev_page" href="$previousPageUrl$">&lt;</a>
-    $endif$
-
-    $for(pagesBefore)$
-        <span>
-            <a href="$pageUrl$">$pageNum$</a>
-        </span>
+    <a id="first_page" class="first_page" href="$firstPageUrl$">&lt;&lt;</a>
+    <a id="prev_page" class="prev_page" href="$previousPageUrl$">&lt;</a>
+    $endif$ $for(pagesBefore)$
+    <span>
+        <a href="$pageUrl$">$pageNum$</a>
+    </span>
     $endfor$
     <span class="active">
-        <a href="#">$currentPageNum$<span class="sr-only"></span></a>
+        <a href="#">$currentPageNum$
+            <span class="sr-only"></span>
+        </a>
     </span>
     $for(pagesAfter)$
-        <span>
-            <a href="$pageUrl$">$pageNum$</a>
-        </span>
-    $endfor$
-
-    $if(nextPageNum)$
-        <a id="last_page" class="prev_page" href="$nextPageUrl$">&gt;</a>
-        <a id="next_page" class="first_page" href="$lastPageUrl$">&gt;&gt;</a>
+    <span>
+        <a href="$pageUrl$">$pageNum$</a>
+    </span>
+    $endfor$ $if(nextPageNum)$
+    <a id="last_page" class="prev_page" href="$nextPageUrl$">&gt;</a>
+    <a id="next_page" class="first_page" href="$lastPageUrl$">&gt;&gt;</a>
     $endif$
 </nav>
