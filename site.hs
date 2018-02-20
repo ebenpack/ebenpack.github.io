@@ -110,18 +110,20 @@ customPandocCompiler =
 
 -- Routing
 slugRoute :: Routes
-slugRoute =
-  metadataRoute $ \md ->
-    case (lookupString "slug" md) of
-      Just slug -> customRoute $ slugSub slug . toFilePath
-      Nothing -> idRoute
+slugRoute = metadataRoute makeRoute
   where
+    makeRoute :: Metadata -> Routes
+    makeRoute md =
+      case (lookupString "slug" md) of
+        Just slug -> customRoute $ slugSub slug . toFilePath
+        Nothing -> idRoute
     slugSub :: String -> FilePath -> FilePath
     slugSub slug path = (joinPath . init . splitPath) path </> slug
 
 assetRoute :: Routes
 assetRoute = customRoute assetPath
   where
+    assetPath :: Identifier -> FilePath
     assetPath = (joinPath . tail . splitPath) . toFilePath
 
 -- Contexts
@@ -132,7 +134,7 @@ teaserCtx :: Context String
 teaserCtx = teaserField "teaser" "content" <> postCtx
 
 -- Archives
-groupChronologicalItems :: [Item String] -> Compiler [(UTCTime, [Item String])]
+groupChronologicalItems :: [Item a] -> Compiler [(UTCTime, [Item a])]
 groupChronologicalItems items = do
   withTime <-
     forM items $ \item -> do
@@ -141,10 +143,11 @@ groupChronologicalItems items = do
   return $
     reverse $ fmap merge $ groupBy compareTime $ sortBy (comparing fst) withTime
   where
-    merge :: [(UTCTime, [Item String])] -> (UTCTime, [Item String])
-    merge gs =
+    merge :: [(UTCTime, [Item a])] -> (UTCTime, [Item a])
+    merge groups =
       let conv (date, acc) (_, toAcc) = (date, toAcc ++ acc)
-      in foldr conv (head gs) (tail gs)
+      in foldr conv (head groups) (tail groups)
+    compareTime :: (UTCTime, a) -> (UTCTime, b) -> Bool
     compareTime (t, _) (t', _) =
       formatTime defaultTimeLocale "%B %0Y" t ==
       formatTime defaultTimeLocale "%B %0Y" t'
@@ -164,8 +167,8 @@ paginate :: MonadMetadata m => Pattern -> m Paginate
 paginate pattern' = buildPaginateWith grouper pattern' makeId
 
 paginateContextPlus :: Paginate -> PageNumber -> Context a
-paginateContextPlus pag currentPage =
-  paginateContext pag currentPage <>
+paginateContextPlus page currentPage =
+  paginateContext page currentPage <>
   mconcat
     [ listField "pagesBefore" linkCtx $ wrapPages pagesBefore
     , listField "pagesAfter" linkCtx $ wrapPages pagesAfter
@@ -175,17 +178,24 @@ paginateContextPlus pag currentPage =
     linkCtx =
       field "pageNum" (return . fst . itemBody) <>
       field "pageUrl" (return . snd . itemBody)
+    pages :: [(Int, Identifier)]
     pages = [pageInfo n | n <- [1 .. lastPage], n /= currentPage]
-    lastPage = M.size . paginateMap $ pag
-    pageInfo n = (n, paginateMakeId pag n)
-    (pagesBefore, pagesAfter) = span ((< currentPage) . fst) pages
+    lastPage :: Int
+    lastPage = M.size . paginateMap $ page
+    pageInfo :: Int -> (Int, Identifier)
+    pageInfo n = (n, paginateMakeId page n)
+    (pagesBefore, pagesAfter) =
+      span ((< currentPage) . fst) pages :: ( [(PageNumber, Identifier)]
+                                            , [(PageNumber, Identifier)])
 
 wrapPages :: [(PageNumber, Identifier)] -> Compiler [Item (String, String)]
 wrapPages = mapM makeInfoItem
 
 makeInfoItem :: (PageNumber, Identifier) -> Compiler (Item (String, String))
-makeInfoItem (n, i) =
-  getRoute i >>= \mbR ->
-    case mbR of
-      Just r -> makeItem (show n, toUrl r)
-      Nothing -> fail $ "No URL for page: " ++ show n
+makeInfoItem (n, i) = getRoute i >>= makeInfo
+  where
+    makeInfo :: Maybe FilePath -> Compiler (Item (String, String))
+    makeInfo filepath =
+      case filepath of
+        Just p -> makeItem (show n, toUrl p)
+        Nothing -> fail $ "No URL for page: " ++ show n
