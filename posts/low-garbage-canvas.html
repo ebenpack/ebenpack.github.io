@@ -1,40 +1,37 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        <meta name="description" content="A few thoughts on writing low garbage JavaScript apps for the canvas." />
-        
-        <title>Eben Packwood - A Load of Garbage</title>
-        <link rel="stylesheet" href="../css/normalize.css" />
-        <link rel="stylesheet" href="../css/syntax.css" />
-        <link rel="stylesheet" href="../css/default.css" />
-        <link rel="stylesheet" href="../css/theme.css" />
-    </head>
-    <body>
-        <div class="page">
-            <header class="page-head">
-                <div class="logo">
-                    <a href="../">Eben Packwood</a>
-                </div>
-                <nav>
-                    <a href="../">Home</a>
-                    <a href="../archives.html">Archive</a>
-                    <a href="../pages/projects.html">Projects</a>
-                    <a href="https://github.com/ebenpack">Github</a>
-                </nav>
-            </header>
 
-            <main role="main" class="page-body">
-                <h1>A Load of Garbage</h1>
-                <article>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <meta name="description" content="A few thoughts on writing low garbage JavaScript apps for the canvas." /> 
+    <title>Eben Packwood - A Load of Garbage</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/syntax.css" />
+    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="stylesheet" href="../css/theme.css" />
+</head>
+
+<body>
+    <div class="page">
+        <header class="page-head">
+            <div class="logo">
+                <a href="../">Eben Packwood</a>
+            </div>
+            <nav>
+                <a href="../">Home</a>
+                <a href="../archives.html">Archive</a>
+                <a href="../pages/projects.html">Projects</a>
+                <a href="https://github.com/ebenpack" target="_blank">Github</a>
+            </nav>
+        </header>
+
+        <main role="main" class="page-body">
+            <h1>A Load of Garbage</h1>
+            <article>
     <section class="header">
-        Posted on August 28, 2014
-        
-            by ebenpack
-        
+        Posted on August 28, 2014  by ebenpack 
     </section>
     <section>
         <p>After I completed a working version of my 3D rendering engine <a href="../pages/projects/wireframe.html">wireframe.js</a>, I started looking for ways to make improvements, both in terms of performance, and usability. While both efforts are still ongoing, there are a few things I have learned with regard to performance that I wanted to get down in writing.</p>
@@ -175,27 +172,29 @@
 <p>As a side note: it occurs to me that in order to clear the back buffer, it would be possible to do potentially much less work than mentioned above. If we kept track of which pixels had been drawn in the previous frame, we could then clear only those pixels which needed clearing. But I suspect that the increased overhead and complexity of such an approach would ultimately not be worthwhile. I will leave it as an exercise to the reader to determine the feasibility of this approach.</p>
     </section>
 </article>
+        </main>
+        <footer class="page-foot">
+            <p> Powered by
+                <a href="https://jaspervdj.be/hakyll/">Hakyll</a>
+            </p>
+            <p>
+                <a id="github-link" class="github-link" href="https://github.com/ebenpack/ebenpack.github.io">
+                    Fork me on Github
+                </a>
+            </p>
+            <p>
+                <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
+                    <img alt="Creative Commons License" style="border-width:0" src="../images/ccbyncnd.png">
+                </a>
+            </p>
+            <p>
+                This work is licensed under a
+                <a href="http://creativecommons.org/licenses/by-nc/4.0/">
+                    Creative Commons Attribution-NonCommercial 4.0 International License.
+                </a>
+            </p>
+        </footer>
+    </div>
+</body>
 
-            </main>
-            <footer class="page-foot">
-                <p> Powered by <a href="https://jaspervdj.be/hakyll/">Hakyll</a></p>
-                <p>
-                    <a id="github-link" class="github-link" href="https://github.com/ebenpack/ebenpack.github.io">
-                        Fork me on Github
-                    </a>
-                </p>
-                <p>
-                    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
-                        <img alt="Creative Commons License" style="border-width:0" src="../images/ccbyncnd.png">
-                    </a>
-                </p>
-                <p>
-                    This work is licensed under a
-                        <a href="http://creativecommons.org/licenses/by-nc/4.0/">
-                            Creative Commons Attribution-NonCommercial 4.0 International License.
-                        </a>
-                </p>
-            </footer>
-        </div>
-    </body>
 </html>

@@ -1,40 +1,37 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        <meta name="description" content="Chrome DevTools' network panel (circa v46) presents misleading information for redirected synchronous XHR requests." />
-        
-        <title>Eben Packwood - Chrome DevTools Synchronous XHR Redirect Bug</title>
-        <link rel="stylesheet" href="../css/normalize.css" />
-        <link rel="stylesheet" href="../css/syntax.css" />
-        <link rel="stylesheet" href="../css/default.css" />
-        <link rel="stylesheet" href="../css/theme.css" />
-    </head>
-    <body>
-        <div class="page">
-            <header class="page-head">
-                <div class="logo">
-                    <a href="../">Eben Packwood</a>
-                </div>
-                <nav>
-                    <a href="../">Home</a>
-                    <a href="../archives.html">Archive</a>
-                    <a href="../pages/projects.html">Projects</a>
-                    <a href="https://github.com/ebenpack">Github</a>
-                </nav>
-            </header>
 
-            <main role="main" class="page-body">
-                <h1>Chrome DevTools Synchronous XHR Redirect Bug</h1>
-                <article>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <meta name="description" content="Chrome DevTools' network panel (circa v46) presents misleading information for redirected synchronous XHR requests." /> 
+    <title>Eben Packwood - Chrome DevTools Synchronous XHR Redirect Bug</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/syntax.css" />
+    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="stylesheet" href="../css/theme.css" />
+</head>
+
+<body>
+    <div class="page">
+        <header class="page-head">
+            <div class="logo">
+                <a href="../">Eben Packwood</a>
+            </div>
+            <nav>
+                <a href="../">Home</a>
+                <a href="../archives.html">Archive</a>
+                <a href="../pages/projects.html">Projects</a>
+                <a href="https://github.com/ebenpack" target="_blank">Github</a>
+            </nav>
+        </header>
+
+        <main role="main" class="page-body">
+            <h1>Chrome DevTools Synchronous XHR Redirect Bug</h1>
+            <article>
     <section class="header">
-        Posted on October 24, 2015
-        
-            by ebenpack
-        
+        Posted on October 24, 2015  by ebenpack 
     </section>
     <section>
         <p>There is an unusual, and potentially very frustrating bug in Chrome’s DevTools (at least as of version 46.0.2490.80). It does not appear to have been documented elsewhere, so it is being recorded here in the hope that it may prevent some future hair-pulling.</p>
@@ -93,27 +90,29 @@
 <p>* Note: Synchronous requests are generally discouraged, especially on the main thread. Even so, synchronous XHRs do still exist in the wild.</p>
     </section>
 </article>
+        </main>
+        <footer class="page-foot">
+            <p> Powered by
+                <a href="https://jaspervdj.be/hakyll/">Hakyll</a>
+            </p>
+            <p>
+                <a id="github-link" class="github-link" href="https://github.com/ebenpack/ebenpack.github.io">
+                    Fork me on Github
+                </a>
+            </p>
+            <p>
+                <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
+                    <img alt="Creative Commons License" style="border-width:0" src="../images/ccbyncnd.png">
+                </a>
+            </p>
+            <p>
+                This work is licensed under a
+                <a href="http://creativecommons.org/licenses/by-nc/4.0/">
+                    Creative Commons Attribution-NonCommercial 4.0 International License.
+                </a>
+            </p>
+        </footer>
+    </div>
+</body>
 
-            </main>
-            <footer class="page-foot">
-                <p> Powered by <a href="https://jaspervdj.be/hakyll/">Hakyll</a></p>
-                <p>
-                    <a id="github-link" class="github-link" href="https://github.com/ebenpack/ebenpack.github.io">
-                        Fork me on Github
-                    </a>
-                </p>
-                <p>
-                    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
-                        <img alt="Creative Commons License" style="border-width:0" src="../images/ccbyncnd.png">
-                    </a>
-                </p>
-                <p>
-                    This work is licensed under a
-                        <a href="http://creativecommons.org/licenses/by-nc/4.0/">
-                            Creative Commons Attribution-NonCommercial 4.0 International License.
-                        </a>
-                </p>
-            </footer>
-        </div>
-    </body>
 </html>
