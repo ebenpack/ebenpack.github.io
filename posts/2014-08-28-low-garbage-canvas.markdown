@@ -2,45 +2,45 @@
 title: A Load of Garbage
 tags: JavaScript, Canvas
 slug: low-garbage-canvas
-date: 2014-08-28 9:30
+published: 2014-08-28 9:30
 author: ebenpack
 description: A few thoughts on writing low garbage JavaScript apps for the canvas.
 summary: A few thoughts on writing low garbage JavaScript apps for the canvas.
 ---
 
-After I completed a working version of my 3D rendering engine [wireframe.js](/pages/projects/wireframe.html), I started 
-looking for ways to make improvements, both in terms of performance, and usability. While both efforts are still 
+After I completed a working version of my 3D rendering engine [wireframe.js](/pages/projects/wireframe.html), I started
+looking for ways to make improvements, both in terms of performance, and usability. While both efforts are still
 ongoing, there are a few things I have learned with regard to performance that I wanted to get down in writing.
 
 <!--more-->
 
-One of the main areas of focus for performance on this project has been memory management. In order to achieve a smooth, 
-stable 60 frames per second, you have just under 17ms to complete all of the operations required to get a frame on the 
-screen. This includes any physics or game logic you might need to execute, as well as the time required to paint the 
-frame itself. I don't know if you've heard, but 17ms is not very much time at all. So when a garbage collection (GC) 
-event occurs, this takes some time away from the already tight 17ms you have to draw your frame. And if you don't have 
-those extra milliseconds to spare for a GC event (and you don't really have much say in when they occur, so you can't 
-exactly plan for them), this can result in skipped frames, which can appear to the user as a stutter or pause. I 
+One of the main areas of focus for performance on this project has been memory management. In order to achieve a smooth,
+stable 60 frames per second, you have just under 17ms to complete all of the operations required to get a frame on the
+screen. This includes any physics or game logic you might need to execute, as well as the time required to paint the
+frame itself. I don't know if you've heard, but 17ms is not very much time at all. So when a garbage collection (GC)
+event occurs, this takes some time away from the already tight 17ms you have to draw your frame. And if you don't have
+those extra milliseconds to spare for a GC event (and you don't really have much say in when they occur, so you can't
+exactly plan for them), this can result in skipped frames, which can appear to the user as a stutter or pause. I
 believe some folks call it jank.
 
-So how do we avoid this? Well, the obvious answer is: if you want to avoid garbage collection, then don't make so much 
-garbage. It may sound an easy thing, but the details of just how to achieve this can be a little more tricky. First, 
-just where does garbage come from in JavaScript? If you aren't experienced with memory management, the answer may not 
+So how do we avoid this? Well, the obvious answer is: if you want to avoid garbage collection, then don't make so much
+garbage. It may sound an easy thing, but the details of just how to achieve this can be a little more tricky. First,
+just where does garbage come from in JavaScript? If you aren't experienced with memory management, the answer may not
 be obvious.
 
-Simply put, creating a new object requires the interpreter to allocate memory for that object. But isn't everything in 
-JavaScript an object? Well... yes and no. Strings, numbers, and booleans (so long as they aren't instantiated by their 
-respective `String`, `Number` or `Boolean` constructors) and `null` and `undefined` are all primitive types, meaning 
-they're not, strictly speaking, objects. They do, however, behave like objects on occasion. When a method is called on 
-a primitive type, a wrapper object is quickly created for that value in order to call the method, and then, just as 
-quickly, it is discarded. And, more importantly, while they may not technically be objects, they still need some memory 
+Simply put, creating a new object requires the interpreter to allocate memory for that object. But isn't everything in
+JavaScript an object? Well... yes and no. Strings, numbers, and booleans (so long as they aren't instantiated by their
+respective `String`, `Number` or `Boolean` constructors) and `null` and `undefined` are all primitive types, meaning
+they're not, strictly speaking, objects. They do, however, behave like objects on occasion. When a method is called on
+a primitive type, a wrapper object is quickly created for that value in order to call the method, and then, just as
+quickly, it is discarded. And, more importantly, while they may not technically be objects, they still need some memory
 allocated in order to store them.
 
-Garbage is what happens to the memory allocated to objects that are no longer in use (or, more specifically, objects 
-that are no longer referenced). Once an object is no longer referenced in a program, the interpreter can mark this 
+Garbage is what happens to the memory allocated to objects that are no longer in use (or, more specifically, objects
+that are no longer referenced). Once an object is no longer referenced in a program, the interpreter can mark this
 object as garbage that needs to be collected (i.e. memory which can be deallocated). E.g.:
 
-~~~~ {.javascript .numberLines}
+```{.javascript .numberLines}
 // Memory allocated for first array object.
 var foo = [1,2,3,4,5,6];
 
@@ -56,25 +56,25 @@ var bar = foo;
 // foo assigned to 'bar', but second array still
 // referenced by bar, so cannot be marked for GC.
 foo = 'bar';
-~~~~
+```
 
-But while virtually anything you do in JavaScript will require the allocation of some amount of memory, the situation 
-is not so hopeless as it may seem. After all, the goal is to reduce garbage, not necessarily to reduce the total amount 
-of memory allocated (although memory use should always be kept as low as possible). As garbage is created when an object 
+But while virtually anything you do in JavaScript will require the allocation of some amount of memory, the situation
+is not so hopeless as it may seem. After all, the goal is to reduce garbage, not necessarily to reduce the total amount
+of memory allocated (although memory use should always be kept as low as possible). As garbage is created when an object
 is no longer referenced, there are a few strategies to reduce garbage collection.
 
-What it boils down to is that, in order to reduce garbage, it is imperative that, as much as possible, you should not 
-discard objects once they have been created. wireframe.js provides us with a good case study of how this can be achieved 
+What it boils down to is that, in order to reduce garbage, it is imperative that, as much as possible, you should not
+discard objects once they have been created. wireframe.js provides us with a good case study of how this can be achieved
 in a project that makes use of the canvas, and for JavaScript in general.
 
-In the first, 'high-garbage' iteration, I was using a version of the 
-[linearalgea.js](https://github.com/ebenpack/linearalgea.js) math library (which I created especially to perform the 
-matrix and vector math required by a 3D rendering engine) that created and returned a new matrix, or a new vector, for 
-virtually every method call. As a general design decision, this mostly made sense. You want your matrices and vectors 
-to be more or less immutable. You don't want the methods you're calling to change the value of the object itself, as you 
+In the first, 'high-garbage' iteration, I was using a version of the
+[linearalgea.js](https://github.com/ebenpack/linearalgea.js) math library (which I created especially to perform the
+matrix and vector math required by a 3D rendering engine) that created and returned a new matrix, or a new vector, for
+virtually every method call. As a general design decision, this mostly made sense. You want your matrices and vectors
+to be more or less immutable. You don't want the methods you're calling to change the value of the object itself, as you
 often need to use these matrices and vectors in multiple operations. E.g.:
 
-~~~~ {.javascript .numberLines}
+```{.javascript .numberLines}
 // Old, high-garbage methods
 Vector.prototype.subtract = function(vector){
     return new Vector(
@@ -104,28 +104,28 @@ var side2 = vertex3.subtract(vertex1);
 
 // Find the normal of the triangle, using the two sides
 var normal = side1.cross(side2);
-~~~~
+```
 
-The above code does what we want, but it also creates three new vectors along the way. Assume we run this code just 
-once per frame (in reality it will run many times per frame, potentially once per triangle of every mesh in our scene). 
-This means that for every frame, we are adding three new vectors as garbage that will need to be collected (assuming the 
-interpreter isn't smart enough to make some reuse of them, which... are there any interpreters that do that? I don't 
+The above code does what we want, but it also creates three new vectors along the way. Assume we run this code just
+once per frame (in reality it will run many times per frame, potentially once per triangle of every mesh in our scene).
+This means that for every frame, we are adding three new vectors as garbage that will need to be collected (assuming the
+interpreter isn't smart enough to make some reuse of them, which... are there any interpreters that do that? I don't
 know).
 
-The solution to this problem was to add 'low-garbage' versions of all of these methods which do not create a new vector 
-or matrix, but which rather assign the result of the operation to a matrix or vector object that is passed to the method 
-call. As JavaScript uses a call-by-sharing evaluation strategy (which means that mutations made to a mutable argument 
-inside a function  will be visible outside of that function), we can pass an object to a function that we will use to 
+The solution to this problem was to add 'low-garbage' versions of all of these methods which do not create a new vector
+or matrix, but which rather assign the result of the operation to a matrix or vector object that is passed to the method
+call. As JavaScript uses a call-by-sharing evaluation strategy (which means that mutations made to a mutable argument
+inside a function will be visible outside of that function), we can pass an object to a function that we will use to
 store the results of the function call.
 
-This method of returning results might be familiar to those of you who are have some experience with C. In C, functions 
-are limited in what they can return; e.g. a function cannot return an array. Instead, a function can return a pointer to 
-an array, or, alternatively, a pointer to the array can be assigned to a pointer that is passed as an argument to the 
+This method of returning results might be familiar to those of you who are have some experience with C. In C, functions
+are limited in what they can return; e.g. a function cannot return an array. Instead, a function can return a pointer to
+an array, or, alternatively, a pointer to the array can be assigned to a pointer that is passed as an argument to the
 function.
 
 The above example, rewritten to use the low-garbage methods, would look something like this:
 
-~~~~ {.javascript .numberLines}
+```{.javascript .numberLines}
 // New, low-grabage methods
 Vector.prototype.subtractLG = function(vector, result){
     result.x = this.x - vector.x;
@@ -154,16 +154,16 @@ vertex3.subtractLG(vertex1, side2);
 
 // Find the normal of the triangle, using the two sides
 side1.crossLG(side2, normal);
-~~~~
+```
 
-This example may look very similar to the earlier example. And if it was executed as-is, since the results vectors would 
-be created anew for every frame, there would be little or no difference between this and the earlier version in terms of 
-memory use. The key difference comes when these results vectors are created just once, and a reference is kept in order 
-to prevent them from being garbage collected. So now, instead of creating and discarding a new object for every method 
-call, multiple times per frame, we're creating just a handful of objects upon initialization, and using them over and 
+This example may look very similar to the earlier example. And if it was executed as-is, since the results vectors would
+be created anew for every frame, there would be little or no difference between this and the earlier version in terms of
+memory use. The key difference comes when these results vectors are created just once, and a reference is kept in order
+to prevent them from being garbage collected. So now, instead of creating and discarding a new object for every method
+call, multiple times per frame, we're creating just a handful of objects upon initialization, and using them over and
 over.
 
-Implementing low-garbage versions of all of the matrix and vector methods had a fairly large impact for wireframe.js. 
+Implementing low-garbage versions of all of the matrix and vector methods had a fairly large impact for wireframe.js.
 Compare the before and after graphs below.
 
 ```{=html}
@@ -189,24 +189,24 @@ Compare the before and after graphs below.
 <div class="illustration-label">Memory usage for 'low-garbage' math methods</div>
 ```
 
-While overall these memory graphs have a similar shape, the latter has a far more regular GC pattern. It grows steadily, 
-and then there's a GC event, which produces the characteristic sawtooth pattern. The 'high-garbage' version, on the 
-other hand, grows some, then has a GC event, grows, grows, GC, etc. Overall the shape is vaguely sawtooth-like, but 
-there are far more GC events that occur sporadically between the trough and the peak of the sawtooth, and the memory 
+While overall these memory graphs have a similar shape, the latter has a far more regular GC pattern. It grows steadily,
+and then there's a GC event, which produces the characteristic sawtooth pattern. The 'high-garbage' version, on the
+other hand, grows some, then has a GC event, grows, grows, GC, etc. Overall the shape is vaguely sawtooth-like, but
+there are far more GC events that occur sporadically between the trough and the peak of the sawtooth, and the memory
 graph appears much more erratic.
 
-Depending on what your aims are, in order to fully make use of this sort of approach it may be necessary to implement 
-object pooling. What this means is that you have a 'pool' of objects that you have instantiated. When you need a new 
-object, you pull one from the pool. When you no longer need that object, you return it to the pool. There is a bit more 
-overhead in this, so if you know ahead of time exactly how many objects you will need, and you are certain that you will 
+Depending on what your aims are, in order to fully make use of this sort of approach it may be necessary to implement
+object pooling. What this means is that you have a 'pool' of objects that you have instantiated. When you need a new
+object, you pull one from the pool. When you no longer need that object, you return it to the pool. There is a bit more
+overhead in this, so if you know ahead of time exactly how many objects you will need, and you are certain that you will
 never need more than this, object pooling would likely not be worth the effort.
 
-It should be noted, though that care must be taken when using this method, whether with an object pool or without, to 
-initialize the results object to ensure that old values from previous calculations are completely removed from your 
-results object. For example, the following matrix translation static method can cause problems if the results matrix 
+It should be noted, though that care must be taken when using this method, whether with an object pool or without, to
+initialize the results object to ensure that old values from previous calculations are completely removed from your
+results object. For example, the following matrix translation static method can cause problems if the results matrix
 still carries values from previous calculations:
 
-~~~~ {.javascript .numberLines}
+```{.javascript .numberLines}
 // If the result matrix still has values in 0-11 or 15 from
 // being used in previous calculations, this will cause problems.
 Matrix.translation = function(xtrans, ytrans, ztrans, result){
@@ -214,47 +214,47 @@ Matrix.translation = function(xtrans, ytrans, ztrans, result){
     result[13] = ytrans;
     result[14] = ztrans;
 };
-~~~~
+```
 
-The way I have implemented the low-garbage methods in these examples also makes method chaining impossible, but chaining 
-can be achieved by simply explicitly returning the result. This does not have any negative repercussions in terms of 
+The way I have implemented the low-garbage methods in these examples also makes method chaining impossible, but chaining
+can be achieved by simply explicitly returning the result. This does not have any negative repercussions in terms of
 memory usage or performance.
 
-Alright, so far, so good. Implementing the low garbage math methods—and refactoring the main 3D rendering function to 
-make use of these methods—had a very noticeable effect on the memory-use profile of the program. Garbage collection was 
-now much less frequent, and at more regular intervals. But garbage can also sneak in where you don't expect it, and 
+Alright, so far, so good. Implementing the low garbage math methods—and refactoring the main 3D rendering function to
+make use of these methods—had a very noticeable effect on the memory-use profile of the program. Garbage collection was
+now much less frequent, and at more regular intervals. But garbage can also sneak in where you don't expect it, and
 there was still work to be done.
 
-The two graphs above represent a ~2 second time slice. So in the 'good' version, GC events are still occurring 
-approximately every 200ms. This could be better, and I was certain that there were still areas of the program that were 
-still making too much garbage. The most obvious place to look was this line, which occurs at the beginning of the 
+The two graphs above represent a ~2 second time slice. So in the 'good' version, GC events are still occurring
+approximately every 200ms. This could be better, and I was certain that there were still areas of the program that were
+still making too much garbage. The most obvious place to look was this line, which occurs at the beginning of the
 render function:
 
-~~~~ {.javascript .numberLines}
+```{.javascript .numberLines}
 back_buffer_img = back_buffer_ctx.createImageData(width, height);
-~~~~
+```
 
-The back buffer is an `ImageData` array (which is a `Uint8ClampedArray`, which is a typed array) where pixel data is 
-written. This image data is then drawn to an offscreen buffer canvas, which is then used to draw to the main canvas. 
-While this may seem like a lot of extra, unnecessary steps, the main advantage of this is that it allows the 3D scene 
-to be initially drawn in one resolution, but displayed in a different resolution. So a scene can be upscaled in order 
+The back buffer is an `ImageData` array (which is a `Uint8ClampedArray`, which is a typed array) where pixel data is
+written. This image data is then drawn to an offscreen buffer canvas, which is then used to draw to the main canvas.
+While this may seem like a lot of extra, unnecessary steps, the main advantage of this is that it allows the 3D scene
+to be initially drawn in one resolution, but displayed in a different resolution. So a scene can be upscaled in order
 to use fewer resources, or it can be downscaled to provide a better looking image.
 
-As `createImageData` creates a new `ImageData` array, in this early version of the program a new back buffer array was 
-being created for every frame. Naturally, this created a lot of unnecessary garbage. In my first attempt to tackle this 
+As `createImageData` creates a new `ImageData` array, in this early version of the program a new back buffer array was
+being created for every frame. Naturally, this created a lot of unnecessary garbage. In my first attempt to tackle this
 problem, I was running over the entire array, zeroing out all the values.
 
-Backing up a little, an `ImageData` array is a one-dimensional array representing the RGBA values of all pixels in a 2D 
-canvas context, with each element representing either a red, green, blue, or alpha value of a pixel. So, for example, a 
+Backing up a little, an `ImageData` array is a one-dimensional array representing the RGBA values of all pixels in a 2D
+canvas context, with each element representing either a red, green, blue, or alpha value of a pixel. So, for example, a
 1x1 pixel `ImageData` array might look like this `[1, 7, 2, 9]`, where the RGBA values are 1, 7, 2, and 9 respectively.
 
-So it should be clear that for any `ImageData` array, its length will be described by canvas width * canvas height * 4. 
-As it turned out, looping over the entire array was actually noticeably slower than just creating a new `ImageData` 
-array for every frame, even with all the extra garbage that brought with it. However, if you consider for a moment what 
-it is we're trying to achieve (clearing the back buffer for the next frame), it may become clear that we can actually 
-get away with doing ¼ of the work. By setting the alpha value to zero, we can ignore the RGB values, just so long as we 
-make sure to set all RGBA values when we draw a new pixel to the array. With this change, each frame took less time to 
-draw (meaning fewer resources were used), and GC events became much less frequent. Here is what memory use looked like 
+So it should be clear that for any `ImageData` array, its length will be described by canvas width _ canvas height _ 4.
+As it turned out, looping over the entire array was actually noticeably slower than just creating a new `ImageData`
+array for every frame, even with all the extra garbage that brought with it. However, if you consider for a moment what
+it is we're trying to achieve (clearing the back buffer for the next frame), it may become clear that we can actually
+get away with doing ¼ of the work. By setting the alpha value to zero, we can ignore the RGB values, just so long as we
+make sure to set all RGBA values when we draw a new pixel to the array. With this change, each frame took less time to
+draw (meaning fewer resources were used), and GC events became much less frequent. Here is what memory use looked like
 after this change (the scale is the same as the previous two graphs):
 
 ```{=html}
@@ -269,11 +269,11 @@ after this change (the scale is the same as the previous two graphs):
 <div class="illustration-label">Memory usage using back buffer zeroing</div>
 ```
 
-GC events are now happening about once a second. Which can certainly still be improved upon, but it's miles ahead of 
+GC events are now happening about once a second. Which can certainly still be improved upon, but it's miles ahead of
 where it was to begin with.
 
-As a side note: it occurs to me that in order to clear the back buffer, it would be possible to do potentially much less 
-work than mentioned above. If we kept track of which pixels had been drawn in the previous frame, we could then clear 
-only those pixels which needed clearing. But I suspect that the increased overhead and complexity of such an approach 
-would ultimately not be worthwhile. I will leave it as an exercise to the reader to determine the feasibility of this 
+As a side note: it occurs to me that in order to clear the back buffer, it would be possible to do potentially much less
+work than mentioned above. If we kept track of which pixels had been drawn in the previous frame, we could then clear
+only those pixels which needed clearing. But I suspect that the increased overhead and complexity of such an approach
+would ultimately not be worthwhile. I will leave it as an exercise to the reader to determine the feasibility of this
 approach.

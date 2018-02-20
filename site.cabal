@@ -10,7 +10,6 @@ executable site
                   , filepath
                   , pandoc
                   , containers
-                  , regex-compat
-                  , dates
+                  , time
   ghc-options:      -threaded
   default-language: Haskell2010

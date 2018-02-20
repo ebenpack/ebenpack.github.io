@@ -2,20 +2,20 @@
 title: Canvas Path Performance
 tags: JavaScript, Canvas
 slug: canvas-path-performance
-date: 2014-08-31 12:34
+published: 2014-08-31 12:34
 author: ebenpack
 description: An investigation of a canvas performance issue leads to unexpected results.
 summary: An investigation of a canvas performance issue leads to unexpected results.
 ---
 
-If you've done much work with the HTML5 canvas API, and especially if you've ever looked into performance tuning your 
-canvas apps, you've likely come across the advice to batch your canvas calls together. For example, you may have read 
-that when drawing multiple lines or shapes, it's better to create a single path and only call your draw method once, 
+If you've done much work with the HTML5 canvas API, and especially if you've ever looked into performance tuning your
+canvas apps, you've likely come across the advice to batch your canvas calls together. For example, you may have read
+that when drawing multiple lines or shapes, it's better to create a single path and only call your draw method once,
 drawing all lines and shapes in one go, than it is to draw each line or shape individually. In other words, this:
 
 <!--more-->
 
-~~~~ {.javascript .numberLines}
+```{.javascript .numberLines}
 ctx.beginPath();
 lineArray.forEach(function(line){
     ctx.moveTo(line.startx, line.starty);
@@ -24,11 +24,11 @@ lineArray.forEach(function(line){
 // Draw all lines at once.
 ctx.stroke();
 ctx.closePath();
-~~~~
+```
 
 is preferable to this:
 
-~~~~ {.javascript .numberLines}
+```{.javascript .numberLines}
  lineArray.forEach(function(line){
     ctx.beginPath();
     ctx.moveTo(line.startx, line.starty);
@@ -37,15 +37,15 @@ is preferable to this:
     ctx.stroke();
     ctx.closePath();
 });
-~~~~
+```
 
-As I recently discovered, however, this does not always hold true. Performance in certain browsers actually degrades 
-very quickly as the number of subpaths increases above a certain threshold. More information about how different 
+As I recently discovered, however, this does not always hold true. Performance in certain browsers actually degrades
+very quickly as the number of subpaths increases above a certain threshold. More information about how different
 browsers perform can be found at this [jsperf](http://jsperf.com/canvas-path-performance/2).
 
 The following test method was used in order to obtain quantitative data to investigate this issue:
 
-~~~~ {.html .numberLines}
+```{.html .numberLines}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,10 +80,10 @@ The following test method was used in order to obtain quantitative data to inves
     </script>
 </body>
 </html>
-~~~~
+```
 
-What this code is doing is drawing paths to the canvas with increasingly many subpaths. `performance.now()` was used to 
-measure execution time, as it provides higher resolution timestamps than `Date.now()`. Results were stored in an array, 
+What this code is doing is drawing paths to the canvas with increasingly many subpaths. `performance.now()` was used to
+measure execution time, as it provides higher resolution timestamps than `Date.now()`. Results were stored in an array,
 which was used to produce the chart below.
 
 ```{=html}
@@ -182,12 +182,12 @@ which was used to produce the chart below.
 </svg>
 ```
 
-The takeaway, it would seem, is that you may see performance drop off precipitously in some browsers when the number of 
-subpaths in your path reaches or exceeds ~600. If you encounter this issue, in order to work around it, paths should be 
-periodically drawn and closed. In other words, paths should not be fully batched together, but should be batched into 
+The takeaway, it would seem, is that you may see performance drop off precipitously in some browsers when the number of
+subpaths in your path reaches or exceeds ~600. If you encounter this issue, in order to work around it, paths should be
+periodically drawn and closed. In other words, paths should not be fully batched together, but should be batched into
 chunks. Experimentation has shown that keeping subpaths to <200 provides relatively good performance.
 
-Addendum: Further testing suggests this issue is not very widespread at all, and does not affect all versions of 
-Firefox. Currently, these results are reproducible in Firefox 31.0 running on Arch Linux. Firefox 31.0 running on 
-OS X 10.7 does not produce similar results. After further investigation, this sounds like it may be an issue with 
+Addendum: Further testing suggests this issue is not very widespread at all, and does not affect all versions of
+Firefox. Currently, these results are reproducible in Firefox 31.0 running on Arch Linux. Firefox 31.0 running on
+OS X 10.7 does not produce similar results. After further investigation, this sounds like it may be an issue with
 [cairo](https://bugzilla.mozilla.org/show_bug.cgi?id=703281).
