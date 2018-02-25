@@ -3,7 +3,7 @@ title: Wireframe
 slug: wireframe
 tags: JavaScript
 languages: JavaScript
-date: 2014-07-22 15:15
+published: 2014-07-22 15:15:00
 author: ebenpack
 description: 3D software engine.
 summary: 3D software engine.

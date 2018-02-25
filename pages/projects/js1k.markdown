@@ -3,7 +3,7 @@ title: JS1K Lattice Boltzmann
 slug: js1k
 tags: JavaScript
 languages: JavaScript
-date: 2014-02-15 20:28
+published: 2014-02-15 20:28:00
 author: ebenpack
 description: An implementation of the lattice Boltzmann method with JavaScript for the JS1k contest.
 summary: Lattice Boltzmann, implemented in under 1K.

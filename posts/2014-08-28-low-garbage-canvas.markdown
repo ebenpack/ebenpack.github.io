@@ -2,7 +2,7 @@
 title: A Load of Garbage
 tags: JavaScript, Canvas
 slug: low-garbage-canvas
-published: 2014-08-28 9:30
+published: 2014-08-28 9:30:00
 author: ebenpack
 description: A few thoughts on writing low garbage JavaScript apps for the canvas.
 summary: A few thoughts on writing low garbage JavaScript apps for the canvas.

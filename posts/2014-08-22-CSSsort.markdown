@@ -2,7 +2,7 @@
 title: Sorting with CSS
 tags: HTML, CSS
 slug: css-sort
-published: 2014-08-22 13:52
+published: 2014-08-22 13:52:00
 author: ebenpack
 description: Sorting content with pure CSS.
 summary: Sorting content with pure CSS.

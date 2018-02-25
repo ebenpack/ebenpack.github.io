@@ -2,7 +2,7 @@
 title: Chrome DevTools Synchronous XHR Redirect Bug
 tags: JavaScript, DevTools
 slug: chrome-devtools-synchronous-xhr-redirect-bug
-published: 2015-10-24 10:14
+published: 2015-10-24 10:14:00
 author: ebenpack
 description: Chrome DevTools' network panel (circa v46) presents misleading information for redirected synchronous XHR requests.
 ---

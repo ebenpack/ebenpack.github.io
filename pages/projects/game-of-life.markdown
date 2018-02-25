@@ -3,7 +3,7 @@ title: Conway's Game of Life
 slug: game-of-life
 tags: JavaScript
 languages: JavaScript
-date: 2014-02-15 20:28
+published: 2014-02-15 20:28:00
 author: ebenpack
 description: Conway's Game of Life made with JavaScript.
 summary: Conway's Game of Life made with JavaScript.

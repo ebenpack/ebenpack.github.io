@@ -2,7 +2,7 @@
 title: Canvas Path Performance
 tags: JavaScript, Canvas
 slug: canvas-path-performance
-published: 2014-08-31 12:34
+published: 2014-08-31 12:34:00
 author: ebenpack
 description: An investigation of a canvas performance issue leads to unexpected results.
 summary: An investigation of a canvas performance issue leads to unexpected results.

@@ -2,7 +2,7 @@
 title: Computational Fluid Dynamics Made Easy
 tags: JavaScript, Lattice Boltzmann
 slug: lattice-boltzmann
-published: 2014-02-16 12:49
+published: 2014-02-16 12:49:00
 author: ebenpack
 description: Implementing the lattice Boltzmann method with JavaScript.
 summary: Implementing the lattice Boltzmann method with JavaScript.

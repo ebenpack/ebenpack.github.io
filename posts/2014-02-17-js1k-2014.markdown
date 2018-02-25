@@ -2,7 +2,7 @@
 title: "Computational Fluid Dynamics in Under 1K: How I Made My JS1K Entry"
 tags: JavaScript, JS1K, Lattice Boltzmann
 slug: wavybits
-published: 2014-02-17 12:49
+published: 2014-02-17 12:49:00
 author: ebenpack
 description: The making of a JavaScript implementation of the lattice Boltzmann method for the JS1K contest.
 summary: The making of a JavaScript implementation of the lattice Boltzmann method for the JS1K contest.

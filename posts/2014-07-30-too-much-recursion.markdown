@@ -2,7 +2,7 @@
 title: Too Much Recursion!
 tags: JavaScript
 slug: too-much-recursion
-published: 2014-07-30 21:00
+published: 2014-07-30 21:00:00
 author: ebenpack
 description: "In which the author addresses the claim, made in the new O'Reilly book 'Data Structures and Algorithms in 
 JavaScript', that 'it is not possible to [implement Mergesort as a recursive algorithm] in JavaScript, as the recursion 

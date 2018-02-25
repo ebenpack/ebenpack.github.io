@@ -3,7 +3,7 @@ title: A*
 slug: a-star
 tags: JavaScript
 languages: JavaScript
-date: 2014-02-15 20:28
+published: 2014-02-15 20:28:00
 author: ebenpack
 description: A* pathfinding made with JavaScript.
 summary: A* pathfinding.
