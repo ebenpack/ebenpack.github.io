@@ -44,7 +44,7 @@ main =
     create ["pages/projects.html"] $ do
       route idRoute
       compile $ do
-        projects <- loadAll "pages/projects/*"
+        projects <- loadAll "pages/projects/*" >>= sortChronologicalItems
         let projectCtx =
               listField "projects" defaultContext (return projects) <>
               constField "title" "Projects" <>
@@ -153,6 +153,14 @@ groupChronologicalItems items = do
       let (year1, month1, _) = toGregorian $ utctDay t1
           (year2, month2, _) = toGregorian $ utctDay t2
       in year1 == year2 && month1 == month2
+
+sortChronologicalItems :: [Item a] -> Compiler [Item a]
+sortChronologicalItems items = do
+  withTime <-
+    forM items $ \item -> do
+      utc <- getItemUTC defaultTimeLocale $ itemIdentifier item
+      return (utc, item)
+  return $ map snd $ sortBy (flip (comparing fst)) withTime
 
 -- Pagination
 makeId :: PageNumber -> Identifier
