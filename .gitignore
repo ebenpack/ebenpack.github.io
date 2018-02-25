@@ -3,3 +3,4 @@ _site/
 _cache/
 .idea/
 .DS_Store
+node_modules/
