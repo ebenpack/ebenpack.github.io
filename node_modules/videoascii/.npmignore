@@ -1,0 +1,8 @@
+node_modules
+*.webm
+*.ogg
+*.ogv
+*.jpg
+*.jpeg
+*.png
+*.gif
