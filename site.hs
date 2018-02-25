@@ -6,7 +6,8 @@ import Data.List (groupBy, sortBy)
 import qualified Data.Map as M
 import Data.Monoid ((<>))
 import Data.Ord (comparing)
-import Data.Time.Clock (UTCTime)
+import Data.Time.Calendar (toGregorian)
+import Data.Time.Clock (UTCTime, utctDay)
 import Data.Time.Format
 import Hakyll
 import System.FilePath
@@ -55,14 +56,14 @@ main =
     create ["archives.html"] $ do
       route idRoute
       compile $ do
-        posts <- (loadAll "posts/*") >>= groupChronologicalItems
+        posts <- loadAll "posts/*" >>= groupChronologicalItems
         let archiveCtx =
               listField
                 "dates"
                 (field
                    "date"
                    (return .
-                    (formatTime defaultTimeLocale "%B %0Y") . fst . itemBody) <>
+                    formatTime defaultTimeLocale "%B %0Y" . fst . itemBody) <>
                  listFieldWith "posts" teaserCtx (return . snd . itemBody))
                 (traverse (\(d, is) -> makeItem (d, is)) posts) <>
               constField "title" "Archives" <>
@@ -103,7 +104,7 @@ customPandocCompiler :: Compiler (Item String)
 customPandocCompiler =
   let defaultWriterExtensions = writerExtensions defaultHakyllWriterOptions
       newWriterExtensions =
-        enableExtension Ext_raw_attribute $ defaultWriterExtensions
+        enableExtension Ext_raw_attribute defaultWriterExtensions
       writerOptions =
         defaultHakyllWriterOptions {writerExtensions = newWriterExtensions}
   in pandocCompilerWith defaultHakyllReaderOptions writerOptions
@@ -114,7 +115,7 @@ slugRoute = metadataRoute makeRoute
   where
     makeRoute :: Metadata -> Routes
     makeRoute md =
-      case (lookupString "slug" md) of
+      case lookupString "slug" md of
         Just slug -> customRoute $ slugSub slug . toFilePath
         Nothing -> idRoute
     slugSub :: String -> FilePath -> FilePath
@@ -141,24 +142,25 @@ groupChronologicalItems items = do
       utc <- getItemUTC defaultTimeLocale $ itemIdentifier item
       return (utc, [item])
   return $
-    reverse $ fmap merge $ groupBy compareTime $ sortBy (comparing fst) withTime
+    fmap merge $ groupBy compareTime $ sortBy (flip (comparing fst)) withTime
   where
     merge :: [(UTCTime, [Item a])] -> (UTCTime, [Item a])
     merge groups =
       let conv (date, acc) (_, toAcc) = (date, toAcc ++ acc)
       in foldr conv (head groups) (tail groups)
     compareTime :: (UTCTime, a) -> (UTCTime, b) -> Bool
-    compareTime (t, _) (t', _) =
-      formatTime defaultTimeLocale "%B %0Y" t ==
-      formatTime defaultTimeLocale "%B %0Y" t'
+    compareTime (t1, _) (t2, _) =
+      let (year1, month1, _) = toGregorian $ utctDay t1
+          (year2, month2, _) = toGregorian $ utctDay t2
+      in year1 == year2 && month1 == month2
 
 -- Pagination
 makeId :: PageNumber -> Identifier
 makeId pageNum =
   fromFilePath $
-  if (pageNum == 1)
+  if pageNum == 1
     then "index.html"
-    else "index" ++ (show pageNum) ++ ".html"
+    else "index" ++ show pageNum ++ ".html"
 
 grouper :: MonadMetadata m => [Identifier] -> m [[Identifier]]
 grouper = fmap (paginateEvery 5) . sortRecentFirst
