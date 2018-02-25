@@ -13,6 +13,8 @@ git stash
 # Verify correct branch
 git checkout develop
 
+npm install
+
 # Build new files
 stack exec site clean
 stack exec site build
