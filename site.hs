@@ -24,22 +24,22 @@ main =
       route $ composeRoutes slugRoute $ setExtension "html"
       compile $
         customPandocCompiler >>= saveSnapshot "content" >>=
-        loadAndApplyTemplate "templates/post.html" postCtx >>=
-        loadAndApplyTemplate "templates/default.html" postCtx >>=
+        loadAndApplyTemplate "templates/post.tmpl" postCtx >>=
+        loadAndApplyTemplate "templates/default.tmpl" postCtx >>=
         relativizeUrls
     match "pages/projects/*" $ do
       route $ composeRoutes slugRoute $ setExtension "html"
       compile $
         customPandocCompiler >>=
-        loadAndApplyTemplate "templates/project.html" postCtx >>=
-        loadAndApplyTemplate "templates/default.html" postCtx >>=
+        loadAndApplyTemplate "templates/project.tmpl" postCtx >>=
+        loadAndApplyTemplate "templates/default.tmpl" postCtx >>=
         relativizeUrls
     match "pages/*" $ do
       route $ composeRoutes slugRoute $ setExtension "html"
       compile $
         customPandocCompiler >>=
-        loadAndApplyTemplate "templates/page.html" postCtx >>=
-        loadAndApplyTemplate "templates/default.html" postCtx >>=
+        loadAndApplyTemplate "templates/page.tmpl" postCtx >>=
+        loadAndApplyTemplate "templates/default.tmpl" postCtx >>=
         relativizeUrls
     create ["pages/projects.html"] $ do
       route idRoute
@@ -50,8 +50,8 @@ main =
               constField "title" "Projects" <>
               defaultContext
         makeItem "" >>=
-          loadAndApplyTemplate "templates/projects.html" projectCtx >>=
-          loadAndApplyTemplate "templates/default.html" projectCtx >>=
+          loadAndApplyTemplate "templates/projects.tmpl" projectCtx >>=
+          loadAndApplyTemplate "templates/default.tmpl" projectCtx >>=
           relativizeUrls
     create ["archives.html"] $ do
       route idRoute
@@ -69,8 +69,8 @@ main =
               constField "title" "Archives" <>
               defaultContext
         makeItem "" >>=
-          loadAndApplyTemplate "templates/archives.html" archiveCtx >>=
-          loadAndApplyTemplate "templates/default.html" archiveCtx >>=
+          loadAndApplyTemplate "templates/archives.tmpl" archiveCtx >>=
+          loadAndApplyTemplate "templates/default.tmpl" archiveCtx >>=
           relativizeUrls
     page <- paginate "posts/*"
     paginateRules page $ \pageNum pattern' -> do
@@ -83,14 +83,14 @@ main =
               constField "title" "Home" <>
               paginateContextPlus page pageNum <>
               defaultContext
-        makeItem "" >>= loadAndApplyTemplate "templates/index.html" indexCtx >>=
-          loadAndApplyTemplate "templates/default.html" indexCtx >>=
+        makeItem "" >>= loadAndApplyTemplate "templates/index.tmpl" indexCtx >>=
+          loadAndApplyTemplate "templates/default.tmpl" indexCtx >>=
           relativizeUrls
-    match "templates/404.html" $ do
+    match "templates/404.tmpl" $ do
       route idRoute
       compile $
         getResourceBody >>= applyAsTemplate postCtx >>=
-        loadAndApplyTemplate "templates/default.html" postCtx >>=
+        loadAndApplyTemplate "templates/default.tmpl" postCtx >>=
         relativizeUrls
     match "templates/*" $ compile templateBodyCompiler
 
