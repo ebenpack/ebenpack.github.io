@@ -1787,7 +1787,7 @@ function boltzmann(config) {
     init();
 }
 
-// module.exports = boltzmann;
+module.exports = boltzmann;
 
 },{}],5:[function(require,module,exports){
 function GameOfLife(canvas_id, speed) {
