@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.main = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 var lispish = require('lispish.js');
 
 function initLispish(input, ref) {
@@ -119,7 +119,7 @@ function initLispish(input, ref) {
         }
         return helper(
             T,
-            lispish.list.map(function(letter) {
+            lispish.list.map(function (letter) {
                 return letter.toLowerCase();
             }, name),
             namespace,
@@ -132,7 +132,7 @@ function initLispish(input, ref) {
             if (T === null) {
                 return list;
             } else {
-                return lispish.alist.map(function(key, val) {
+                return lispish.alist.map(function (key, val) {
                     if (key === '_value') {
                         return val;
                     } else {
@@ -165,12 +165,12 @@ function initLispish(input, ref) {
     var autocomplete = null;
     var namespace;
     for (namespace in lispish) {
-        if (namespace !== '__esModule'){
+        if (namespace !== '__esModule') {
             docu[namespace] = [];
             window[namespace] = {};
             for (var p in lispish[namespace]) {
-                if (p !== '__esModule'){
-                window[namespace][p] = lispish[namespace][p];
+                if (p !== '__esModule') {
+                    window[namespace][p] = lispish[namespace][p];
                     if (!(p[0] === 'c' && p[p.length - 1] === 'r' && p.length > 3)) {
                         docu[namespace].push(p);
                         autocomplete = addTrie(
@@ -192,20 +192,20 @@ function initLispish(input, ref) {
                     lispish.list.list(text.toLowerCase().split(''))
                 )
             ),
-            function(curr, prev) {
+            function (curr, prev) {
                 return prev.concat(curr);
             }, []
         );
     }
     var lispishCompleter = {
-        getCompletions: function(editor, session, pos, prefix, callback) {
+        getCompletions: function (editor, session, pos, prefix, callback) {
             if (prefix.length === 0) {
                 callback(null, []);
                 return;
             } else {
                 var completions = getCompletions(autocomplete, prefix.toLowerCase());
                 completions.sort();
-                completions.forEach(function(curr, idx, arr) {
+                completions.forEach(function (curr, idx, arr) {
                     arr[idx] = {
                         caption: curr,
                         snippet: curr + '($1)',
@@ -256,7 +256,7 @@ function initLispish(input, ref) {
         }
 
         chunks = lines.reduce(
-            function(acc, line, index) {
+            function (acc, line, index) {
                 if (line.match(/^\s*$/)) {
                     // do nothing
                 } else if (line.match(/\/\/=>/)) {
@@ -269,7 +269,7 @@ function initLispish(input, ref) {
                 []
             ]);
 
-        chunks = chunks.filter(function(item) {
+        chunks = chunks.filter(function (item) {
             return item.length > 0;
         });
 
@@ -277,7 +277,7 @@ function initLispish(input, ref) {
             return;
         }
 
-        chunks = chunks.map(function(chunk) {
+        chunks = chunks.map(function (chunk) {
             var wantsResult = chunk[chunk.length - 1].match(/\/\/=>/),
                 resultPosition = wantsResult ? parseInt(chunk.pop().split(' ')[1]) : lines.length,
                 result;
@@ -305,7 +305,7 @@ function initLispish(input, ref) {
         var lnk = document.createElement('a');
         lnk.href = '#';
         lnk.textContent = elmt;
-        lnk.addEventListener('click', function(e) {
+        lnk.addEventListener('click', function (e) {
             e.preventDefault();
             elmt === '//=>' ? editor.insert(elmt) : editor.insert((typeof namespace === 'undefined' ? '' : namespace + '.') + elmt + '()');
         });
@@ -325,7 +325,7 @@ function initLispish(input, ref) {
 
             ref.appendChild(heading(namespace));
             docu[namespace].sort();
-            docu[namespace].forEach(function(elmt) {
+            docu[namespace].forEach(function (elmt) {
                 ref.appendChild(makeLink(elmt, namespace));
             });
         }
@@ -775,20 +775,20 @@ function boltzmann(config) {
     var viscosity = 0.02;
     // Lattice arrays
     var size = latticeWidth * latticeHeight;
-    var L0 = new Float64Array(size);
-    var L1 = new Float64Array(size);
-    var L2 = new Float64Array(size);
-    var L3 = new Float64Array(size);
-    var L4 = new Float64Array(size);
-    var L5 = new Float64Array(size);
-    var L6 = new Float64Array(size);
-    var L7 = new Float64Array(size);
-    var L8 = new Float64Array(size);
-    var Ldensity = new Float64Array(size);
-    var Lux = new Float64Array(size);
-    var Luy = new Float64Array(size);
-    var Lbarrier = new Uint8Array(size);
-    var Lcurl = new Float64Array(size);
+    var L0 = new Array(size);
+    var L1 = new Array(size);
+    var L2 = new Array(size);
+    var L3 = new Array(size);
+    var L4 = new Array(size);
+    var L5 = new Array(size);
+    var L6 = new Array(size);
+    var L7 = new Array(size);
+    var L8 = new Array(size);
+    var Ldensity = new Array(size);
+    var Lux = new Array(size);
+    var Luy = new Array(size);
+    var Lbarrier = new Array(size);
+    var Lcurl = new Array(size);
     var omega = 1 / (3 * viscosity + 0.5); // "relaxation" parameter
     var draw_mode = 0;
     var flow_vectors = false;
@@ -812,20 +812,20 @@ function boltzmann(config) {
      */
     function make_lattice(latticeWidth, latticeHeight) {
         size = latticeWidth * latticeHeight;
-        L0 = new Float64Array(size);
-        L1 = new Float64Array(size);
-        L2 = new Float64Array(size);
-        L3 = new Float64Array(size);
-        L4 = new Float64Array(size);
-        L5 = new Float64Array(size);
-        L6 = new Float64Array(size);
-        L7 = new Float64Array(size);
-        L8 = new Float64Array(size);
-        Ldensity = new Float64Array(size);
-        Lux = new Float64Array(size);
-        Luy = new Float64Array(size);
+        L0 = new Array(size);
+        L1 = new Array(size);
+        L2 = new Array(size);
+        L3 = new Array(size);
+        L4 = new Array(size);
+        L5 = new Array(size);
+        L6 = new Array(size);
+        L7 = new Array(size);
+        L8 = new Array(size);
+        Ldensity = new Array(size);
+        Lux = new Array(size);
+        Luy = new Array(size);
         Lbarrier = new Uint8Array(size);
-        Lcurl = new Float64Array(size);
+        Lcurl = new Array(size);
     }
 
     /**
@@ -933,62 +933,54 @@ function boltzmann(config) {
     }
 
     function stream() {
-        var node, x, y, idx;
+        var x, y, idx;
         // Get local references, to reduce
         // any additional lookup cost.
-        var temp1 = L1;
-        var temp2 = L2;
-        var temp3 = L3;
-        var temp4 = L4;
-        var temp5 = L5;
-        var temp6 = L6;
-        var temp7 = L7;
-        var temp8 = L8;
         var wid = latticeWidth;
         var hei = latticeHeight;
         for (y = hei - 2; y > 0; y--) {
             for (x = 1; x < wid - 1; x++) {
                 idx = y * wid + x;
-                temp2[idx] = temp2[(y - 1) * wid + x];
-                temp6[idx] = temp6[(y - 1) * wid + (x + 1)];
+                L2[idx] = L2[(y - 1) * wid + x];
+                L6[idx] = L6[(y - 1) * wid + (x + 1)];
             }
         }
 
         for (y = hei - 2; y > 0; y--) {
             for (x = wid - 2; x > 0; x--) {
                 idx = y * wid + x;
-                temp1[idx] = temp1[y * wid + (x - 1)];
-                temp5[idx] = temp5[(y - 1) * wid + (x - 1)];
+                L1[idx] = L1[y * wid + (x - 1)];
+                L5[idx] = L5[(y - 1) * wid + (x - 1)];
             }
         }
 
         for (y = 1; y < hei - 1; y++) {
             for (x = wid - 2; x > 0; x--) {
                 idx = y * wid + x;
-                temp4[idx] = temp4[(y + 1) * wid + x];
-                temp8[idx] = temp8[(y + 1) * wid + (x - 1)];
+                L4[idx] = L4[(y + 1) * wid + x];
+                L8[idx] = L8[(y + 1) * wid + (x - 1)];
             }
         }
 
         for (y = 1; y < hei - 1; y++) {
             for (x = 1; x < wid - 1; x++) {
                 idx = y * wid + x;
-                temp3[idx] = temp3[y * wid + (x + 1)];
-                temp7[idx] = temp7[(y + 1) * wid + (x + 1)];
+                L3[idx] = L3[y * wid + (x + 1)];
+                L7[idx] = L7[(y + 1) * wid + (x + 1)];
             }
         }
         for (y = 1; y < hei - 1; y++) {
             for (x = 1; x < wid - 1; x++) {
                 idx = y * wid + x;
                 if (Lbarrier[idx]) {
-                    temp1[(y) * wid + (x + 1)] = temp3[idx];
-                    temp2[(y + 1) * wid + (x)] = temp4[idx];
-                    temp3[(y) * wid + (x - 1)] = temp1[idx];
-                    temp4[(y - 1) * wid + (x)] = temp2[idx];
-                    temp5[(y + 1) * wid + (x + 1)] = temp7[idx];
-                    temp6[(y + 1) * wid + (x - 1)] = temp8[idx];
-                    temp7[(y - 1) * wid + (x - 1)] = temp5[idx];
-                    temp8[(y - 1) * wid + (x + 1)] = temp6[idx];
+                    L1[(y) * wid + (x + 1)] = L3[idx];
+                    L2[(y + 1) * wid + (x)] = L4[idx];
+                    L3[(y) * wid + (x - 1)] = L1[idx];
+                    L4[(y - 1) * wid + (x)] = L2[idx];
+                    L5[(y + 1) * wid + (x + 1)] = L7[idx];
+                    L6[(y + 1) * wid + (x - 1)] = L8[idx];
+                    L7[(y - 1) * wid + (x - 1)] = L5[idx];
+                    L8[(y - 1) * wid + (x + 1)] = L6[idx];
                 }
             }
         }
@@ -999,83 +991,60 @@ function boltzmann(config) {
      */
     function collide() {
         var idx;
-        var temp0 = L0;
-        var temp1 = L1;
-        var temp2 = L2;
-        var temp3 = L3;
-        var temp4 = L4;
-        var temp5 = L5;
-        var temp6 = L6;
-        var temp7 = L7;
-        var temp8 = L8;
-        var tempux = Lux;
-        var tempuy = Luy;
-        var tempden = Ldensity;
-        var tempbar = Lbarrier;
-        var tempcurl = Lcurl;
         var wid = latticeWidth;
         var hei = latticeHeight;
         for (var y = 1; y < hei - 1; y++) {
             for (var x = 1; x < wid - 1; x++) {
                 idx = y * wid + x;
-                if (!tempbar[idx]) {
+                if (!Lbarrier[idx]) {
                     // Calculate macroscopic density (rho) and velocity (ux, uy)
                     // Thanks to Daniel V. Schroeder for this optimization
                     // http://physics.weber.edu/schroeder/fluids/
-                    var temp0val = temp0[idx];
-                    var temp1val = temp1[idx];
-                    var temp2val = temp2[idx];
-                    var temp3val = temp3[idx];
-                    var temp4val = temp4[idx];
-                    var temp5val = temp5[idx];
-                    var temp6val = temp6[idx];
-                    var temp7val = temp7[idx];
-                    var temp8val = temp8[idx];
                     var rho = (
-                        temp0val +
-                        temp1val +
-                        temp2val +
-                        temp3val +
-                        temp4val +
-                        temp5val +
-                        temp6val +
-                        temp7val +
-                        temp8val
+                        L0[idx] +
+                        L1[idx] +
+                        L2[idx] +
+                        L3[idx] +
+                        L4[idx] +
+                        L5[idx] +
+                        L6[idx] +
+                        L7[idx] +
+                        L8[idx]
                     );
                     var ux = (
                         (
-                            temp1val +
-                            temp5val +
-                            temp8val -
-                            temp3val -
-                            temp6val -
-                            temp7val
+                            L1[idx] +
+                            L5[idx] +
+                            L8[idx] -
+                            L3[idx] -
+                            L6[idx] -
+                            L7[idx]
                         ) /
                         rho
                     );
                     var uy = (
                         (
-                            temp4val +
-                            temp7val +
-                            temp8val -
-                            temp2val -
-                            temp5val -
-                            temp6val
+                            L4[idx] +
+                            L7[idx] +
+                            L8[idx] -
+                            L2[idx] -
+                            L5[idx] -
+                            L6[idx]
                         ) / rho
                     );
                     // Update values stored in node.
-                    tempden[idx] = rho;
-                    tempux[idx] = ux;
-                    tempuy[idx] = uy;
+                    Ldensity[idx] = rho;
+                    Lux[idx] = ux;
+                    Luy[idx] = uy;
                     // Compute curl. Non-edge nodes only.
                     // Don't compute if it won't get drawn
                     if (draw_mode == 4 && x > 0 && x < wid - 1 &&
                         y > 0 && y < hei - 1) {
-                        tempcurl[idx] = (
-                            tempuy[y * wid + (x + 1)] -
-                            tempuy[y * wid + (x - 1)] -
-                            tempux[(y + 1) * wid + x] +
-                            tempux[(y - 1) * wid + x]
+                        Lcurl[idx] = (
+                            Luy[y * wid + (x + 1)] -
+                            Luy[y * wid + (x - 1)] -
+                            Lux[(y + 1) * wid + x] +
+                            Lux[(y - 1) * wid + x]
                         );
                     }
                     // Set node equilibrium for each velocity
@@ -1089,38 +1058,27 @@ function boltzmann(config) {
                     var u215 = 1.5 * u2;
                     var one9thrho = one9th * rho;
                     var one36thrho = one36th * rho;
-                    temp0[idx] = temp0val + (omega * ((four9ths * rho * (1 - u215)) - temp0val));
-                    temp1[idx] = temp1val + (omega * ((one9thrho * (1 + ux3 + 4.5 * ux2 - u215)) - temp1val));
-                    temp2[idx] = temp2val + (omega * ((one9thrho * (1 - uy3 + 4.5 * uy2 - u215)) - temp2val));
-                    temp3[idx] = temp3val + (omega * ((one9thrho * (1 - ux3 + 4.5 * ux2 - u215)) - temp3val));
-                    temp4[idx] = temp4val + (omega * ((one9thrho * (1 + uy3 + 4.5 * uy2 - u215)) - temp4val));
-                    temp5[idx] = temp5val + (omega * ((one36thrho * (1 + ux3 - uy3 + 4.5 * (u2 - uxuy2) - u215)) - temp5val));
-                    temp6[idx] = temp6val + (omega * ((one36thrho * (1 - ux3 - uy3 + 4.5 * (u2 + uxuy2) - u215)) - temp6val));
-                    temp7[idx] = temp7val + (omega * ((one36thrho * (1 - ux3 + uy3 + 4.5 * (u2 - uxuy2) - u215)) - temp7val));
-                    temp8[idx] = temp8val + (omega * ((one36thrho * (1 + ux3 + uy3 + 4.5 * (u2 + uxuy2) - u215)) - temp8val));
+                    var ux3p1 = 1 + ux3;
+                    var ux3m1 = 1 - ux3;
+                    L0[idx] = L0[idx] + (omega * ((four9ths * rho * (1 - u215)) - L0[idx]));
+                    L1[idx] = L1[idx] + (omega * ((one9thrho * (ux3p1 + 4.5 * ux2 - u215)) - L1[idx]));
+                    L2[idx] = L2[idx] + (omega * ((one9thrho * (1 - uy3 + 4.5 * uy2 - u215)) - L2[idx]));
+                    L3[idx] = L3[idx] + (omega * ((one9thrho * (ux3m1 + 4.5 * ux2 - u215)) - L3[idx]));
+                    L4[idx] = L4[idx] + (omega * ((one9thrho * (1 + uy3 + 4.5 * uy2 - u215)) - L4[idx]));
+                    L5[idx] = L5[idx] + (omega * ((one36thrho * (ux3p1 - uy3 + 4.5 * (u2 - uxuy2) - u215)) - L5[idx]));
+                    L6[idx] = L6[idx] + (omega * ((one36thrho * (ux3m1 - uy3 + 4.5 * (u2 + uxuy2) - u215)) - L6[idx]));
+                    L7[idx] = L7[idx] + (omega * ((one36thrho * (ux3m1 + uy3 + 4.5 * (u2 - uxuy2) - u215)) - L7[idx]));
+                    L8[idx] = L8[idx] + (omega * ((one36thrho * (ux3p1 + uy3 + 4.5 * (u2 + uxuy2) - u215)) - L8[idx]));
                 }
             }
         }
     }
+
     /**
      * Set equilibrium values for boundary nodes.
      */
     function set_boundaries() {
         // Copied from Daniel V. Schroeder.
-        var temp0 = L0;
-        var temp1 = L1;
-        var temp2 = L2;
-        var temp3 = L3;
-        var temp4 = L4;
-        var temp5 = L5;
-        var temp6 = L6;
-        var temp7 = L7;
-        var temp8 = L8;
-        var tempux = Lux;
-        var tempuy = Luy;
-        var tempden = Ldensity;
-        var tempbar = Lbarrier;
-        var tempcurl = Lcurl;
         var wid = latticeWidth;
         var hei = latticeHeight;
         var idx1, idx2;
@@ -1146,28 +1104,28 @@ function boltzmann(config) {
         for (var x = 0; x < latticeWidth - 1; x++) {
             idx1 = x;
             idx2 = (latticeHeight - 1) * latticeWidth + x;
-            temp0[idx2] = temp0[idx1] = zero;
-            temp1[idx2] = temp1[idx1] = one;
-            temp2[idx2] = temp2[idx1] = two;
-            temp3[idx2] = temp3[idx1] = three;
-            temp4[idx2] = temp4[idx1] = four;
-            temp5[idx2] = temp5[idx1] = five;
-            temp6[idx2] = temp6[idx1] = six;
-            temp7[idx2] = temp7[idx1] = seven;
-            temp8[idx2] = temp8[idx1] = eight;
+            L0[idx2] = L0[idx1] = zero;
+            L1[idx2] = L1[idx1] = one;
+            L2[idx2] = L2[idx1] = two;
+            L3[idx2] = L3[idx1] = three;
+            L4[idx2] = L4[idx1] = four;
+            L5[idx2] = L5[idx1] = five;
+            L6[idx2] = L6[idx1] = six;
+            L7[idx2] = L7[idx1] = seven;
+            L8[idx2] = L8[idx1] = eight;
         }
         for (var y = 0; y < latticeHeight - 1; y++) {
             idx1 = y * latticeWidth;
             idx2 = y * latticeWidth + (latticeWidth - 1);
-            temp0[idx2] = temp0[idx1] = zero;
-            temp1[idx2] = temp1[idx1] = one;
-            temp2[idx2] = temp2[idx1] = two;
-            temp3[idx2] = temp3[idx1] = three;
-            temp4[idx2] = temp4[idx1] = four;
-            temp5[idx2] = temp5[idx1] = five;
-            temp6[idx2] = temp6[idx1] = six;
-            temp7[idx2] = temp7[idx1] = seven;
-            temp8[idx2] = temp8[idx1] = eight;
+            L0[idx2] = L0[idx1] = zero;
+            L1[idx2] = L1[idx1] = one;
+            L2[idx2] = L2[idx1] = two;
+            L3[idx2] = L3[idx1] = three;
+            L4[idx2] = L4[idx1] = four;
+            L5[idx2] = L5[idx1] = five;
+            L6[idx2] = L6[idx1] = six;
+            L7[idx2] = L7[idx1] = seven;
+            L8[idx2] = L8[idx1] = eight;
         }
     }
     /**
@@ -1175,7 +1133,6 @@ function boltzmann(config) {
      */
     function updater() {
         var steps = steps_per_frame;
-        var q;
         set_boundaries();
         for (var i = 0; i < steps; i++) {
             stream();
@@ -1274,7 +1231,6 @@ function boltzmann(config) {
         // This function is actually being called
         // incorrectly, but it produces interesting results.
         var left_span = max - min;
-        var right_span = 1;
         var value_scaled = val - min / left_span;
         var h = (1 - value_scaled);
         var s = 1;
@@ -1814,6 +1770,7 @@ function boltzmann(config) {
 }
 
 module.exports = boltzmann;
+
 },{}],5:[function(require,module,exports){
 function GameOfLife(canvas_id, speed) {
     this.canvas = document.getElementById(canvas_id);
