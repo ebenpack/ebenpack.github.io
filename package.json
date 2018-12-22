@@ -8,8 +8,7 @@
         "url": "git+https://github.com/ebenpack/ebenpack.github.io.git"
     },
     "scripts": {
-        "install":
-            "browserify js/main.js --standalone main > assets/js/bundle.js"
+        "install": "browserify js/main.js --standalone main > assets/js/bundle.js"
     },
     "author": "ebenpack",
     "license": "MIT",
@@ -21,8 +20,7 @@
         "boltzmann": "git://github.com/ebenpack/lattice-boltzmann.js#master",
         "conway": "git://github.com/ebenpack/conway.js#master",
         "lispish.js": "git://github.com/ebenpack/lispish.js.git#master",
-        "projectwavybits":
-            "git://github.com/ebenpack/projectwavybits.js#master",
+        "projectwavybits": "git://github.com/ebenpack/projectwavybits.js#master",
         "videoascii": "git://github.com/ebenpack/videoascii.js#master",
         "vu": "git://github.com/ebenpack/vu.js#master",
         "wireframe": "git://github.com/ebenpack/wireframe.js#master"
