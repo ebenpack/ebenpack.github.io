@@ -824,8 +824,26 @@ function boltzmann(config) {
         Ldensity = new Array(size);
         Lux = new Array(size);
         Luy = new Array(size);
-        Lbarrier = new Uint8Array(size);
+        Lbarrier = new Array(size);
         Lcurl = new Array(size);
+        var i = 0;
+        while (i < size) {
+            L0[i] = 0;
+            L1[i] = 0;
+            L2[i] = 0;
+            L3[i] = 0;
+            L4[i] = 0;
+            L5[i] = 0;
+            L6[i] = 0;
+            L7[i] = 0;
+            L8[i] = 0;
+            Ldensity[i] = 0;
+            Lux[i] = 0;
+            Luy[i] = 0;
+            Lbarrier[i] = 0;
+            Lcurl[i] = 0;
+            i++;
+        }
     }
 
     /**
@@ -1769,7 +1787,7 @@ function boltzmann(config) {
     init();
 }
 
-module.exports = boltzmann;
+// module.exports = boltzmann;
 
 },{}],5:[function(require,module,exports){
 function GameOfLife(canvas_id, speed) {
