@@ -13,6 +13,8 @@ git stash
 # Verify correct branch
 git checkout develop
 
+mkdir assets/js
+
 npm install
 
 # Build new files

@@ -2,7 +2,7 @@
 title: lidrisp
 slug: lidrisp
 tags: Idris
-languages: JavaScript
+languages: Idris
 published: 2019-01-22 18:16:00
 author: ebenpack
 description: A scheme-like, written in idris.
@@ -41,7 +41,7 @@ img: lidrisp.gif
         <button id="eval">Eval</button>
     </div>
     <p>It's a lisp! Or maybe a scheme! And it's written in idris!</p>
-    <p>How's it work? Write some scheme in top pane, hit the 'eval' button, and see the results in the bottom pane.</p>
+    <p>How's it work? Write some scheme in the top pane, hit the 'eval' button, and see the results in the bottom pane.</p>
     <p><a href="https://github.com/ebenpack/lidrisp">Check it out</a></p>
 </div>
 <script>main.initLidrisp();</script>
