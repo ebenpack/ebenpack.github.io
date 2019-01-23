@@ -19,6 +19,7 @@
         "astar": "git://github.com/ebenpack/astar#master",
         "boltzmann": "git://github.com/ebenpack/lattice-boltzmann.js#master",
         "conway": "git://github.com/ebenpack/conway.js#master",
+        "lidrisp": "git://github.com/ebenpack/lidrisp.git#build",
         "lispish.js": "git://github.com/ebenpack/lispish.js.git#master",
         "projectwavybits": "git://github.com/ebenpack/projectwavybits.js#master",
         "videoascii": "git://github.com/ebenpack/videoascii.js#master",

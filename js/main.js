@@ -159,7 +159,6 @@ function initLispish(input, ref) {
     // Throw everything into the global namespace
     // and collect function names for autocompletion
     // and for sidebar.
-    debugger
     var docu = {};
     var autocomplete = null;
     var namespace;
@@ -333,11 +332,46 @@ function initLispish(input, ref) {
     ref.appendChild(makeLink('//=>'));
 }
 
+var lidrisp = require('lidrisp');
+
+function initLidrisp() {
+    // This is all an ugly dirty quick hack right now
+    var editor = ace.edit("input");
+    var langTools = ace.require("ace/ext/language_tools");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/lisp");
+    editor.setOptions({
+        fontSize: "16px"
+    });
+    window.thingus = function thingus(buttonId) {
+        return function(err, cb) {
+            var foo = document.getElementById(buttonId);
+            var listener = function(e){
+                cb(editor.getValue());
+                foo.removeEventListener('click', listener);
+            };
+            foo.addEventListener('click', listener)
+        }
+    }
+
+    window.spoutput = function(outId, s) {
+        var foo = document.getElementById("output");
+        foo.textContent = s;
+    }
+
+    window.bleh = function bleh(s, cb) {
+        var foo = document.getElementById('foo');
+        foo.textContent += '\n' + s;
+    }
+    lidrisp();
+}
+
 exports.astar = require('astar');
 exports.wireframe = require('wireframe');
 exports.videoascii = require('videoascii');
 exports.boltzmann = require('boltzmann');
 exports.initLispish = initLispish;
+exports.initLidrisp = initLidrisp;
 exports.vu = require('vu');
 exports.conway = require('conway');
 exports.projectwavybits = require('projectwavybits');
