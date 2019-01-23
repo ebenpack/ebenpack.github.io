@@ -36,7 +36,7 @@ img: lidrisp.gif
   (if (empty? ls) acc
       (fold2 fn (fn acc (car ls)) (cdr ls))))
 (fold2 + 0 '(1 2 3 4))</pre>
-    <pre style="border:1px solid gray;height:500px;overflow-y: auto; color: white;" id="output"></pre>
+    <pre style="border:1px solid gray;height:200px;overflow-y: auto; color: white;" id="output"></pre>
     <div style="clear:both; margin:1em;">
         <button id="eval">Eval</button>
     </div>
