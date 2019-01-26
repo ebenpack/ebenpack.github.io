@@ -339,7 +339,7 @@ function initLidrisp() {
     var editor = ace.edit("input");
     var langTools = ace.require("ace/ext/language_tools");
     editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/lisp");
+    editor.getSession().setMode("ace/mode/scheme");
     editor.setOptions({
         fontSize: "16px"
     });
