@@ -360,7 +360,6 @@ function initLidrisp() {
             eval.addEventListener('click', _read)
         }
         lidrisp.print = function(out) {
-            console.log('printin\'', out)
             output.textContent = out;
         }
         return lidrisp;
