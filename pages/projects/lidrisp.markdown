@@ -17,25 +17,38 @@ img: lidrisp.gif
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ext-language_tools.js"></script>
 <div style="font-size:16px;">
     <pre style="border:1px solid gray;height:500px;overflow-y: auto;margin-bottom: 5px;" id="input" contentEditable="true">
+(define (foldl fn acc ls)
+    (if (empty? ls) 
+        acc
+        (foldl fn (fn acc (car ls)) (cdr ls))))
+(define (foldr fn acc ls)
+    (if (empty? ls)
+        acc
+        (fn (car ls) (foldr fn acc (cdr ls)))))
 (define (map fn ls)
-  (if (empty? ls) ls
-    (cons (fn (car ls)) (map fn (cdr ls)))))
-(define (double2 n) (+ n n))
-(map double2 '(1 2 3 4 5))
-
+  (foldr (lambda (x xs) (cons (fn x) xs)) '() ls))
 (define (filter fn ls)
-  (if (empty? ls)
-    ls
-    (if (fn (car ls))
-          (cons (car ls) (filter fn (cdr ls)))
-          (filter fn (cdr ls)))))
-(define (even? n) (= 0 (modulo n 2)))
-(filter even? '(1 2 3 4 5 6 7 8))
+  (foldr (lambda (x xs) (if (fn x) (cons x xs) xs)) '() ls))
+(define (double n) (+ n n))
+(define (even?  n) (= 0 (modulo n 2)))
+(define (zero?  n) (= 0 n))
+(define (sub1   n) (- n 1))
+(define (not    b) (if b #f #t))
 
-(define (fold fn acc ls)
-  (if (empty? ls) acc
-      (fold fn (fn acc (car ls)) (cdr ls))))
-(fold + 0 '(1 2 3 4))</pre>
+(foldl  + 0    '(1 2 3 4 5))
+(map    double '(1 2 3 4 5))
+(filter even?  '(1 2 3 4 5 6 7 8 9 10))
+(let* ([a 5] [b (+ a 10)]) (+ b 20))
+(letrec
+    ([is-even? 
+        (lambda (n)
+            (or (zero? n)
+                (is-odd? (sub1 n))))]
+    [is-odd? 
+        (lambda (n)
+            (and (not (zero? n))
+                (is-even? (sub1 n))))])
+    (is-odd? 11))</pre>
     <pre style="border:1px solid gray;height:200px;overflow-y: auto; color: white;" id="output"></pre>
     <div style="clear:both; margin:1em;">
         <button id="eval">Eval</button>
