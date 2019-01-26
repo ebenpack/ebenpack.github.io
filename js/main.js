@@ -343,26 +343,27 @@ function initLidrisp() {
     editor.setOptions({
         fontSize: "16px"
     });
-    window.thingus = function thingus(buttonId) {
-        return function(err, cb) {
-            var foo = document.getElementById(buttonId);
-            var listener = function(e){
-                cb(editor.getValue());
-                foo.removeEventListener('click', listener);
-            };
-            foo.addEventListener('click', listener)
+    window.lidrisp = (function(){
+        var lidrisp = {};
+        var input = document.getElementById('input');
+        var output = document.getElementById('output');
+        var eval = document.getElementById('eval');
+        lidrisp.read = function(err, succ) {
+            function _read(){
+                if (input.textContent) {
+                    succ(editor.getValue())
+                }
+                else {err("Could not get input")}
+                eval.removeEventListener('click', _read);
+            }
+            eval.addEventListener('click', _read)
         }
-    }
-
-    window.spoutput = function(outId, s) {
-        var foo = document.getElementById("output");
-        foo.textContent = s;
-    }
-
-    window.bleh = function bleh(s, cb) {
-        var foo = document.getElementById('foo');
-        foo.textContent += '\n' + s;
-    }
+        lidrisp.print = function(out) {
+            console.log('printin\'', out)
+            output.textContent = out;
+        }
+        return lidrisp;
+    })();
     lidrisp();
 }
 
