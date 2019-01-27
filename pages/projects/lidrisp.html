@@ -36,8 +36,10 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ext-language_tools.js"></script>
 <div style="font-size:16px;">
     <pre style="border:1px solid gray;height:500px;overflow-y: auto;margin-bottom: 5px;" id="input" contentEditable="true">
+#lang racket
+
 (define (foldl fn acc ls)
-    (if (empty? ls) 
+    (if (empty? ls)
         acc
         (foldl fn (fn acc (car ls)) (cdr ls))))
 (define (foldr fn acc ls)
@@ -45,9 +47,9 @@
         acc
         (fn (car ls) (foldr fn acc (cdr ls)))))
 (define (map fn ls)
-  (foldr (lambda (x xs) (cons (fn x) xs)) '() ls))
+    (foldr (lambda (x xs) (cons (fn x) xs)) '() ls))
 (define (filter fn ls)
-  (foldr (lambda (x xs) (if (fn x) (cons x xs) xs)) '() ls))
+    (foldr (lambda (x xs) (if (fn x) (cons x xs) xs)) '() ls))
 (define (double n) (+ n n))
 (define (even?  n) (= 0 (modulo n 2)))
 (define (zero?  n) (= 0 n))
@@ -67,7 +69,8 @@
         (lambda (n)
             (and (not (zero? n))
                 (is-even? (sub1 n))))])
-    (is-odd? 11))</pre>
+    (is-odd? 11))
+</pre>
     <pre style="border:1px solid gray;height:200px;overflow-y: auto; color: white;" id="output"></pre>
     <div style="clear:both; margin:1em;">
         <button id="eval">Eval</button>
