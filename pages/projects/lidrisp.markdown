@@ -18,11 +18,11 @@ img: lidrisp.gif
 <div style="font-size:16px;">
     <pre style="border:1px solid gray;height:500px;overflow-y: auto;margin-bottom: 5px;" id="input" contentEditable="true">
 (define (foldl fn acc ls)
-    (if (empty? ls)
+    (if (null? ls)
         acc
         (foldl fn (fn acc (car ls)) (cdr ls))))
 (define (foldr fn acc ls)
-    (if (empty? ls)
+    (if (null? ls)
         acc
         (fn (car ls) (foldr fn acc (cdr ls)))))
 (define (map fn ls)
@@ -42,13 +42,13 @@ img: lidrisp.gif
 (letrec
     ([is-even? 
         (lambda (n)
-            (or (zero? n)
+            (if (zero? n) #t
                 (is-odd? (sub1 n))))]
     [is-odd? 
         (lambda (n)
-            (and (not (zero? n))
+            (if (zero? n) #f
                 (is-even? (sub1 n))))])
-    (is-odd? 11))
+    (is-odd? 13))
 </pre>
     <pre style="border:1px solid gray;height:200px;overflow-y: auto; color: white;" id="output"></pre>
     <div style="clear:both; margin:1em;">
