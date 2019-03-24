@@ -1,6 +1,6 @@
 ---
-title: LM3000
-slug: lm3000
+title: Profligate
+slug: profligate
 published: 2019-03-24 12:34:36
 author: ebenpack
 languages: Purescript
