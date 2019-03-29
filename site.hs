@@ -108,13 +108,16 @@ main = hakyllWith config $ do
         compile $ do
           posts <- recentFirst =<< loadAll "posts/*/*"
           projects <- loadAll "pages/projects/*" >>= sortChronologicalItems
-          let allPosts = (return (projects ++ posts))
+          singlePages <- (loadAll (fromList ["archives.html", "pages/projects.html"]) :: Compiler [Item String])
+          indices <- (loadAll "index*.html" :: Compiler [Item String])
+          let allPosts = (return (projects ++ posts ++ singlePages ++ (tail indices)))
               projectCtx =
                 listField "projects" defaultContext (return projects)
                   <> constField "title" "Projects"
+                  <> constField "root" root
                   <> defaultContext
               sitemapCtx = mconcat
-                           [ constField "host" "ebenpackwood.com"
+                           [ constField "root" root
                            , listField "entries" (postCtx <> projectCtx) allPosts
                            , defaultContext
                            ]
@@ -124,6 +127,9 @@ main = hakyllWith config $ do
 -- Config
 config :: Configuration
 config = defaultConfiguration { deployCommand = "./deploy.sh" }
+
+root :: String
+root = "https://ebenpackwood.com"
 
 -- Compiler
 customPandocCompiler :: Compiler (Item String)
