@@ -103,6 +103,22 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/default.tmpl" postCtx
             >>= relativizeUrls
     match "templates/*" $ compile templateBodyCompiler
+    create ["sitemap.xml"] $ do
+        route idRoute
+        compile $ do
+          posts <- recentFirst =<< loadAll "posts/*/*"
+          projects <- loadAll "pages/projects/*" >>= sortChronologicalItems
+          let allPosts = (return (projects ++ posts))
+              projectCtx =
+                listField "projects" defaultContext (return projects)
+                  <> constField "title" "Projects"
+                  <> defaultContext
+              sitemapCtx = mconcat
+                           [ constField "host" "ebenpackwood.com"
+                           , listField "entries" (postCtx <> projectCtx) allPosts
+                           , defaultContext
+                           ]
+          makeItem "" >>= loadAndApplyTemplate "templates/sitemap.tmpl" sitemapCtx
 
 --------------------------------------------------------------------------------
 -- Config

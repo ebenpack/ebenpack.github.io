@@ -9,5 +9,6 @@ summary: 8-bit microprocessor.
 status: nopage
 img: LM3000.jpg
 url: http://wiki.bennington.edu/LM3000
+external: true
 ---
 

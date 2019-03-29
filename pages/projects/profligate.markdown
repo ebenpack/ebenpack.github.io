@@ -8,6 +8,6 @@ description: An online GHC prof file visualizer thingy.
 summary: An online GHC prof file visualizer thingy.
 status: nopage
 img: profligate.png
-url: http://ebenpackwood.com/profligate/
+url: /profligate/
 ---
 

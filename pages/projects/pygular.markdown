@@ -8,6 +8,7 @@ description: A real-time regular expression editor.
 summary: A real-time regular expression editor.
 status: nopage
 img: snout.png
+external: true
 url: https://pygular.appspot.com/
 ---
 
