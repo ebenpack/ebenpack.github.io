@@ -1,16 +1,18 @@
-$for(projects)$
-<div class="project">
-    <a href="$url$">
-        <h3>$title$</h3>
-    </a>
-    <a href="$url$">
-        <img src="/images/$img$" alt="$description$">
-    </a>
-    <div class="languages">
-        $languages$
+<div class="projects">
+    $for(projects)$
+    <div class="project">
+        <a href="$url$">
+            <h3>$title$</h3>
+        </a>
+        <a href="$url$">
+            <img src="/images/$img$" alt="$description$">
+        </a>
+        <div class="languages">
+            $languages$
+        </div>
+        <div class="summary">
+            $summary$
+        </div>
     </div>
-    <div class="summary">
-        $summary$
-    </div>
+    $endfor$
 </div>
-$endfor$
