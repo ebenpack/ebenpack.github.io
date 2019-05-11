@@ -285,18 +285,18 @@ blockquote p {
 
 /* PROJECT PAGE */
 
+.projects {
+    display: flex;
+    flex-flow: row wrap;
+}
+
 .project {
     text-align: center;
     width: 48%;
     margin-left: 1%;
-    float: left;
     margin-bottom: 1em;
 	border: 1px solid rgb(230, 230, 230);
     padding: 0.5em;
-}
-
-.project:nth-child(even) {
-    clear: left;
 }
 
 .project .languages {
