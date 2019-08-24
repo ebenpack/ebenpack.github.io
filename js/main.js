@@ -343,27 +343,14 @@ function initLidrisp() {
     editor.setOptions({
         fontSize: "16px"
     });
-    window.lidrisp = (function(){
-        var lidrisp = {};
-        var input = document.getElementById('input');
-        var output = document.getElementById('output');
-        var eval = document.getElementById('eval');
-        lidrisp.read = function(err, succ) {
-            function _read(){
-                if (input.textContent) {
-                    succ(editor.getValue())
-                }
-                else {err("Could not get input")}
-                eval.removeEventListener('click', _read);
-            }
-            eval.addEventListener('click', _read)
-        }
-        lidrisp.print = function(out) {
-            output.textContent = out;
-        }
-        return lidrisp;
-    })();
-    lidrisp();
+    var input = document.getElementById('input');
+    var output = document.getElementById('output');
+    var eval = document.getElementById('eval');
+    eval.addEventListener('click', function(){
+        var result = lidrisp.run(editor.getValue());
+        output.textContent = result;
+    });
+
 }
 
 exports.astar = require('astar');
