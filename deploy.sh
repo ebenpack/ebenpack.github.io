@@ -18,17 +18,23 @@ mkdir assets/js
 npm install
 
 # Build new files
+sleep .5
 stack build
+sleep .5
 stack exec site clean
+sleep .5
 stack exec site build
+sleep .5
 
 # Get previous files
 git fetch --all
 git checkout -b publish --track origin/master
+sleep .5
 
 
 # Overwrite existing files with new files
 cp -a _site/. .
+sleep .5
 
 # Commit
 git add -A
