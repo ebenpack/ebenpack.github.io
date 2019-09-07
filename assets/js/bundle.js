@@ -364,90 +364,7 @@ exports.vu = require('vu');
 exports.conway = require('conway');
 exports.projectwavybits = require('projectwavybits');
 
-},{"astar":3,"boltzmann":5,"conway":8,"lidrisp":10,"lispish.js":54,"projectwavybits":59,"videoascii":60,"vu":62,"wireframe":63}],2:[function(require,module,exports){
-function luminance(r, g, b) {
-    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-}
-
-function asciify(inputWidth, inputHeight, outputWidth, outputHeight, monochrome, ctx, fontSize, fidelity) {
-    // Characters from 'darkest' to 'lightest'
-    var asciiLuminanceMap = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft\/|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
-    var ratio;
-    var inputSampleWidth;
-    var inputSampleHeight;
-    var incrementX;
-    var incrementY;
-    ctx.font = fontSize + "pt Courier";
-    var fontWidth = ctx.measureText('W').width;
-    var fontHeight = fontSize;
-    resize(inputWidth, inputHeight, outputWidth, outputHeight);
-
-    function draw(imageData) {
-        // For each ascii character in the output
-        for (var y = 0; y < outputHeight; y += fontHeight) {
-            for (var x = 0; x < outputWidth; x += fontWidth) {
-                // Loop over input sample, determine average RGB
-                // and luminance values
-                var blockLuminanceTotal = 0;
-                var redTotal = 0;
-                var greenTotal = 0;
-                var blueTotal = 0;
-                var area = 0;
-                for (var y2 = 0; y2 < inputSampleHeight; y2 += incrementY) {
-                    for (var x2 = 0; x2 < inputSampleWidth; x2 += incrementX) {
-                        var index = ((Math.round(x * ratio) + x2) + ((Math.round(y * ratio) + y2) * inputWidth)) * 4;
-                        if (index < imageData.length) {
-                            var red = imageData[index];
-                            var green = imageData[index + 1];
-                            var blue = imageData[index + 2];
-                            redTotal += red;
-                            greenTotal += green;
-                            blueTotal += blue;
-                            blockLuminanceTotal += luminance(red, green, blue);
-                            area += 1;
-                        }
-                    }
-                }
-                var blockLuminanceAvg = blockLuminanceTotal / area;
-                var idx = Math.floor((asciiLuminanceMap.length - 1) * blockLuminanceAvg);
-                if (!monochrome) {
-                    var r = Math.floor(redTotal / area);
-                    var g = Math.floor(greenTotal / area);
-                    var b = Math.floor(blueTotal / area);
-                    ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
-                }
-                var character = asciiLuminanceMap[idx];
-                ctx.fillText(character, x, y);
-            }
-        }
-    }
-
-    function resize(iWidth, iHeight, oWidth, oHeight) {
-        inputWidth = iWidth;
-        inputHeight = iHeight;
-        outputWidth = oWidth;
-        outputHeight = oHeight;
-        ratio = inputWidth / outputWidth;
-        inputSampleWidth = Math.floor(fontWidth * ratio);
-        inputSampleHeight = Math.floor(fontHeight * ratio);
-        incrementX = Math.max(1, Math.floor(inputSampleWidth * (1 - fidelity)));
-        incrementY = Math.max(1, Math.floor(inputSampleHeight * (1 - fidelity)));
-    }
-
-    function toggleMonochrome(){
-        ctx.fillStyle = "black";
-        monochrome = !monochrome;
-    }
-
-    return {
-        toggleMonochrome: toggleMonochrome,
-        draw: draw,
-        resize: resize,
-    };
-}
-
-module.exports = asciify;
-},{}],3:[function(require,module,exports){
+},{"astar":2,"boltzmann":4,"conway":7,"lidrisp":9,"lispish.js":53,"projectwavybits":58,"videoascii":60,"vu":62,"wireframe":63}],2:[function(require,module,exports){
 function Maze(map_id, particle_id) {
     this.mapcanvas = document.getElementById(map_id);
     this.canvas = document.getElementById(particle_id);
@@ -780,7 +697,7 @@ function angle(x1, y1, x2, y2) {
 }
 
 module.exports = Maze;
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -933,7 +850,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 function boltzmann(config) {
     var boltzcanvas = document.getElementById(config.boltzId);
     var vectorcanvas = document.getElementById(config.vectorcanvasId);
@@ -1964,9 +1881,9 @@ function boltzmann(config) {
 
 module.exports = boltzmann;
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -3745,7 +3662,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":4,"ieee754":9}],8:[function(require,module,exports){
+},{"base64-js":3,"ieee754":8}],7:[function(require,module,exports){
 function GameOfLife(canvas_id, speed) {
     this.canvas = document.getElementById(canvas_id);
     this.ctx = this.canvas.getContext('2d');
@@ -4157,7 +4074,7 @@ GameOfLife.prototype.update = function() {
 };
 
 module.exports = GameOfLife;
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -4243,7 +4160,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.lidrisp = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (process,Buffer){
@@ -20748,7 +20665,7 @@ process.umask = function() { return 0; };
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":58,"base64-js":4,"buffer":7,"fs":6,"ieee754":9,"os":57}],11:[function(require,module,exports){
+},{"_process":57,"base64-js":3,"buffer":6,"fs":5,"ieee754":8,"os":56}],10:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20762,7 +20679,7 @@ var cons_1 = require("../cons/cons");
  */
 exports["default"] = (function (key, value) { return list_1["default"](cons_1["default"](key, value)); });
 
-},{"../cons/cons":20,"../list/list":43}],12:[function(require,module,exports){
+},{"../cons/cons":19,"../list/list":42}],11:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20786,7 +20703,7 @@ exports["default"] = (function (L1, L2) {
         every_1["default"](function (val) { return pair_1["default"](val) && equal_1["default"](get_1["default"](car_1["default"](val), L1), cdr_1["default"](val)); }, L2);
 });
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/equal":21,"../cons/pair":25,"../list/every":36,"./get":13}],13:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/equal":20,"../cons/pair":24,"../list/every":35,"./get":12}],12:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20807,7 +20724,7 @@ var get = function (key, L) {
 };
 exports["default"] = get;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/equal":21,"../cons/isempty":22}],14:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/equal":20,"../cons/isempty":21}],13:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20826,7 +20743,7 @@ var map = function (fn, L) {
 };
 exports["default"] = map;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../list/map":44}],15:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../list/map":43}],14:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20868,7 +20785,7 @@ exports["default"] = (function (L) {
     return outerWrap(L, 0);
 });
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22,"../cons/pair":25}],16:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21,"../cons/pair":24}],15:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20898,12 +20815,12 @@ exports["default"] = (function (key, value, L) {
         : helper(L, key, value);
 });
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"./get":13}],17:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"./get":12}],16:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 exports["default"] = Symbol("Cons");
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20914,7 +20831,7 @@ exports.__esModule = true;
  */
 exports["default"] = (function (cons) { return cons(0); });
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20925,7 +20842,7 @@ exports.__esModule = true;
  */
 exports["default"] = (function (cons) { return cons(1); });
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 /// <reference path="../cons.d.ts" />
@@ -20941,7 +20858,7 @@ exports["default"] = (function (car, cdr) { return function (pick) {
     return pick === 0 ? car : pick === 1 ? cdr : ConsType_1["default"];
 }; });
 
-},{"./ConsType":17}],21:[function(require,module,exports){
+},{"./ConsType":16}],20:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20978,7 +20895,7 @@ var equal = function (a, b) {
 };
 exports["default"] = equal;
 
-},{"./car":18,"./cdr":19,"./pair":25}],22:[function(require,module,exports){
+},{"./car":17,"./cdr":18,"./pair":24}],21:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -20991,7 +20908,7 @@ var nil_1 = require("./nil");
  */
 exports["default"] = (function (c) { return c === nil_1["default"]; });
 
-},{"./nil":24}],23:[function(require,module,exports){
+},{"./nil":23}],22:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 var cons_1 = require("./cons");
@@ -21040,12 +20957,12 @@ exports.pair = pair_1["default"];
 exports.isEmpty = isempty_1["default"];
 exports.nil = nil_1["default"];
 
-},{"../fun/compose":29,"./car":18,"./cdr":19,"./cons":20,"./equal":21,"./isempty":22,"./nil":24,"./pair":25,"./print":26}],24:[function(require,module,exports){
+},{"../fun/compose":28,"./car":17,"./cdr":18,"./cons":19,"./equal":20,"./isempty":21,"./nil":23,"./pair":24,"./print":25}],23:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 exports["default"] = null;
 
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 var ConsType_1 = require("./ConsType");
@@ -21058,7 +20975,7 @@ exports["default"] = (function (c) {
     return typeof c === "function" && c(3) === ConsType_1["default"];
 });
 
-},{"./ConsType":17}],26:[function(require,module,exports){
+},{"./ConsType":16}],25:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21098,7 +21015,7 @@ var print = function (c, options) {
 };
 exports["default"] = print;
 
-},{"./car":18,"./cdr":19,"./isempty":22,"./pair":25}],27:[function(require,module,exports){
+},{"./car":17,"./cdr":18,"./isempty":21,"./pair":24}],26:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21121,7 +21038,7 @@ exports["default"] = (function (f) {
     }; }));
 });
 
-},{"../helpers/args":31,"../list/list":43,"./apply":28}],28:[function(require,module,exports){
+},{"../helpers/args":30,"../list/list":42,"./apply":27}],27:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21145,7 +21062,7 @@ var apply = function (fn, args) {
 };
 exports["default"] = apply;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22}],29:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21}],28:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 /**
@@ -21156,7 +21073,7 @@ exports.__esModule = true;
  */
 exports["default"] = (function (a, b) { return function (c) { return a(b(c)); }; });
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21182,7 +21099,7 @@ exports["default"] = (function (fn, arity) {
         : helper(fn, arity, nil_1["default"]);
 });
 
-},{"../cons/cons":20,"../cons/nil":24,"./apply":28}],31:[function(require,module,exports){
+},{"../cons/cons":19,"../cons/nil":23,"./apply":27}],30:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 /**
@@ -21192,7 +21109,7 @@ exports.__esModule = true;
  */
 exports["default"] = (function (args) { return Array.prototype.slice.call(args); });
 
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21212,7 +21129,7 @@ var concat = function (L1, L2) {
 };
 exports["default"] = concat;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22}],33:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21}],32:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21231,7 +21148,7 @@ var contains = function (a, L) {
 };
 exports["default"] = contains;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/equal":21,"../cons/isempty":22}],34:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/equal":20,"../cons/isempty":21}],33:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21245,7 +21162,7 @@ var isempty_1 = require("../cons/isempty");
  */
 exports["default"] = (function (L) { return (isempty_1["default"](L) ? L : cdr_1["default"](L)); });
 
-},{"../cons/cdr":19,"../cons/isempty":22}],35:[function(require,module,exports){
+},{"../cons/cdr":18,"../cons/isempty":21}],34:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21259,7 +21176,7 @@ var cons_1 = require("../cons/cons");
  */
 exports["default"] = (function (val, L) { return cons_1["default"](val, L); });
 
-},{"../cons/cons":20}],36:[function(require,module,exports){
+},{"../cons/cons":19}],35:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21284,7 +21201,7 @@ exports["default"] = (function (fn, L) {
     return helper(fn, 0, L);
 });
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22}],37:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21}],36:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21311,7 +21228,7 @@ var filter = function (fn, L) {
 };
 exports["default"] = filter;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/nil":24}],38:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/nil":23}],37:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21334,7 +21251,7 @@ var flatten = function (L) {
 };
 exports["default"] = flatten;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/pair":25,"./concat":32}],39:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/pair":24,"./concat":31}],38:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21359,7 +21276,7 @@ var foldl = function (fn, acc, L) {
 };
 exports["default"] = foldl;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22}],40:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21}],39:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21385,7 +21302,7 @@ var foldr = function (fn, acc, L) {
 };
 exports["default"] = foldr;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22}],41:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21}],40:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21404,7 +21321,7 @@ var get = function (idx, L) {
 };
 exports["default"] = get;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22}],42:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21}],41:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21416,7 +21333,7 @@ var foldl_1 = require("./foldl");
  */
 exports["default"] = (function (L) { return foldl_1["default"](function (acc, curr) { return acc + 1; }, 0, L); });
 
-},{"./foldl":39}],43:[function(require,module,exports){
+},{"./foldl":38}],42:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21444,7 +21361,7 @@ exports["default"] = (function () {
         : helper(args_1["default"](outerArgs));
 });
 
-},{"../cons/cons":20,"../cons/nil":24,"../helpers/args":31}],44:[function(require,module,exports){
+},{"../cons/cons":19,"../cons/nil":23,"../helpers/args":30}],43:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21469,7 +21386,7 @@ var map = function (fn, L) {
 };
 exports["default"] = map;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/nil":24}],45:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/nil":23}],44:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21486,7 +21403,7 @@ var peek = function (L) {
 };
 exports["default"] = peek;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22}],46:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21}],45:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21505,7 +21422,7 @@ var pop = function (L) {
 };
 exports["default"] = pop;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/nil":24}],47:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/nil":23}],46:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21530,7 +21447,7 @@ var push = function (val, L) {
 };
 exports["default"] = push;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/nil":24}],48:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/nil":23}],47:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21566,7 +21483,7 @@ exports["default"] = (function (m, n, step) {
         : stepHelper(m, step, n);
 });
 
-},{"../cons/cons":20,"../cons/nil":24}],49:[function(require,module,exports){
+},{"../cons/cons":19,"../cons/nil":23}],48:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21588,7 +21505,7 @@ exports["default"] = (function (L) {
     return helper(L, nil_1["default"]);
 });
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/nil":24}],50:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/nil":23}],49:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21624,7 +21541,7 @@ exports["default"] = (function (L, m, n) {
         : sliceHelper(L, m, n, 0);
 });
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/nil":24,"./length":42}],51:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/nil":23,"./length":41}],50:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21649,7 +21566,7 @@ exports["default"] = (function (fn, L) {
     return someHelper(fn, 0, L);
 });
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22}],52:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21}],51:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21695,7 +21612,7 @@ exports["default"] = (function (fn, L) {
     return msort(L, fn, length_1["default"](L));
 });
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/nil":24,"./length":42}],53:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/nil":23,"./length":41}],52:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21722,7 +21639,7 @@ var zip = function (L1, L2) {
 };
 exports["default"] = zip;
 
-},{"../cons/car":18,"../cons/cdr":19,"../cons/cons":20,"../cons/isempty":22,"../cons/nil":24}],54:[function(require,module,exports){
+},{"../cons/car":17,"../cons/cdr":18,"../cons/cons":19,"../cons/isempty":21,"../cons/nil":23}],53:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 var _cons = require("./cons/main");
@@ -21810,7 +21727,7 @@ exports.trie = {
     putTrie: putTrie_1["default"]
 };
 
-},{"./alist/alist":11,"./alist/equal":12,"./alist/get":13,"./alist/map":14,"./alist/print":15,"./alist/put":16,"./cons/main":23,"./fun/Y":27,"./fun/apply":28,"./fun/compose":29,"./fun/curry":30,"./helpers/args":31,"./list/concat":32,"./list/contains":33,"./list/dequeue":34,"./list/enqueue":35,"./list/every":36,"./list/filter":37,"./list/flatten":38,"./list/foldl":39,"./list/foldr":40,"./list/get":41,"./list/length":42,"./list/list":43,"./list/map":44,"./list/peek":45,"./list/pop":46,"./list/push":47,"./list/range":48,"./list/reverse":49,"./list/slice":50,"./list/some":51,"./list/sort":52,"./list/zip":53,"./trie/getTrie":55,"./trie/putTrie":56}],55:[function(require,module,exports){
+},{"./alist/alist":10,"./alist/equal":11,"./alist/get":12,"./alist/map":13,"./alist/print":14,"./alist/put":15,"./cons/main":22,"./fun/Y":26,"./fun/apply":27,"./fun/compose":28,"./fun/curry":29,"./helpers/args":30,"./list/concat":31,"./list/contains":32,"./list/dequeue":33,"./list/enqueue":34,"./list/every":35,"./list/filter":36,"./list/flatten":37,"./list/foldl":38,"./list/foldr":39,"./list/get":40,"./list/length":41,"./list/list":42,"./list/map":43,"./list/peek":44,"./list/pop":45,"./list/push":46,"./list/range":47,"./list/reverse":48,"./list/slice":49,"./list/some":50,"./list/sort":51,"./list/zip":52,"./trie/getTrie":54,"./trie/putTrie":55}],54:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21839,7 +21756,7 @@ exports["default"] = (function (T, str) {
     return flatten_1["default"](getLeaves(descendToNode(T, str), nil_1["default"]));
 });
 
-},{"../alist/get":13,"../alist/map":14,"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22,"../cons/nil":24,"../list/flatten":38}],56:[function(require,module,exports){
+},{"../alist/get":12,"../alist/map":13,"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21,"../cons/nil":23,"../list/flatten":37}],55:[function(require,module,exports){
 "use strict";
 /// <reference path="../cons.d.ts" />
 exports.__esModule = true;
@@ -21878,7 +21795,7 @@ exports["default"] = (function (T, name, namespace) {
     return isempty_1["default"](name) ? T : helper(T, name, namespace, name);
 });
 
-},{"../alist/alist":11,"../alist/get":13,"../alist/put":16,"../cons/car":18,"../cons/cdr":19,"../cons/isempty":22,"../cons/nil":24,"../cons/print":26,"../list/concat":32,"../list/list":43,"../list/push":47}],57:[function(require,module,exports){
+},{"../alist/alist":10,"../alist/get":12,"../alist/put":15,"../cons/car":17,"../cons/cdr":18,"../cons/isempty":21,"../cons/nil":23,"../cons/print":25,"../list/concat":31,"../list/list":42,"../list/push":46}],56:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -21929,7 +21846,7 @@ exports.homedir = function () {
 	return '/'
 };
 
-},{}],58:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -22115,7 +22032,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],59:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 // WHAT TO DO WITH EXTRA BYTES
 // 1. OOB checks for mouse
 // 2. curl
@@ -22292,6 +22209,89 @@ function JS1K(){
 
 module.exports = JS1K;
 
+},{}],59:[function(require,module,exports){
+function luminance(r, g, b) {
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+}
+
+function asciify(inputWidth, inputHeight, outputWidth, outputHeight, monochrome, ctx, fontSize, fidelity) {
+    // Characters from 'darkest' to 'lightest'
+    var asciiLuminanceMap = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft\/|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
+    var ratio;
+    var inputSampleWidth;
+    var inputSampleHeight;
+    var incrementX;
+    var incrementY;
+    ctx.font = fontSize + "pt Courier";
+    var fontWidth = ctx.measureText('W').width;
+    var fontHeight = fontSize;
+    resize(inputWidth, inputHeight, outputWidth, outputHeight);
+
+    function draw(imageData) {
+        // For each ascii character in the output
+        for (var y = 0; y < outputHeight; y += fontHeight) {
+            for (var x = 0; x < outputWidth; x += fontWidth) {
+                // Loop over input sample, determine average RGB
+                // and luminance values
+                var blockLuminanceTotal = 0;
+                var redTotal = 0;
+                var greenTotal = 0;
+                var blueTotal = 0;
+                var area = 0;
+                for (var y2 = 0; y2 < inputSampleHeight; y2 += incrementY) {
+                    for (var x2 = 0; x2 < inputSampleWidth; x2 += incrementX) {
+                        var index = ((Math.round(x * ratio) + x2) + ((Math.round(y * ratio) + y2) * inputWidth)) * 4;
+                        if (index < imageData.length) {
+                            var red = imageData[index];
+                            var green = imageData[index + 1];
+                            var blue = imageData[index + 2];
+                            redTotal += red;
+                            greenTotal += green;
+                            blueTotal += blue;
+                            blockLuminanceTotal += luminance(red, green, blue);
+                            area += 1;
+                        }
+                    }
+                }
+                var blockLuminanceAvg = blockLuminanceTotal / area;
+                var idx = Math.floor((asciiLuminanceMap.length - 1) * blockLuminanceAvg);
+                if (!monochrome) {
+                    var r = Math.floor(redTotal / area);
+                    var g = Math.floor(greenTotal / area);
+                    var b = Math.floor(blueTotal / area);
+                    ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                }
+                var character = asciiLuminanceMap[idx];
+                ctx.fillText(character, x, y);
+            }
+        }
+    }
+
+    function resize(iWidth, iHeight, oWidth, oHeight) {
+        inputWidth = iWidth;
+        inputHeight = iHeight;
+        outputWidth = oWidth;
+        outputHeight = oHeight;
+        ratio = inputWidth / outputWidth;
+        inputSampleWidth = Math.floor(fontWidth * ratio);
+        inputSampleHeight = Math.floor(fontHeight * ratio);
+        incrementX = Math.max(1, Math.floor(inputSampleWidth * (1 - fidelity)));
+        incrementY = Math.max(1, Math.floor(inputSampleHeight * (1 - fidelity)));
+    }
+
+    function toggleMonochrome(){
+        ctx.fillStyle = "black";
+        monochrome = !monochrome;
+    }
+
+    return {
+        toggleMonochrome: toggleMonochrome,
+        draw: draw,
+        resize: resize,
+    };
+}
+
+module.exports = asciify;
 },{}],60:[function(require,module,exports){
 var asciify = require('asciify');
 
@@ -22390,7 +22390,7 @@ function videoascii(options){
 }
 
 module.exports = videoascii;
-},{"asciify":2}],61:[function(require,module,exports){
+},{"asciify":59}],61:[function(require,module,exports){
 (function (global){
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.wireframe=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 var hslToRgb, rgbToHsl, parseColor, cache;
