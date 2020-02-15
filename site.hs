@@ -106,7 +106,7 @@ main = hakyllWith config $ do
     create ["sitemap.xml"] $ do
         route idRoute
         compile $ do
-          posts <- recentFirst =<< loadAll "posts/*/*"
+          posts <- recentFirst =<< loadAll "posts/*"
           projects <- loadAll "pages/projects/*" >>= sortChronologicalItems
           singlePages <- (loadAll (fromList ["archives.html", "pages/projects.html"]) :: Compiler [Item String])
           indices <- (loadAll "index*.html" :: Compiler [Item String])
