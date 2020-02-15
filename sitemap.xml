@@ -104,6 +104,78 @@
 
     
     <url>
+        <loc>https://ebenpackwood.com/posts/not-my-type.html</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+    
+
+    
+    <url>
+        <loc>https://ebenpackwood.com/posts/chrome-devtools-synchronous-xhr-redirect-bug.html</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+    
+
+    
+    <url>
+        <loc>https://ebenpackwood.com/posts/canvas-path-performance.html</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+    
+
+    
+    <url>
+        <loc>https://ebenpackwood.com/posts/low-garbage-canvas.html</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+    
+
+    
+    <url>
+        <loc>https://ebenpackwood.com/posts/css-sort.html</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+    
+
+    
+    <url>
+        <loc>https://ebenpackwood.com/posts/too-much-recursion.html</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+    
+
+    
+    <url>
+        <loc>https://ebenpackwood.com/posts/wavybits.html</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+    
+
+    
+    <url>
+        <loc>https://ebenpackwood.com/posts/lattice-boltzmann.html</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+    
+
+    
+    <url>
         <loc>https://ebenpackwood.com/archives.html</loc>
         <changefreq>weekly</changefreq>
         
