@@ -161,10 +161,15 @@ a.goto {
     margin: 0em .2em;
 }
 
-pre, img, figure, table {
+img, figure, table {
     max-width: 100%;
     margin: 1em auto;
     overflow-x: auto;
+}
+
+pre {
+    max-width: 100%;
+    margin: 1em auto;
 }
 
 table td, table th {
@@ -235,32 +240,6 @@ h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
     color: gray;
     font-style: italic;
     font-size: 0.8em;
-}
-
-/* CODE */
-
-.highlighttable {
-    display: block;
-    border: none;
-    overflow-y:hidden;
-}
-
-.highlighttable pre {
-    white-space: pre;
-    margin: 0;
-}
-
-.highlighttable td {
-    border: none;
-}
-
-.highlighttable .code {
-    width: 100%;
-}
-
-.highlighttable .linenos {
-    color: #f8f8f2;
-    padding: 0;
 }
 
 code {
