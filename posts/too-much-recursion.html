@@ -55,74 +55,74 @@
 <p>might not know what they’re talking about. Like, at all.</p>
 <p>While this certainly is one of the more flagrant errors in the book, it is just one of many. If you’re on the fence about getting this book, I would recommend you give it a pass.</p>
 <p>Anyway, here’s some code:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource javascript numberLines"><code class="sourceCode javascript"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co">// The number of stack traces that will be logged in the console.</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">// We call console.log() when we reach the base case in our</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">// mergesort function, which will be the maximum recursive depth.</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">// We're only going to call this the first few times, as</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">// it can really bog things down otherwise.</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw">var</span> stacktraces <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">// The array we will be sorting.</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="kw">var</span> big_array <span class="op">=</span> []<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">// Build our array with numbers going in descending order.</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">// The array size, max, can be larger, but things slow down</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">// and start to get wonky at about 2^25.</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="kw">var</span> max <span class="op">=</span> <span class="va">Math</span>.<span class="at">pow</span>(<span class="dv">2</span><span class="op">,</span> <span class="dv">20</span>)<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="cf">for</span> (<span class="kw">var</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> max<span class="op">;</span> i<span class="op">++</span>)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16">    <span class="va">big_array</span>.<span class="at">push</span>(max <span class="op">-</span> i)<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="op">}</span></a>
-<a class="sourceLine" id="cb2-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb2-19" data-line-number="19">big_array <span class="op">=</span> <span class="at">mergesort</span>(big_array)<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">// Standard merge</span></a>
-<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="kw">function</span> <span class="at">merge</span>(a<span class="op">,</span>b)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23">    <span class="kw">var</span> result <span class="op">=</span> []<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-24" data-line-number="24">    <span class="kw">var</span> alen <span class="op">=</span> <span class="va">a</span>.<span class="at">length</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-25" data-line-number="25">    <span class="kw">var</span> blen <span class="op">=</span> <span class="va">b</span>.<span class="at">length</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-26" data-line-number="26">    <span class="cf">while</span> (alen <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">||</span> blen <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-27" data-line-number="27">        <span class="cf">if</span> (alen <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> blen <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-28" data-line-number="28">            <span class="cf">if</span> (a[<span class="dv">0</span>] <span class="op">&lt;</span> b[<span class="dv">0</span>])<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-29" data-line-number="29">                <span class="va">result</span>.<span class="at">push</span>(<span class="va">a</span>.<span class="at">shift</span>())<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-30" data-line-number="30">                alen <span class="op">-=</span> <span class="dv">1</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-31" data-line-number="31">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb2-32" data-line-number="32">            <span class="cf">else</span> <span class="cf">if</span> (b[<span class="dv">0</span>] <span class="op">&lt;=</span> a[<span class="dv">0</span>])<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-33" data-line-number="33">                <span class="va">result</span>.<span class="at">push</span>(<span class="va">b</span>.<span class="at">shift</span>())<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-34" data-line-number="34">                blen <span class="op">-=</span> <span class="dv">1</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-35" data-line-number="35">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb2-36" data-line-number="36">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb2-37" data-line-number="37">        <span class="cf">else</span> <span class="cf">if</span> (alen <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-38" data-line-number="38">            <span class="va">result</span>.<span class="at">push</span>(<span class="va">a</span>.<span class="at">shift</span>())<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-39" data-line-number="39">            alen <span class="op">-=</span> <span class="dv">1</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-40" data-line-number="40">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb2-41" data-line-number="41">        <span class="cf">else</span> <span class="cf">if</span> (blen <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-42" data-line-number="42">            <span class="va">result</span>.<span class="at">push</span>(<span class="va">b</span>.<span class="at">shift</span>())<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-43" data-line-number="43">            blen <span class="op">-=</span> <span class="dv">1</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-44" data-line-number="44">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb2-45" data-line-number="45">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb2-46" data-line-number="46">    <span class="cf">return</span> result<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-47" data-line-number="47"><span class="op">}</span></a>
-<a class="sourceLine" id="cb2-48" data-line-number="48"></a>
-<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="co">// Standard recursive mergesort</span></a>
-<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">function</span> <span class="at">mergesort</span>(lst)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-51" data-line-number="51">    <span class="kw">var</span> length <span class="op">=</span> <span class="va">lst</span>.<span class="at">length</span><span class="op">;</span></a>
-<a class="sourceLine" id="cb2-52" data-line-number="52">    <span class="cf">if</span> (length <span class="op">&lt;=</span> <span class="dv">1</span>)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-53" data-line-number="53">        <span class="cf">if</span> (stacktraces <span class="op">&lt;</span> <span class="dv">10</span>)<span class="op">{</span></a>
-<a class="sourceLine" id="cb2-54" data-line-number="54">            <span class="co">// This will print a call stack to the console the</span></a>
-<a class="sourceLine" id="cb2-55" data-line-number="55">            <span class="co">// first ten times our mergesort reaches the base case.</span></a>
-<a class="sourceLine" id="cb2-56" data-line-number="56">            <span class="co">// It should be clear that the maximum recursive depth</span></a>
-<a class="sourceLine" id="cb2-57" data-line-number="57">            <span class="co">// of our mergesort function is n+1, where our array</span></a>
-<a class="sourceLine" id="cb2-58" data-line-number="58">            <span class="co">// has on the order of 2^n items.</span></a>
-<a class="sourceLine" id="cb2-59" data-line-number="59">            <span class="va">console</span>.<span class="at">trace</span>()</a>
-<a class="sourceLine" id="cb2-60" data-line-number="60">            stacktraces<span class="op">++;</span></a>
-<a class="sourceLine" id="cb2-61" data-line-number="61">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb2-62" data-line-number="62">        <span class="cf">return</span> lst<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-63" data-line-number="63">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb2-64" data-line-number="64">    <span class="kw">var</span> q <span class="op">=</span> <span class="va">Math</span>.<span class="at">floor</span>(length/<span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb2-65" data-line-number="65">    <span class="kw">var</span> left <span class="op">=</span> <span class="at">mergesort</span>(<span class="va">lst</span>.<span class="at">slice</span>(<span class="dv">0</span><span class="op">,</span>q))<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-66" data-line-number="66">    <span class="kw">var</span> right <span class="op">=</span> <span class="at">mergesort</span>(<span class="va">lst</span>.<span class="at">slice</span>(q))<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-67" data-line-number="67">    <span class="cf">return</span> <span class="at">merge</span>(left<span class="op">,</span> right)<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-68" data-line-number="68"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource javascript numberLines"><code class="sourceCode javascript"><a class="sourceLine" id="cb2-1" title="1"><span class="co">// The number of stack traces that will be logged in the console.</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="co">// We call console.log() when we reach the base case in our</span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co">// mergesort function, which will be the maximum recursive depth.</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co">// We're only going to call this the first few times, as</span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">// it can really bog things down otherwise.</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="kw">var</span> stacktraces <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb2-7" title="7"></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="co">// The array we will be sorting.</span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="kw">var</span> big_array <span class="op">=</span> []<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-10" title="10"></a>
+<a class="sourceLine" id="cb2-11" title="11"><span class="co">// Build our array with numbers going in descending order.</span></a>
+<a class="sourceLine" id="cb2-12" title="12"><span class="co">// The array size, max, can be larger, but things slow down</span></a>
+<a class="sourceLine" id="cb2-13" title="13"><span class="co">// and start to get wonky at about 2^25.</span></a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="kw">var</span> max <span class="op">=</span> <span class="va">Math</span>.<span class="at">pow</span>(<span class="dv">2</span><span class="op">,</span> <span class="dv">20</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-15" title="15"><span class="cf">for</span> (<span class="kw">var</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> max<span class="op">;</span> i<span class="op">++</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-16" title="16">    <span class="va">big_array</span>.<span class="at">push</span>(max <span class="op">-</span> i)<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-17" title="17"><span class="op">}</span></a>
+<a class="sourceLine" id="cb2-18" title="18"></a>
+<a class="sourceLine" id="cb2-19" title="19">big_array <span class="op">=</span> <span class="at">mergesort</span>(big_array)<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-20" title="20"></a>
+<a class="sourceLine" id="cb2-21" title="21"><span class="co">// Standard merge</span></a>
+<a class="sourceLine" id="cb2-22" title="22"><span class="kw">function</span> <span class="at">merge</span>(a<span class="op">,</span>b)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-23" title="23">    <span class="kw">var</span> result <span class="op">=</span> []<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-24" title="24">    <span class="kw">var</span> alen <span class="op">=</span> <span class="va">a</span>.<span class="at">length</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb2-25" title="25">    <span class="kw">var</span> blen <span class="op">=</span> <span class="va">b</span>.<span class="at">length</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb2-26" title="26">    <span class="cf">while</span> (alen <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">||</span> blen <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-27" title="27">        <span class="cf">if</span> (alen <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> blen <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-28" title="28">            <span class="cf">if</span> (a[<span class="dv">0</span>] <span class="op">&lt;</span> b[<span class="dv">0</span>])<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-29" title="29">                <span class="va">result</span>.<span class="at">push</span>(<span class="va">a</span>.<span class="at">shift</span>())<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-30" title="30">                alen <span class="op">-=</span> <span class="dv">1</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb2-31" title="31">            <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-32" title="32">            <span class="cf">else</span> <span class="cf">if</span> (b[<span class="dv">0</span>] <span class="op">&lt;=</span> a[<span class="dv">0</span>])<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-33" title="33">                <span class="va">result</span>.<span class="at">push</span>(<span class="va">b</span>.<span class="at">shift</span>())<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-34" title="34">                blen <span class="op">-=</span> <span class="dv">1</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb2-35" title="35">            <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-36" title="36">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-37" title="37">        <span class="cf">else</span> <span class="cf">if</span> (alen <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-38" title="38">            <span class="va">result</span>.<span class="at">push</span>(<span class="va">a</span>.<span class="at">shift</span>())<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-39" title="39">            alen <span class="op">-=</span> <span class="dv">1</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb2-40" title="40">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-41" title="41">        <span class="cf">else</span> <span class="cf">if</span> (blen <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-42" title="42">            <span class="va">result</span>.<span class="at">push</span>(<span class="va">b</span>.<span class="at">shift</span>())<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-43" title="43">            blen <span class="op">-=</span> <span class="dv">1</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb2-44" title="44">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-45" title="45">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-46" title="46">    <span class="cf">return</span> result<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-47" title="47"><span class="op">}</span></a>
+<a class="sourceLine" id="cb2-48" title="48"></a>
+<a class="sourceLine" id="cb2-49" title="49"><span class="co">// Standard recursive mergesort</span></a>
+<a class="sourceLine" id="cb2-50" title="50"><span class="kw">function</span> <span class="at">mergesort</span>(lst)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-51" title="51">    <span class="kw">var</span> length <span class="op">=</span> <span class="va">lst</span>.<span class="at">length</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb2-52" title="52">    <span class="cf">if</span> (length <span class="op">&lt;=</span> <span class="dv">1</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-53" title="53">        <span class="cf">if</span> (stacktraces <span class="op">&lt;</span> <span class="dv">10</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-54" title="54">            <span class="co">// This will print a call stack to the console the</span></a>
+<a class="sourceLine" id="cb2-55" title="55">            <span class="co">// first ten times our mergesort reaches the base case.</span></a>
+<a class="sourceLine" id="cb2-56" title="56">            <span class="co">// It should be clear that the maximum recursive depth</span></a>
+<a class="sourceLine" id="cb2-57" title="57">            <span class="co">// of our mergesort function is n+1, where our array</span></a>
+<a class="sourceLine" id="cb2-58" title="58">            <span class="co">// has on the order of 2^n items.</span></a>
+<a class="sourceLine" id="cb2-59" title="59">            <span class="va">console</span>.<span class="at">trace</span>()</a>
+<a class="sourceLine" id="cb2-60" title="60">            stacktraces<span class="op">++;</span></a>
+<a class="sourceLine" id="cb2-61" title="61">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-62" title="62">        <span class="cf">return</span> lst<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-63" title="63">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-64" title="64">    <span class="kw">var</span> q <span class="op">=</span> <span class="va">Math</span>.<span class="at">floor</span>(length/<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb2-65" title="65">    <span class="kw">var</span> left <span class="op">=</span> <span class="at">mergesort</span>(<span class="va">lst</span>.<span class="at">slice</span>(<span class="dv">0</span><span class="op">,</span>q))<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-66" title="66">    <span class="kw">var</span> right <span class="op">=</span> <span class="at">mergesort</span>(<span class="va">lst</span>.<span class="at">slice</span>(q))<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-67" title="67">    <span class="cf">return</span> <span class="at">merge</span>(left<span class="op">,</span> right)<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-68" title="68"><span class="op">}</span></a></code></pre></div>
 <p>Addendum: I was curious about the relative performance of the iterative and recursive mergesort implementations. As you can see, the iterative approach is much faster, and I believe it uses quite a bit less memory as well.</p>
 <div id="graph">
 <style scoped>

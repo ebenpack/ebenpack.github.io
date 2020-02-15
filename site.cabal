@@ -1,0 +1,38 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 7a3a7b1fe8869d9d8b7d7903797366ec212ec8c6b5a692eb7152b69e3fc8bba5
+
+name:           site
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/testfoo#readme>
+homepage:       https://github.com/ebenpack/ebenpack.github.io#readme
+bug-reports:    https://github.com/ebenpack/ebenpack.github.io/issues
+author:         ebenpack
+maintainer:     example@example.com
+copyright:      2020 ebenpack
+license:        MIT
+build-type:     Simple
+extra-source-files:
+    README.MD
+
+source-repository head
+  type: git
+  location: https://github.com/ebenpack/ebenpack.github.io
+
+executable site
+  main-is: site.hs
+  other-modules:
+      Paths_site
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , filepath
+    , hakyll
+    , pandoc
+    , time
+  default-language: Haskell2010
