@@ -7,3 +7,4 @@ node_modules/
 *.iml
 *.html
 *.cabal
+assets/js/bundle.js
