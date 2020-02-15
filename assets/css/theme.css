@@ -4,7 +4,7 @@
 }
 
 body {
-    font-family: "Lucida Grande", "Gargi_1.7", "Garuda", "Jamrul", "Loma", "Malayalam", "Mukti Narrow", sans-serif;
+    font-family: "Lucida Grande", "Gargi_1.7", Garuda, Jamrul, Loma, Malayalam, "Mukti Narrow", sans-serif;
     font-size: 16px;
     line-height: 1.5em;
     color: #444;
@@ -15,7 +15,7 @@ h1, h2, h3,
 h4, h5, h6,
 .meta {
     color: #222;
-    font-family: "Century Schoolbook L", "Georgia", "Nimbus Roman No9 L", "Norasi", "Rekha", serif;
+    font-family: "Arial Black", Verdana, Tahoma, Helvetica, sans-serif;
     line-height: 1.1em;
 }
 
@@ -174,6 +174,12 @@ table td, table th {
 
 figure * { border: none; margin: auto; padding: 0; }
 
+figcaption {
+    margin-top: 1em;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
 @media screen and (max-width: 550px) {
     body {
         font-size: 15px;
@@ -264,7 +270,7 @@ code {
     color: rgb(255, 0, 71);
 }
 
-blockquote {
+blockquote, aside {
   background: #F0F0F0;
   border-left: 10px solid #ccc;
   margin: 1.5em 10px;
@@ -281,6 +287,11 @@ blockquote:before {
 }
 blockquote p {
   display: inline;
+}
+
+aside {
+    background: #E3F6FD;
+    border-left-color: #BFD2D9;
 }
 
 /* PROJECT PAGE */
@@ -390,4 +401,40 @@ svg .arrow-3 {
 svg .triangle {
     fill: black;
     stroke: black;
+}
+
+button {
+    display: inline-block;
+    padding: 0.35em 1.2em;
+    border: 0.1em solid #222;
+    margin: 0 0.3em 0.3em 0;
+    border-radius: 0.12em;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-weight: 300;
+    color: #222;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:disabled {
+    border: 0.1em solid #888;
+    color: #888;
+    cursor: not-allowed;
+}
+
+button:hover {
+    color: #FFFFFF;
+    background-color: #444;
+}
+
+@media all and (max-width:30em) {
+    button {
+        display: block;
+        margin: 0.4em auto;
+    }
 }
