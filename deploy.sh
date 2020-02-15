@@ -15,7 +15,8 @@ git checkout develop
 
 mkdir assets/js
 
-npm install
+npm ci
+npm run build-js
 
 # Build new files
 sleep .5
