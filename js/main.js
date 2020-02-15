@@ -345,8 +345,8 @@ function initLidrisp() {
     });	
     var input = document.getElementById('input');	
     var output = document.getElementById('output');	
-    var eval = document.getElementById('eval');	
-    eval.addEventListener('click', function(){	
+    var eval_ = document.getElementById('eval');
+    eval_.addEventListener('click', function(){
         var result = lidrisp.run(editor.getValue());	
         output.textContent = result;	
     });	
