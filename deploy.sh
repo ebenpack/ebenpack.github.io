@@ -26,6 +26,11 @@ sleep .5
 stack exec site build
 sleep .5
 
+npm run minify-css
+sleep .5
+npm run minify-js
+sleep .5
+
 # Get previous files
 git fetch --all
 git checkout -b publish --track origin/master
