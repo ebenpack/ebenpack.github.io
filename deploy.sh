@@ -22,6 +22,8 @@ sleep .5
 stack exec site build
 sleep .5
 
+mkdir _site/js
+
 npm ci
 npm run build-js
 
