@@ -13,11 +13,6 @@ git stash
 # Verify correct branch
 git checkout develop
 
-mkdir assets/js
-
-npm ci
-npm run build-js
-
 # Build new files
 sleep .5
 stack build
@@ -26,6 +21,9 @@ stack exec site clean
 sleep .5
 stack exec site build
 sleep .5
+
+npm ci
+npm run build-js
 
 npm run minify-css
 sleep .5
