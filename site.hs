@@ -96,12 +96,10 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.tmpl" indexCtx
                 >>= relativizeUrls
     match "templates/404.tmpl" $ do
-        route idRoute
+        route $ constRoute "404.html"
         compile
             $   getResourceBody
-            >>= applyAsTemplate postCtx
             >>= loadAndApplyTemplate "templates/default.tmpl" postCtx
-            >>= relativizeUrls
     match "templates/*" $ compile templateBodyCompiler
     create ["sitemap.xml"] $ do
         route idRoute
