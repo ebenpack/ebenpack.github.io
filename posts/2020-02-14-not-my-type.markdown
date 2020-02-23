@@ -477,96 +477,132 @@ appendVec : Vect m a -> Vect n a -> Vect (m + n) a
 
 With the length encoded at the type level, we can leverage the type system to reject incorrect implementations where the important properties of the operation do not hold. In this case, the important property of the append function is that the length of the resulting `Vect` is the sum of the lengths of the two input `Vect`s. The type checker can now determine for us that a naive implementation—say, one which simply always returns an empty vector—does not satisfy the length summing property that we have specified in our type signature.
 
-But in fact beyond even just rejecting incorrect implementations, we can leverage the type system to write a complete implementation of this function for us. Through a series of fairly mechanical steps, we can ask the compiler to fill out aspects of our function for us, using the information it knows about our types, until we're left with a complete and correct implementation. This is what this looks like in action:
+But in fact beyond even just rejecting incorrect implementations, we can leverage the type system to write a complete implementation of this function for us. Through a series of fairly mechanical steps, we can ask the compiler to fill out aspects of our function for us, using the information it knows about our types, until we're left with a complete and correct implementation. Here's what this looks like in action. Keep in mind that at every step, while we're directing the compiler on what we want it to do, it's determining how to do it.
 
-```{.appendVect .idris .numberLines}
+<div class="appendVect">
+```{.idris .numberLines}
 appendVect : Vect m a -> Vect n a -> Vect (m + n) a
 
 
 
 ```
+<div class="caption"></div>
+</div>
 
-``` {.appendVect .idris .numberLines}
+<div class="appendVect">
+``` {.idris .numberLines}
 appendVect : Vect m a -> Vect n a -> Vect (m + n) a
 appendVect x        y = ?appendVect_rhs
 
 
 ```
+<div class="caption">Generate an initial pattern match clause</div>
+</div>
 
-``` {.appendVect .idris .numberLines}
+<div class="appendVect">
+``` {.idris .numberLines}
 appendVect : Vect m a -> Vect n a -> Vect (m + n) a
 appendVect Nil      y = ?appendVect_rhs_1
 appendVect (x :: z) y = ?appendVect_rhs_2
 ```
+<div class="caption">Generate a case split for a pattern variable</div>
+</div>
 
-``` {.appendVect .idris .numberLines}
+<div class="appendVect">
+``` {.idris .numberLines}
 appendVect : Vect m a -> Vect n a -> Vect (m + n) a
 appendVect Nil      y = y
 appendVect (x :: z) y = ?appendVect_rhs_2
 ```
+<div class="caption">Attempt to fill a hole</div>
+</div>
 
-``` {.appendVect .idris .numberLines}
+<div class="appendVect">
+``` {.idris .numberLines}
 appendVect : Vect m a -> Vect n a -> Vect (m + n) a
 appendVect Nil      y = y
 appendVect (x :: z) y = x :: appendVec z y
 ```
+<div class="caption">Attempt to fill a hole</div>
+</div>
 
-<button id="play-appendVect">Play</button>
+<div><div id="caption-appendVect"></div><button id="play-appendVect">Play</button></div>
 
 Amazing! By providing the type checker with more information about our types, not only can our type checker do more for us to verify the correctness of our programs, but it can also write many of our programs for us!
 
 Let's look at another brief example:
 
-``` {.zipVect .idris .numberLines}
+<div class="zipVect">
+``` {.idris .numberLines}
 zipVect : Vect n a -> Vect n b -> Vect n (a,b)
 
 
 
 ```
+<div class="caption"></div>
+</div>
 
-``` {.zipVect .idris .numberLines}
+<div class="zipVect">
+``` {.idris .numberLines}
 zipVect : Vect n a -> Vect n b -> Vect n (a,b)
 zipVect x        y         = ?zipVect_rhs
 
 
 ```
+<div class="caption">Generate an initial pattern match clause</div>
+</div>
 
-``` {.zipVect .idris .numberLines}
+<div class="zipVect">
+``` {.idris .numberLines}
 zipVect : Vect n a -> Vect n b -> Vect n (a,b)
 zipVect Nil      y         = ?zipVect_rhs_1
 zipVect (x :: z) y         = ?zipVect_rhs_2
 
 ```
+<div class="caption">Generate a case split for a pattern variable</div>
+</div>
 
-``` {.zipVect .idris .numberLines}
+<div class="zipVect">
+``` {.idris .numberLines}
 zipVect : Vect n a -> Vect n b -> Vect n (a,b)
 zipVect Nil      Nil       = ?zipVect_rhs_1
 zipVect (x :: z) y         = ?zipVect_rhs_2
 
 ```
+<div class="caption">Generate a case split for a pattern variable</div>
+</div>
 
-``` {.zipVect .idris .numberLines}
+<div class="zipVect">
+``` {.idris .numberLines}
 zipVect : Vect n a -> Vect n b -> Vect n (a,b)
 zipVect Nil      Nil       = ?zipVect_rhs_1
 zipVect (x :: z) (y :: ys) = ?zipVect_rhs_2
 
 ```
+<div class="caption">Generate a case split for a pattern variable</div>
+</div>
 
-``` {.zipVect .idris .numberLines}
+<div class="zipVect">
+``` {.idris .numberLines}
 zipVect : Vect n a -> Vect n b -> Vect n (a,b)
 zipVect Nil      Nil       = Nil
 zipVect (x :: z) (y :: ys) = ?zipVect_rhs_2
 
 ```
+<div class="caption">Attempt to fill a hole</div>
+</div>
 
-``` {.zipVect .idris .numberLines}
+<div class="zipVect">
+``` {.idris .numberLines}
 zipVect : Vect n a -> Vect n b -> Vect n (a,b)
 zipVect Nil      Nil       = Nil
 zipVect (x :: z) (y :: ys) = (x, y) :: zipVect z w
 
 ```
+<div class="caption">Attempt to fill a hole</div>
+</div>
 
-<button id="play-zipVect">Play</button>
+<div><div id="caption-zipVect"></div><button id="play-zipVect">Play</button></div>
 
 Here the compiler wrote for us the full implementation of a function that zips two vectors together. Note that the type signature specifies the two vectors passed to this function must be of the same length, `n`, and the vector returned must also be of length `n`. The compiler was able to determine that, when the first parameter is an empty vector, so too will be the second parameter (their lengths are, after all, equal), and was able to correctly pattern match and provide full, correct implementations for the two cases given the available information. Furthermore, the compiler will enforce these constraints whenever this function is called. It is impossible to call this function with two vectors that the compiler cannot determine to be of the same length. And with only a few more tools in our toolbelt (e.g. a `min` function for `Nat` values), we could have implemented a different, equally provably correct function that zips together any two arbitrary length `Vect`s, producing a new `Vect` of a length equal to the lesser of the lengths of the two input `Vect`s.
 
@@ -574,28 +610,64 @@ Here the compiler wrote for us the full implementation of a function that zips t
 
 <script>
 (function(){
-    function registerPlayButton(selector, playButtonSelector){
+    function registerPlayButton(selector){
         var TICK = 1100;
-        var button = document.querySelector(playButtonSelector);
-        var els = document.querySelectorAll(selector);
+        var button = document.querySelector('#play-' + selector);
+        var caption = document.querySelector('#caption-' + selector);
+        var els = document.querySelectorAll('.' + selector);
         var end = els.length;
-        function showFrame(n, end) {
+        var currentFrame = 0;
+        var tallestCaption = 0;
+        els.forEach(function(el){
+            var caption = Array.prototype.find.call(el.children, function(child){
+                return child.classList.contains('caption');
+            });
+            var captionBoundingClientRect = caption.getBoundingClientRect();
+            tallestCaption = Math.max(tallestCaption, captionBoundingClientRect.height);
+        });
+        caption.style.height = tallestCaption + 'px';
+        caption.style.margin = '1em 0';
+
+        var rangeSlider = document.createElement('input');
+        rangeSlider.type = 'range';
+        rangeSlider.min = 0;
+        rangeSlider.max = end - 1;
+        rangeSlider.value = 0; 
+        rangeSlider.step = 1;
+        caption.parentNode.insertBefore(rangeSlider, button.nextSibling);
+        rangeSlider.addEventListener('input', function(evt){
+            currentFrame = parseInt(event.target.value, 10);
+            redraw();
+            if (currentFrame >= (end - 1)) {
+                currentFrame = 0;
+            }
+        });
+
+        function redraw() {
+            rangeSlider.value = currentFrame;
             for (var m = 0; m < end; m++) {
-                el = els[m];
-                if (m === n) {
+                var el = els[m];
+                if (m === currentFrame) {
                     el.style.display = '';
+                    var elCaption = el.querySelector('.caption');
+                    if (elCaption) {
+                        elCaption.style.display = 'none';
+                        caption.textContent = elCaption.textContent;
+                    } else {
+                        caption.textContent = '';
+                    }
                 } else {
                     el.style.display = 'none';
                 }
             }
         }
-        function play(n){
+        function play(){
             // TODO - this is kinda bunk. firefox formats it weird, and it's a shitty function anyway
-            n = n % end;
-            showFrame(n, end);
-            n = n + 1;
-            if (n !== end) {
-                setTimeout(function(){play(n)}, TICK);
+            currentFrame = currentFrame % end;
+            redraw();
+            currentFrame = currentFrame + 1;
+            if (currentFrame !== end) {
+                setTimeout(function(){play()}, TICK);
             } else {
                 button.disabled = false;
             }
@@ -603,13 +675,13 @@ Here the compiler wrote for us the full implementation of a function that zips t
         button.addEventListener('click', function(){
             if (!button.disabled) {
                 button.disabled = true;
-                play(0);
+                play();
             }
         });
-        showFrame(0, end);
+        redraw();
     }
-    registerPlayButton('.appendVect', '#play-appendVect');
-    registerPlayButton('.zipVect', '#play-zipVect');
+    registerPlayButton('appendVect');
+    registerPlayButton('zipVect');
 })();
 </script>
 
