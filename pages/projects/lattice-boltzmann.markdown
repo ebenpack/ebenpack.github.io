@@ -3,11 +3,10 @@ title: Lattice Boltzmann
 slug: lattice-boltzmann
 tags: JavaScript
 languages: JavaScript
-published: 2014-02-15 20:28:00
+published: 2015-08-02 20:28:00
 author: ebenpack
 description: An implementation of the lattice Boltzmann method with JavaScript.
 summary: A computational fluid dynamics simulation.
-status: hidden
 img: lattice-boltzmann.gif
 ---
 

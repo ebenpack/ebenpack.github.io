@@ -3,11 +3,10 @@ title: VU
 slug: vu
 tags: JavaScript
 languages: JavaScript
-published: 2014-07-29 17:18:00
+published: 2015-07-29 17:18:00
 author: ebenpack
 description: A 3d sound visualizer.
 summary: A 3d audio visualizer.
-status: hidden
 img: vu.gif
 ---
 

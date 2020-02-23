@@ -3,11 +3,10 @@ title: VideoASCII
 slug: videoascii
 tags: JavaScript
 languages: JavaScript
-published: 2015-11-22 15:19:00
+published: 2014-11-22 15:19:00
 author: ebenpack
 description: An ASCII video renderer.
 summary: An ASCII video renderer.
-status: hidden
 img: videoascii.gif
 ---
 

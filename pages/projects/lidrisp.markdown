@@ -7,7 +7,6 @@ published: 2019-01-22 18:16:00
 author: ebenpack
 description: A scheme-like, written in idris.
 summary: A scheme-like, written in idris.
-status: hidden
 img: lidrisp.gif
 ---
 
