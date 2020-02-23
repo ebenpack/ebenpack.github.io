@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 
-import Control.Monad (forM, liftM)
+import Control.Monad (forM, liftM, filterM)
 import Data.List (groupBy, sortBy)
 import qualified Data.Map as M
 import Data.Monoid ((<>))
@@ -44,7 +44,7 @@ main = hakyllWith config $ do
     create ["pages/projects.html"] $ do
         route idRoute
         compile $ do
-            projects <- loadAll "pages/projects/*" >>= sortChronologicalItems
+            projects <- loadAll "pages/projects/*" >>= removeHidden >>= sortChronologicalItems
             let projectCtx =
                     listField "projects" defaultContext (return projects)
                         <> constField "title" "Projects"
@@ -142,6 +142,15 @@ customPandocCompiler =
             }
     in
         pandocCompilerWith defaultHakyllReaderOptions writerOptions
+
+
+removeHidden :: MonadMetadata m => [Item a] -> m [Item a]
+removeHidden = filterM notHidden
+    where
+    notHidden :: MonadMetadata m => Item a -> m Bool
+    notHidden (Item ident _) = do
+        status <- getMetadataField ident "status"
+        return (status /= Just "hidden")
 
 -- Routing
 slugRoute :: Routes
