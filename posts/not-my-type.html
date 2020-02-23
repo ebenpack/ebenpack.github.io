@@ -336,79 +336,185 @@ Statically typed languages can also be strongly or weakly typed, with the most n
 <p>What do we gain by having such a type? As was mentioned earlier, we have encoded more information about our data at the type level. Specifically in this case we have encoded the length of our list-like vector in its type. With this information, the type system can further assist us, by checking that the operations we write are correct with respect to the type signatures that we specify. As an example, if we wish to write an operation to append two vectors together it should be clear that the result will be a vector whose length is the sum of the lengths of the two input vectors. The signature for this function might look like this:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb24-1" title="1"><span class="fu">appendVec</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a></code></pre></div>
 <p>With the length encoded at the type level, we can leverage the type system to reject incorrect implementations where the important properties of the operation do not hold. In this case, the important property of the append function is that the length of the resulting <code>Vect</code> is the sum of the lengths of the two input <code>Vect</code>s. The type checker can now determine for us that a naive implementation—say, one which simply always returns an empty vector—does not satisfy the length summing property that we have specified in our type signature.</p>
-<p>But in fact beyond even just rejecting incorrect implementations, we can leverage the type system to write a complete implementation of this function for us. Through a series of fairly mechanical steps, we can ask the compiler to fill out aspects of our function for us, using the information it knows about our types, until we’re left with a complete and correct implementation. This is what this looks like in action:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource appendVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb25-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
+<p>But in fact beyond even just rejecting incorrect implementations, we can leverage the type system to write a complete implementation of this function for us. Through a series of fairly mechanical steps, we can ask the compiler to fill out aspects of our function for us, using the information it knows about our types, until we’re left with a complete and correct implementation. Here’s what this looks like in action. Keep in mind that at every step, while we’re directing the compiler on what we want it to do, it’s determining how to do it.</p>
+<div class="appendVect">
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb25-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
 <a class="sourceLine" id="cb25-2" title="2"></a>
 <a class="sourceLine" id="cb25-3" title="3"></a></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource appendVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb26-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
+<div class="caption">
+
+</div>
+</div>
+<div class="appendVect">
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb26-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
 <a class="sourceLine" id="cb26-2" title="2">appendVect x        y <span class="fu">=</span> <span class="ot">?appendVect_rhs</span></a>
 <a class="sourceLine" id="cb26-3" title="3"></a></code></pre></div>
-<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource appendVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb27-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
+<div class="caption">
+Generate an initial pattern match clause
+</div>
+</div>
+<div class="appendVect">
+<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb27-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
 <a class="sourceLine" id="cb27-2" title="2">appendVect <span class="dt">Nil</span>      y <span class="fu">=</span> <span class="ot">?appendVect_rhs_1</span></a>
 <a class="sourceLine" id="cb27-3" title="3">appendVect (x <span class="ot">::</span> z) y <span class="fu">=</span> <span class="ot">?appendVect_rhs_2</span></a></code></pre></div>
-<div class="sourceCode" id="cb28"><pre class="sourceCode numberSource appendVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb28-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
+<div class="caption">
+Generate a case split for a pattern variable
+</div>
+</div>
+<div class="appendVect">
+<div class="sourceCode" id="cb28"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb28-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
 <a class="sourceLine" id="cb28-2" title="2">appendVect <span class="dt">Nil</span>      y <span class="fu">=</span> y</a>
 <a class="sourceLine" id="cb28-3" title="3">appendVect (x <span class="ot">::</span> z) y <span class="fu">=</span> <span class="ot">?appendVect_rhs_2</span></a></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode numberSource appendVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb29-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
+<div class="caption">
+Attempt to fill a hole
+</div>
+</div>
+<div class="appendVect">
+<div class="sourceCode" id="cb29"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb29-1" title="1"><span class="fu">appendVect</span> <span class="ot">:</span> <span class="dt">Vect</span> m a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> (m <span class="fu">+</span> n) a</a>
 <a class="sourceLine" id="cb29-2" title="2">appendVect <span class="dt">Nil</span>      y <span class="fu">=</span> y</a>
 <a class="sourceLine" id="cb29-3" title="3">appendVect (x <span class="ot">::</span> z) y <span class="fu">=</span> x <span class="ot">::</span> appendVec z y</a></code></pre></div>
+<div class="caption">
+Attempt to fill a hole
+</div>
+</div>
+<div>
+<div id="caption-appendVect">
+
+</div>
 <button id="play-appendVect">
 Play
 </button>
+</div>
 <p>Amazing! By providing the type checker with more information about our types, not only can our type checker do more for us to verify the correctness of our programs, but it can also write many of our programs for us!</p>
 <p>Let’s look at another brief example:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode numberSource zipVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb30-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
+<div class="zipVect">
+<div class="sourceCode" id="cb30"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb30-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
 <a class="sourceLine" id="cb30-2" title="2"></a>
 <a class="sourceLine" id="cb30-3" title="3"></a></code></pre></div>
-<div class="sourceCode" id="cb31"><pre class="sourceCode numberSource zipVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb31-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
+<div class="caption">
+
+</div>
+</div>
+<div class="zipVect">
+<div class="sourceCode" id="cb31"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb31-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
 <a class="sourceLine" id="cb31-2" title="2">zipVect x        y         <span class="fu">=</span> <span class="ot">?zipVect_rhs</span></a>
 <a class="sourceLine" id="cb31-3" title="3"></a></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="sourceCode numberSource zipVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb32-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
+<div class="caption">
+Generate an initial pattern match clause
+</div>
+</div>
+<div class="zipVect">
+<div class="sourceCode" id="cb32"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb32-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
 <a class="sourceLine" id="cb32-2" title="2">zipVect <span class="dt">Nil</span>      y         <span class="fu">=</span> <span class="ot">?zipVect_rhs_1</span></a>
 <a class="sourceLine" id="cb32-3" title="3">zipVect (x <span class="ot">::</span> z) y         <span class="fu">=</span> <span class="ot">?zipVect_rhs_2</span></a></code></pre></div>
-<div class="sourceCode" id="cb33"><pre class="sourceCode numberSource zipVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb33-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
+<div class="caption">
+Generate a case split for a pattern variable
+</div>
+</div>
+<div class="zipVect">
+<div class="sourceCode" id="cb33"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb33-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
 <a class="sourceLine" id="cb33-2" title="2">zipVect <span class="dt">Nil</span>      <span class="dt">Nil</span>       <span class="fu">=</span> <span class="ot">?zipVect_rhs_1</span></a>
 <a class="sourceLine" id="cb33-3" title="3">zipVect (x <span class="ot">::</span> z) y         <span class="fu">=</span> <span class="ot">?zipVect_rhs_2</span></a></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode numberSource zipVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb34-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
+<div class="caption">
+Generate a case split for a pattern variable
+</div>
+</div>
+<div class="zipVect">
+<div class="sourceCode" id="cb34"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb34-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
 <a class="sourceLine" id="cb34-2" title="2">zipVect <span class="dt">Nil</span>      <span class="dt">Nil</span>       <span class="fu">=</span> <span class="ot">?zipVect_rhs_1</span></a>
 <a class="sourceLine" id="cb34-3" title="3">zipVect (x <span class="ot">::</span> z) (y <span class="ot">::</span> ys) <span class="fu">=</span> <span class="ot">?zipVect_rhs_2</span></a></code></pre></div>
-<div class="sourceCode" id="cb35"><pre class="sourceCode numberSource zipVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb35-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
+<div class="caption">
+Generate a case split for a pattern variable
+</div>
+</div>
+<div class="zipVect">
+<div class="sourceCode" id="cb35"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb35-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
 <a class="sourceLine" id="cb35-2" title="2">zipVect <span class="dt">Nil</span>      <span class="dt">Nil</span>       <span class="fu">=</span> <span class="dt">Nil</span></a>
 <a class="sourceLine" id="cb35-3" title="3">zipVect (x <span class="ot">::</span> z) (y <span class="ot">::</span> ys) <span class="fu">=</span> <span class="ot">?zipVect_rhs_2</span></a></code></pre></div>
-<div class="sourceCode" id="cb36"><pre class="sourceCode numberSource zipVect idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb36-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
+<div class="caption">
+Attempt to fill a hole
+</div>
+</div>
+<div class="zipVect">
+<div class="sourceCode" id="cb36"><pre class="sourceCode numberSource idris numberLines"><code class="sourceCode idris"><a class="sourceLine" id="cb36-1" title="1"><span class="fu">zipVect</span> <span class="ot">:</span> <span class="dt">Vect</span> n a <span class="ot">-&gt;</span> <span class="dt">Vect</span> n b <span class="ot">-&gt;</span> <span class="dt">Vect</span> n (a,b)</a>
 <a class="sourceLine" id="cb36-2" title="2">zipVect <span class="dt">Nil</span>      <span class="dt">Nil</span>       <span class="fu">=</span> <span class="dt">Nil</span></a>
 <a class="sourceLine" id="cb36-3" title="3">zipVect (x <span class="ot">::</span> z) (y <span class="ot">::</span> ys) <span class="fu">=</span> (x, y) <span class="ot">::</span> zipVect z w</a></code></pre></div>
+<div class="caption">
+Attempt to fill a hole
+</div>
+</div>
+<div>
+<div id="caption-zipVect">
+
+</div>
 <button id="play-zipVect">
 Play
 </button>
+</div>
 <p>Here the compiler wrote for us the full implementation of a function that zips two vectors together. Note that the type signature specifies the two vectors passed to this function must be of the same length, <code>n</code>, and the vector returned must also be of length <code>n</code>. The compiler was able to determine that, when the first parameter is an empty vector, so too will be the second parameter (their lengths are, after all, equal), and was able to correctly pattern match and provide full, correct implementations for the two cases given the available information. Furthermore, the compiler will enforce these constraints whenever this function is called. It is impossible to call this function with two vectors that the compiler cannot determine to be of the same length. And with only a few more tools in our toolbelt (e.g. a <code>min</code> function for <code>Nat</code> values), we could have implemented a different, equally provably correct function that zips together any two arbitrary length <code>Vect</code>s, producing a new <code>Vect</code> of a length equal to the lesser of the lengths of the two input <code>Vect</code>s.</p>
 <aside>
 Remember that the length checks mentioned above are compile time checks. Since the compiler has already performed these checks, and has verified and proven the correctness of our programs, these checks need not incur any runtime cost. In fact, our types can often be erased entirely during compilation.
 </aside>
 <script>
 (function(){
-    function registerPlayButton(selector, playButtonSelector){
+    function registerPlayButton(selector){
         var TICK = 1100;
-        var button = document.querySelector(playButtonSelector);
-        var els = document.querySelectorAll(selector);
+        var button = document.querySelector('#play-' + selector);
+        var caption = document.querySelector('#caption-' + selector);
+        var els = document.querySelectorAll('.' + selector);
         var end = els.length;
-        function showFrame(n, end) {
+        var currentFrame = 0;
+        var tallestCaption = 0;
+        els.forEach(function(el){
+            var caption = Array.prototype.find.call(el.children, function(child){
+                return child.classList.contains('caption');
+            });
+            var captionBoundingClientRect = caption.getBoundingClientRect();
+            tallestCaption = Math.max(tallestCaption, captionBoundingClientRect.height);
+        });
+        caption.style.height = tallestCaption + 'px';
+        caption.style.margin = '1em 0';
+
+        var rangeSlider = document.createElement('input');
+        rangeSlider.type = 'range';
+        rangeSlider.min = 0;
+        rangeSlider.max = end - 1;
+        rangeSlider.value = 0; 
+        rangeSlider.step = 1;
+        caption.parentNode.insertBefore(rangeSlider, button.nextSibling);
+        rangeSlider.addEventListener('input', function(evt){
+            currentFrame = parseInt(event.target.value, 10);
+            redraw();
+            if (currentFrame >= (end - 1)) {
+                currentFrame = 0;
+            }
+        });
+
+        function redraw() {
+            rangeSlider.value = currentFrame;
             for (var m = 0; m < end; m++) {
-                el = els[m];
-                if (m === n) {
+                var el = els[m];
+                if (m === currentFrame) {
                     el.style.display = '';
+                    var elCaption = el.querySelector('.caption');
+                    if (elCaption) {
+                        elCaption.style.display = 'none';
+                        caption.textContent = elCaption.textContent;
+                    } else {
+                        caption.textContent = '';
+                    }
                 } else {
                     el.style.display = 'none';
                 }
             }
         }
-        function play(n){
+        function play(){
             // TODO - this is kinda bunk. firefox formats it weird, and it's a shitty function anyway
-            n = n % end;
-            showFrame(n, end);
-            n = n + 1;
-            if (n !== end) {
-                setTimeout(function(){play(n)}, TICK);
+            currentFrame = currentFrame % end;
+            redraw();
+            currentFrame = currentFrame + 1;
+            if (currentFrame !== end) {
+                setTimeout(function(){play()}, TICK);
             } else {
                 button.disabled = false;
             }
@@ -416,13 +522,13 @@ Remember that the length checks mentioned above are compile time checks. Since t
         button.addEventListener('click', function(){
             if (!button.disabled) {
                 button.disabled = true;
-                play(0);
+                play();
             }
         });
-        showFrame(0, end);
+        redraw();
     }
-    registerPlayButton('.appendVect', '#play-appendVect');
-    registerPlayButton('.zipVect', '#play-zipVect');
+    registerPlayButton('appendVect');
+    registerPlayButton('zipVect');
 })();
 </script>
 <h2 id="conclusion">Conclusion</h2>
