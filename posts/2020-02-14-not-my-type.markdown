@@ -237,9 +237,9 @@ In virtually every programming language, the values that we're dealing with in o
 
 In a statically typed language, the semantics of the language specify that terms have types, and the language's type checker will track these types throughout the program to ensure they are not used in ways that would break any contracts. If the type checker cannot determine that types are used in valid ways throughout the program, the program is rejected as invalid.
 
-This is, as the name implies, a static anaylisis process. Meaning that this type checking is performed on some static representation of the program (e.g. the source code), and does not involve actually running the code being analyzed. In other words, the problems that were only found at runtime in our strongly, dynamically typed language, can be discovered at compile time in our statically typed language.
+This is, as the name implies, a static analysis process. Meaning that this type checking is performed on some static representation of the program (e.g. the source code), and does not involve actually running the code being analyzed. In other words, the problems that were only found at runtime in our strongly, dynamically typed language, can be discovered at compile time in our statically typed language.
 
-<aside>Statically typed languages can also be strongly or weakly typed, with the most notable example of the latter being C. For the pruposes of this discussion, however, this topic is not worth any further comment.</aside>
+<aside>Statically typed languages can also be strongly or weakly typed, with the most notable example of the latter being C. For the purposes of this discussion, however, this topic is not worth any further comment.</aside>
 
 So, building on the example from above, in a statically typed language such as Java, the `not` function from earlier might look like this:
 
@@ -689,7 +689,7 @@ Here the compiler wrote for us the full implementation of a function that zips t
 
 We began by demonstrating some of the issues that a weak, dynamic type system will permit. We saw that these type systems, by performing implicit type conversions, can allow nonsensical values to propagate throughout our systems.
 
-We then proceeded to introduce a constraint, in the form of strong typing, whereby our operations would enforce for us the types which they would permit us to operate on. However, we also saw that, while strong typing did much to help ensure the correctness of our programs that weak typing was unable to, when coupled with a dynamic type system, strong typing was unable to reveal to us the correctness (or incorrectness) of our systems without actually running our code. This opened the possibility of edge cases in rarely used code paths, or when unexected input somehow entered our systems.
+We then proceeded to introduce a constraint, in the form of strong typing, whereby our operations would enforce for us the types which they would permit us to operate on. However, we also saw that, while strong typing did much to help ensure the correctness of our programs that weak typing was unable to, when coupled with a dynamic type system, strong typing was unable to reveal to us the correctness (or incorrectness) of our systems without actually running our code. This opened the possibility of edge cases in rarely used code paths, or when unexpected input somehow entered our systems.
 
 Introducing further constraints, we examined static typing. We saw that static typing was able to reject incorrect programs at compile time, which would have only been discovered at runtime using a comparable dynamically typed language. But again, we found deficiencies in the static type system that we were examining; namely, the type system allowed for side-effects which were not represented, or constrained at the type level.
 
