@@ -55,7 +55,7 @@ img: lidrisp.gif
     </div>
     <p>It's a lisp! Or maybe a scheme! And it's written in idris!</p>
     <p>How's it work? Write some scheme in the top pane, hit the 'eval' button, and see the results in the bottom pane.</p>
-    <p><a href="https://github.com/ebenpack/lidrisp">Check it out</a></p>
+    <p><a href="https://github.com/ebenpack/lidrisp" rel="noreferrer">Check it out</a></p>
 </div>
 <script>main.initLidrisp();</script>
 ```
