@@ -8,7 +8,8 @@
         "url": "git+https://github.com/ebenpack/ebenpack.github.io.git"
     },
     "scripts": {
-        "build-js": "if [ -f \"_site/js\" ]; then rm -r _site/js; fi && mkdir _site/js && browserify js/main.js --standalone main > _site/js/bundle.js",
+        "build-js": "if [ -f \"_site/js\" ]; then rm -r _site/js; fi && mkdir _site/js && browserify js/main.js --standalone main > _site/js/bundle.js && npm run build-mathjax",
+        "build-mathjax": "cp js/MathJax.js _site/js && cp -r js/config js/extensions js/fonts js/jax js/localization _site/js",
         "minify-css": "postcss _site/css/default.css > _site/css/default.min.css && postcss _site/css/normalize.css > _site/css/normalize.min.css && postcss _site/css/syntax.css > _site/css/syntax.min.css && postcss _site/css/theme.css > _site/css/theme.min.css && cp _site/css/default.min.css _site/css/default.css && cp _site/css/normalize.min.css _site/css/normalize.css && cp _site/css/syntax.min.css _site/css/syntax.css && cp _site/css/theme.min.css _site/css/theme.css && rm _site/css/default.min.css _site/css/normalize.min.css _site/css/syntax.min.css _site/css/theme.min.css # lol",
         "minify-js": "google-closure-compiler  --js=_site/js/bundle.js --js_output_file=_site/js/bundle.min.js --strict_mode_input=false && cp _site/js/bundle.min.js _site/js/bundle.js && rm _site/js/bundle.min.js"
     },
