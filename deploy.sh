@@ -23,12 +23,7 @@ stack exec site build
 sleep .5
 
 npm ci
-npm run build-js
-
-npm run minify-css
-sleep .5
-npm run minify-js
-sleep .5
+npm run build:prod
 
 # Get previous files
 git fetch --all
