@@ -30,14 +30,14 @@
         "webpack-cli": "^3.3.11"
     },
     "dependencies": {
-        "astar": "git://github.com/ebenpack/astar#master",
-        "boltzmann": "git://github.com/ebenpack/lattice-boltzmann.js#master",
-        "conway": "git://github.com/ebenpack/conway.js#master",
+        "astar": "git://github.com/ebenpack/astar.git#master",
+        "boltzmann": "git://github.com/ebenpack/lattice-boltzmann.js.git#master",
+        "conway": "git://github.com/ebenpack/conway.js.git#master",
         "lidrisp": "git://github.com/ebenpack/lidrisp.git#build",
         "lispish.js": "git://github.com/ebenpack/lispish.js.git#master",
-        "projectwavybits": "git://github.com/ebenpack/projectwavybits.js#master",
-        "videoascii": "git://github.com/ebenpack/videoascii.js#master",
-        "vu": "git://github.com/ebenpack/vu.js#master",
-        "wireframe": "git://github.com/ebenpack/wireframe.js#master"
+        "projectwavybits": "git://github.com/ebenpack/projectwavybits.js.git#master",
+        "videoascii": "git://github.com/ebenpack/videoascii.js.git#master",
+        "vu": "git://github.com/ebenpack/vu.js.git#master",
+        "wireframe": "git://github.com/ebenpack/wireframe.js.git#master"
     }
 }
