@@ -29,7 +29,7 @@ const initLidrisp = () => {
         }
         return lidrisp;
     })();
-    lidrisp();
+    window.lidrisp();
 }
 
 export default initLidrisp;
