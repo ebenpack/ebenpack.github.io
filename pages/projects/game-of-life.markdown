@@ -17,7 +17,9 @@ img: game-of-life.png
 </div>
 <script>
 (function(){
-    var GOL = new main.conway('gol', 50);
+    main.conway().then(function(conway){
+        new conway('gol', 50);
+    });
 })();
 </script>
 ```

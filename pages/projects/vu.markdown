@@ -21,6 +21,6 @@ img: vu.gif
 </div>
 
 <script>
-    main.vu("/audio/piano-sonata-no13.ogg");
+    main.vu().then((vu) => vu("/audio/piano-sonata-no13.ogg"));
 </script>
 ```

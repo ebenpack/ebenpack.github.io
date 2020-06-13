@@ -14,12 +14,14 @@ img: js1k.gif
 ```{=html}
 <canvas id="c" style="position: relative;"></canvas>
 <script>
-  var a = document.getElementsByTagName('canvas')[0];
-  var b = document.body;
-  var c = a.getContext('2d');
-  a.width = a.height = 600;
-</script>
-<script>
-    main.projectwavybits();
+(function(){
+    var a = document.getElementsByTagName('canvas')[0];
+    var b = document.body;
+    var c = a.getContext('2d');
+    a.width = a.height = 600;
+    main.projectwavybits().then(function(projectwavybits){
+        projectwavybits();
+    });
+})();
 </script>
 ```

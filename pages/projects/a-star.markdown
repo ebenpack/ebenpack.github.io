@@ -16,8 +16,10 @@ img: astar.gif
     <canvas id="particles" style="position: absolute; left: 0; top:0;" width='600' height='240'></canvas>
 </div>
 <script>
-    (function(){
-        var maze = new main.astar("map", "particles");
-    })();
+(function(){
+    main.astar().then(function(astar){
+        new astar("map", "particles");
+    });
+})();
 </script>
 ```

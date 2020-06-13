@@ -53,6 +53,10 @@ fun.curry(add, 5)(1)(2)(3)(4)(5);
     </div>
 </div>
 <script>
-main.initLispish('input', 'ref');
+(function(){
+    main.initLispish().then(function(initLispish){
+        initLispish('input', 'ref');
+    });
+})();
 </script>
 ```

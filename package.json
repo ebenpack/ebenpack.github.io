@@ -8,12 +8,18 @@
         "url": "git+https://github.com/ebenpack/ebenpack.github.io.git"
     },
     "scripts": {
-        "install": "browserify js/main.js --standalone main > assets/js/bundle.js"
+        "install": "webpack"
     },
     "author": "ebenpack",
     "license": "MIT",
     "devDependencies": {
-        "browserify": "^16.1.0"
+        "@babel/core": "^7.10.2",
+        "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+        "@babel/preset-env": "^7.10.2",
+        "babel-loader": "^8.1.0",
+        "regenerator-runtime": "^0.13.5",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11"
     },
     "dependencies": {
         "astar": "git://github.com/ebenpack/astar#master",

@@ -47,13 +47,15 @@ img: lattice-boltzmann.gif
 <div id="debug"></div>
 </div>
 <script>
-main.boltzmann({
-    boltzId: "boltzmann",
-    latticeWidth: 200,
-    latticeHeight: 80,
-    vectorcanvasId: "vectorcanvas",
-    particlecanvasId: "particlecanvas",
-    barriercanvasId: "barriercanvas",
+main.boltzmann().then(function(boltzmann){
+    boltzmann({
+        boltzId: "boltzmann",
+        latticeWidth: 200,
+        latticeHeight: 80,
+        vectorcanvasId: "vectorcanvas",
+        particlecanvasId: "particlecanvas",
+        barriercanvasId: "barriercanvas",
+    });
 });
 </script>
 ```
