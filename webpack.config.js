@@ -1,14 +1,14 @@
 const path = require('path');
 
 const jsDir = path.resolve(__dirname, 'js');
-const jsAssetsDir = path.resolve(__dirname, 'assets', 'js');
+const jsSiteDir = path.resolve(__dirname, '_site/js');
 
 module.exports = {
     mode: 'production',
     entry: ['regenerator-runtime', path.resolve(jsDir, 'main.js')],
     output: {
         filename: 'bundle.js',
-        path: jsAssetsDir,
+        path: jsSiteDir,
         library: 'main',
         publicPath: '/js/'
     },

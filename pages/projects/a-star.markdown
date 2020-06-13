@@ -7,6 +7,7 @@ published: 2014-02-15 20:28:00
 author: ebenpack
 description: A* pathfinding made with JavaScript.
 summary: A* pathfinding.
+status: hidden
 img: astar.gif
 ---
 

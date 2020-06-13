@@ -1,7 +1,7 @@
 ---
 title: LM3000
 slug: lm3000
-published: 2014-07-22 15:15:00
+published: 2014-02-25 15:15:00
 author: ebenpack
 languages: Breadboards, integrated circuits, 50 odd meters of wire, etc.
 description: 8-bit microprocessor.

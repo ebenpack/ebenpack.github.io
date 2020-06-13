@@ -3,11 +3,10 @@ title: VideoASCII
 slug: videoascii
 tags: JavaScript
 languages: JavaScript
-published: 2015-11-22 15:19:00
+published: 2014-11-22 15:19:00
 author: ebenpack
 description: An ASCII video renderer.
 summary: An ASCII video renderer.
-status: hidden
 img: videoascii.gif
 ---
 
@@ -36,7 +35,7 @@ img: videoascii.gif
     
             function make_ascii(canvas, videoSrc){
                 canvas.style.border = "";
-                var videoascii = videoascii({
+                var vid = videoascii({
                     canvas: canvas,
                     output_width: canvas.parentElement.offsetWidth,
                     videoSrc: videoSrc,
@@ -45,19 +44,19 @@ img: videoascii.gif
                     autoplay: false
                 });
                 start.addEventListener('click', function(){
-                    videoascii.start();
+                    vid.start();
                 });
                 pause.addEventListener('click', function(){
-                    videoascii.pause();
+                    vid.pause();
                 });
                 restart.addEventListener('click', function(){
-                    videoascii.restart();
+                    vid.restart();
                 });
                 monochrome.addEventListener('click', function(){
-                    videoascii.toggleMonochrome();
+                    vid.toggleMonochrome();
                 });
                 window.addEventListener('resize', function() {
-                    videoascii.resize(canvas.parentElement.offsetWidth);
+                    vid.resize(canvas.parentElement.offsetWidth);
                 });
             }
     

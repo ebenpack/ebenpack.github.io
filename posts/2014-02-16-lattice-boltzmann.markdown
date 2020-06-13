@@ -819,5 +819,5 @@ ride. This module-like architecture has also allowed for more rapid extension of
 new draw-mode, or new controls (play/pause, etc.), and overall it is far less brittle than the ad-hoc, global-ridden
 spaghetti-mess the program began as.
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+<script type="text/javascript" src="/js/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>

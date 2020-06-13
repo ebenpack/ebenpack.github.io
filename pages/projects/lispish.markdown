@@ -3,11 +3,10 @@ title: Lispish
 slug: lispish
 tags: JavaScript
 languages: JavaScript
-published: 2014-12-10 18:46:00
+published: 2015-12-10 18:46:00
 author: ebenpack
 description: Some lisp-like noodlings in JS, by someone who doesn't really know lisp.
 summary: Some lisp-like noodlings in JS, by someone who doesn't really know lisp.
-status: hidden
 img: lispish.png
 ---
 
