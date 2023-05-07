@@ -25,19 +25,15 @@ sleep .5
 npm ci
 npm run build:prod
 
-# Get previous files
-git fetch --all
-git checkout -b publish --track origin/master
-sleep .5
-
-
-# Overwrite existing files with new files
-cp -a _site/. .
-sleep .5
-
-# Commit
-git add -A
-git commit -m "publish."
+# Set up build directory
+git init _site/
+git -C _site/ config remote.origin.url >&- || git -C pkg/ remote add origin $(git ls-remote --get-url origin)
+git -C _site/ checkout master || git -C pkg/ checkout --orphan master
+git -C _site/ stash
+git -C _site/ pull
+git -C _site/ stash pop
+git -C _site/ add .
+git -C pkg/ commit -m "Publish - $(shell date "+%Y-%m-%d %H:%M:%S")"
 
 read -p $'Enter Y to push\x0a' -n 1 -r
 echo
@@ -47,9 +43,4 @@ then
 fi
 
 # Push
-git push origin publish:master
-
-# Restoration
-git checkout develop
-git branch -D publish
-git stash pop
+git -C pkg/ push --set-upstream origin master
