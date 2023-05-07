@@ -1,7 +1,7 @@
 ---
 title: lidrisp
 slug: lidrisp
-tags: Idris
+tags: Idris,Scheme
 languages: Idris
 published: 2019-01-22 18:16:00
 author: ebenpack

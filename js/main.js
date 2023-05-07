@@ -1,5 +1,5 @@
 export const astar = async () => (await import('astar')).default;
-export const wireframe = async () => (await import('wireframe')).default;
+export const wireframe = async () => (await import('wireframe.js')).default;
 export const videoascii = async () => (await import('videoascii')).default;
 export const boltzmann = async () => (await import('boltzmann')).default;
 export const vu = async () => (await import('vu')).default;
@@ -7,3 +7,4 @@ export const conway = async () => (await import('conway')).default;
 export const projectwavybits = async () => (await import('projectwavybits')).default;
 export const initLispish = async () => (await import('./lispish')).default;
 export const initLidrisp = async () => (await import('./lidrisp')).default;
+export const initSchemeRs = async () => (await import('./scheme_rs')).default;

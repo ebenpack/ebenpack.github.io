@@ -37,3 +37,7 @@ pre .sourceLine:before {
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
 }
+
+#output {
+    color: white;
+}

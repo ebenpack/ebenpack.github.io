@@ -417,3 +417,7 @@ button:hover {
         margin: 0.4em auto;
     }
 }
+
+#output {
+    color: white;
+}
