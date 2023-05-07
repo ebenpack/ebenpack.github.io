@@ -7,37 +7,31 @@ then
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
 fi
 
-# Temporarily store uncommited changes
-git stash
-
-# Verify correct branch
-git checkout develop
-
-# Build new files
+# Setup stack and start from a clean slate
 sleep .5
 stack build
 sleep .5
 stack exec site clean
+
+# Set up build directory
+mkdir _site/
+git -C _site/ init
+git -C _site/ config remote.origin.url >&- || git -C _site/ remote add origin $(git ls-remote --get-url origin)
+git -C _site/ fetch
+git -C _site/ checkout master || git -C _site/ checkout --orphan master
+git -C _site/ stash
+git -C _site/ stash pop
 sleep .5
+
+# Build new files
 stack exec site build
 sleep .5
 
-npm ci
-npm run build:prod
+yarn install --frozen-lockfile
+yarn build:prod
 
-# Get previous files
-git fetch --all
-git checkout -b publish --track origin/master
-sleep .5
-
-
-# Overwrite existing files with new files
-cp -a _site/. .
-sleep .5
-
-# Commit
-git add -A
-git commit -m "publish."
+# git -C _site/ add .
+# git -C _site/ commit -m "Publish - $(date "+%Y-%m-%d %H:%M:%S")"
 
 read -p $'Enter Y to push\x0a' -n 1 -r
 echo
@@ -47,9 +41,4 @@ then
 fi
 
 # Push
-git push origin publish:master
-
-# Restoration
-git checkout develop
-git branch -D publish
-git stash pop
+git -C _site/ push --set-upstream origin master
