@@ -208,10 +208,10 @@ makeId pageNum = fromFilePath $ if pageNum == 1
     then "index.html"
     else "index" ++ show pageNum ++ ".html"
 
-grouper :: MonadMetadata m => [Identifier] -> m [[Identifier]]
+grouper :: (MonadMetadata m, MonadFail m) => [Identifier] -> m [[Identifier]]
 grouper = fmap (paginateEvery 5) . sortRecentFirst
 
-paginate :: MonadMetadata m => Pattern -> m Paginate
+paginate :: (MonadMetadata m, MonadFail m) => Pattern -> m Paginate
 paginate pattern' = buildPaginateWith grouper pattern' makeId
 
 paginateContextPlus :: Paginate -> PageNumber -> Context a
