@@ -1,0 +1,141 @@
+{%- macro time() -%}
+  {%- if config.extra.footer.start_year -%}
+  	{%- set start_year = config.extra.footer.start_year -%}
+  {%- else -%}
+  	{%- set start_year = now() | date(format="%Y") -%}
+  {%- endif -%}
+  
+  {%- if config.extra.footer.end_year -%}
+  	{%- set end_year = config.extra.footer.end_year -%}
+  {%- else -%}
+  	{%- set end_year = now() | date(format="%Y") -%}
+  {%- endif -%}
+  
+  {%- if start_year == end_year -%}
+  	{%- set year = start_year -%}
+  {%- else -%}
+  	{%- set year = start_year ~ "-" ~ end_year -%}
+  {%- endif -%}
+
+  <time datetime="{{ now() }}">{{ year }}</time>
+{%- endmacro -%}
+
+
+
+{% macro page(page) -%}
+<article>
+  <header class="post-header"><h2><a href="{{ page.permalink | trim_end_matches(pat="/") | safe }}">{{ page.title }}</a></h2></header>
+  <div class="meta">
+    Posted {{ page.date | date(format=config.extra.timeformat |
+      default(value="%B %e, %Y")) }} by {{ page.extra.author | default(value="ebenpack")}}
+  </div>
+  <div class="post-content">
+    <p>
+      {%- if page.extra.summary -%}
+      {{ page.extra.summary | markdown | safe }}
+      {% else -%}
+      {{ page.content | striptags | truncate(length=280) | safe }}
+      {%- endif -%}
+    </p>
+  </div>
+  <footer class="post-footer">
+    <a href="{{ page.permalink | trim_end_matches(pat="/") | safe }}">Read more...</a>
+  </footer>
+</article>
+{%- endmacro %}
+
+{% macro seo(
+  title="",
+  og_title="",
+  author="",
+  description="",
+  site_url="",
+  image="",
+  image_height="",
+  image_width="",
+  web_type="WebSite"
+  ) -%}
+{% if title %}
+<title>{{ title }}</title>
+{% endif %}
+
+{% if og_title %}
+<meta property="og:title" content="{{ og_title | default(value=title) }}">
+{% endif %}
+
+{% if author %}
+<meta name="author" content="{{ author }}">
+{% endif %}
+
+<meta property="og:locale" content="{{ config.extra.seo.og_locale | default(value="en-US") }}">
+
+{% if description %}
+<meta name="description" content="{{ description }}">
+<meta property="og:description" content="{{ description }}">
+{% endif %}
+
+{% if site_url %}
+<link rel="canonical" href="{{ site_url | safe }}">
+<meta property="og:url" content="{{ site_url | safe }}">
+{% endif %}
+
+{% if config.title %}
+<meta property="og:site_name" content="{{ config.title }}" />
+{% endif %}
+
+{% if image %}
+  <meta property="og:image" content="{{ get_url(path=image) | safe }}">
+  {% if image_height -%}
+    <meta property="og:image:height" content="{{ image_height }}">
+  {%- endif %}
+  {% if image_width -%}
+    <meta property="og:image:width" content="{{ image_width }}">
+  {%- endif %}
+{% endif %}
+
+{% if page.date %}
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="{{ page.date | date(format="%+") }}">
+{% endif %}
+
+{% if page.earlier %}
+  <link rel="prev" href="{{ page.earlier.permalink | safe }}">
+{% elif paginator.previous %}
+  <link rel="prev" href="{{ paginator.previous | safe }}">
+{% endif %}
+
+{% if ppage.later %}
+  <link rel="next" href="{{ page.later.permalink | safe }}">
+{% elif paginator.next %}
+  <link rel="next" href="{{ paginator.next | safe }}">
+{% endif %}
+
+{%- endmacro %}
+
+{% macro month(month) %}
+    {% if month  == "1" %}
+      January
+    {% elif month == "2" %}
+      February
+    {% elif month == "3" %}
+      March
+    {% elif month == "4" %}
+      April
+    {% elif month == "5" %}
+      May
+    {% elif month == "6" %}
+      June
+    {% elif month == "7" %}
+      July
+    {% elif month == "8" %}
+      August
+    {% elif month == "9" %}
+      September
+    {% elif month == "10" %}
+      October
+    {% elif month == "11" %}
+      November
+    {% elif month == "12" %}
+      December
+    {% endif %}
+{% endmacro %}

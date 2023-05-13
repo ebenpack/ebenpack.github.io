@@ -1,0 +1,29 @@
+{% extends "base.html"%}
+
+{% block seo -%}
+  {{ super() }}
+
+  {%- set home = config.extra.expressions.home | default(value="Home") -%}
+  {% set og_title = home -%}
+
+  {% if config.title -%}
+  	{% set title = home ~ " | " ~ config.title -%}
+  {% else -%}
+		{% set title = home -%}
+  {% endif -%}
+  
+  {% set author = config.extra.author %}
+
+  {{ macros::seo(title=title, og_title=og_title, author=author) }}
+{%- endblock seo %}
+
+{% block content %}
+  <h1>{{ page.title }}</h1>
+  <article>
+    <section class="header">
+      Posted on {{ page.date | date(format=config.extra.timeformat | default(value="%B %e, %Y")) }} by {{ page.extra.author | default(value="ebenpack") }} 
+    </section>
+  	{{ page.content | safe }}
+  </div>
+  </article>
+{% endblock content %}

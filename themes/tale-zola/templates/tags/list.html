@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+
+
+{% block seo -%}
+  {{ super() }}
+
+  {%- set tags = config.extra.expressions.tags | default(value="Tags") -%}
+
+  {% set og_title = tags -%}
+	
+  {% if config.title -%}
+    {% set title = tags ~ " | " ~ config.title -%}
+  {% else -%}
+    {% set title = tags -%}
+  {% endif -%}
+
+  {% set web_type = "WebPage" -%}
+
+  {% set author = config.extra.author %}
+  
+  {{ macros::seo(title=title, og_title=og_title, author=author, web_type=web_type) }}
+{%- endblock seo %}
+
+
+
+{% block content %}
+<div class="tags">
+	<div class="tags-header">
+		<h2 class="tags-header-title">{{ config.extra.expressions.tags | default(value="Tags") }}</h2>
+		<div class="tags-header-line"></div>
+	</div>
+	<div class="tags-clouds">
+		{% for term in terms -%}
+			<a href="#{{ term.name }}">{{ term.name }}</a>
+		{%- endfor %}
+	</div>
+
+	{% for term in terms -%}
+	<div class="tags-item" id="{{ term.name }}">
+		<h2 class="tags-item-label"><a href="{{ term.permalink | trim_end_matches(pat="/") | safe }}">{{ term.name }}</a></h2>
+
+		{% for page in term.pages -%}
+		<a class="tags-post" href="{{ page.permalink | trim_end_matches(pat="/") | safe }}">
+			<div>
+				<div class="tags-post-title">{{ page.title }}</div>
+				<div class="tags-post-meta">
+					<time datetime="{{ page.date }}">
+						{{ page.date | date(format=config.extra.timeformat |
+						default(value="%B %e, %Y")) }}
+					</time>
+				</div>
+			</div>
+		</a>
+		{% endfor -%}
+	</div>
+	{% endfor -%}
+</div>
+{% endblock content %}

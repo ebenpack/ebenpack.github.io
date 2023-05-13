@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block seo -%}
+  {{ super() }}
+
+  {%- set home = config.extra.expressions.home | default(value="Home") -%}
+  {% set og_title = home -%}
+
+  {% set title = "Eben Packwood | Projects" -%}
+
+  {% set author = config.extra.author %}
+
+  {{ macros::seo(title=title, og_title=og_title, author=author) }}
+{%- endblock seo %}
+
+{% block content %}
+<div class="projects">
+{% for project in section.pages -%}
+    {% set hidden = project.extra.hidden | default(value=false) %}
+    {% set url = project.extra.url | default(value=project.permalink) | trim_end_matches(pat="/") | safe %}
+    {% if hidden != true -%}
+    <div class="project">
+        <a href="{{ url }}">
+            <h3>{{project.title}}</h3>
+        </a>
+        <a href="{{ url }}">
+            <img src="/images/{{ project.extra.img }}" alt="{{ project.extra.description }}">
+        </a>
+        <div class="languages">
+            {{ project.extra.languages | join(sep=", ") }}
+        </div>
+        <div class="summary">
+            {{ project.extra.summary }}
+        </div>
+    </div>
+    {%- endif %}
+    {%- endfor %}
+</div>
+{% endblock content %}

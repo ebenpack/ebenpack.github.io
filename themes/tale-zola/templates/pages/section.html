@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block seo -%}
+  {{ super() }}
+
+  {%- set home = config.extra.expressions.home | default(value="Home") -%}
+  {% set og_title = home -%}
+
+  {% set title = "Eben Packwood | " ~ page.title -%}
+
+  {% set author = config.extra.author %}
+
+  {{ macros::seo(title=title, og_title=og_title, author=author) }}
+{%- endblock seo %}
+
+{% block content %}
+<div class="projects">
+</div>
+{% endblock content %}

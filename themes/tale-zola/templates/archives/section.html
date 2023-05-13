@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block seo -%}
+  {{ super() }}
+
+  {%- set home = config.extra.expressions.home | default(value="Home") -%}
+  {% set og_title = home -%}
+
+  {% set title = "Eben Packwood | Archives" -%}
+
+  {% set author = config.extra.author %}
+
+  {{ macros::seo(title=title, og_title=og_title, author=author) }}
+{%- endblock seo %}
+
+{% block content %}
+
+{% set section = get_section(path="_index.md") %}
+
+<div class="archives">
+{% for year, year_posts in section.pages | group_by(attribute="year") %}
+    {% for month, posts in year_posts | group_by(attribute="month") %}
+    {# Hack: Make a fake date string w/ the month so we can parse i  #}
+    <h2>{{ macros::month(month=month) }} {{ year }}</h2>
+    <ul>
+    {% for post in posts %}
+        <li><a href="{{ post.permalink }}">{{ post.title }}</a></li>
+    {% endfor %}
+    </ul>
+    {% endfor %}
+{% endfor %}
+
+</div>
+{% endblock content %}

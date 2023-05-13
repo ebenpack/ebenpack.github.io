@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+
+
+{% block seo -%}
+  {{ super() }}
+
+  {%- set home = "404" -%}
+  {% set og_title = home -%}
+
+  {% if config.title -%}
+  	{% set title = home ~ " | " ~ config.title -%}
+  {% else -%}
+	{% set title = home -%}
+  {% endif -%}
+
+  {% set web_type = "WebPage" -%}
+
+  {% set author = config.extra.author %}
+  
+  {{ macros::seo(title=title, og_title=og_title, author=author, web_type=web_type) }}
+{%- endblock seo %}
+
+
+
+{% block content %}
+<div class="notfound">
+	<h1 class="notfound-error">{{ config.extra.expressions.p404 | default(value="404: Page not found") }}</h1>
+	<div class="notfound-line"></div>
+	<p class="notfound-message">
+		<h2>Whoopsy daisy...</h2>
+		It looks like that page cannot be found. Sorry about that. Let's 
+	</p>
+	<p></p>
+</div>
+{% endblock content %}

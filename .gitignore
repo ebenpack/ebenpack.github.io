@@ -1,10 +1,7 @@
-_cache/
-_site/
-.stack-work/
-node_modules/
-.idea/
 .DS_Store
-*.iml
-*.html
-assets/js
-*.cabal
+.vs
+.vscode
+public/
+js/dist
+static/js/dist
+node_modules/

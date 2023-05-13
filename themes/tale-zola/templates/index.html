@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+
+
+{% block seo -%}
+  {{ super() }}
+
+  {%- set home = config.extra.expressions.home | default(value="Home") -%}
+  {% set og_title = home -%}
+
+  {% if config.title -%}
+  	{% set title = home ~ " | " ~ config.title -%}
+  {% else -%}
+		{% set title = home -%}
+  {% endif -%}
+  
+  {% set author = config.extra.author %}
+
+  {{ macros::seo(title=title, og_title=og_title, author=author) }}
+{%- endblock seo %}
+
+{% block content %}
+{% if paginator.pages %}
+	{% for page in paginator.pages -%}
+		{{ macros::page(page=page) }}
+	{%- endfor %}
+	<nav class="pagination" id="pagination">
+		{% if paginator.previous -%}
+			<a id="first_page" class="first_page" href="{{ paginator.base_url ~ 1 | safe }}">&lt;&lt;</a>
+			<a id="prev_page" class="prev_page" href="{{ paginator.previous | safe }}">&lt;</a>
+		{%- endif %}
+
+		{% for page_num in range(start=1, end=(paginator.number_pagers + 1)) -%}
+		<span {% if page_num - 1 == paginator.current_index -%}class="active"{%- endif %}>
+			<a 
+				{% if page_num == paginator.current_index -%}
+				href="#"
+				{%- else %}
+				href="{{paginator.base_url ~ page_num}}"
+				{%- endif %}
+			>
+				{{page_num}}
+			</a>
+		</span>
+		{%- endfor %}
+
+		{% if paginator.next -%}
+			<a id="next_page" class="next_page" href="{{ paginator.next | safe }}">&gt;</a>
+			<a id="last_page" class="last_page" href="{{ paginator.base_url ~ paginator.number_pagers | safe }}">&gt;&gt;</a>
+		{%- endif %}
+	</nav>
+{% endif %}
+{% endblock content %}
