@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://ebenpackwood.com/main.css">
+
+  <link rel="shortcut icon" type="image/ico" sizes="32x32" href="https://ebenpackwood.com/assets/favicon.ico">
+
+  
+    <link type="application/atom+xml" rel="alternate" href="https://ebenpackwood.com/atom.xml" title="Eben Packwood" />
+  
+
+  
+  
+
+  
+
+  
+<title>Home | Eben Packwood</title>
+
+
+
+<meta property="og:title" content="Home">
+
+
+
+<meta name="author" content="ebenpack">
+
+
+<meta property="og:locale" content="en-US">
+
+
+
+
+
+
+<meta property="og:site_name" content="Eben Packwood" />
+
+
+
+
+
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2020-02-14T14:39:00+00:00">
+
+
+
+
+
+</head>
+
+<body>
+  <div class="page">
+  
+  <header class="page-head">
+  <div class="logo">
+    <a href="https://ebenpackwood.com">
+      Eben Packwood
+    </a>
+  </div>
+  <nav >
+      
+        
+          <a href="https://ebenpackwood.com">Home</a>
+        
+          <a href="https://ebenpackwood.com/pages/projects">Projects</a>
+                  
+      
+      <a href="https://github.com/ebenpack">Github</a>
+  </nav>
+  </header>
+  
+
+  <main class="page-body">
+    
+  <h1>Not My Type: A Highly Opinionated and Incomplete Journey Through the Type Systems of Several Programming Languages</h1>
+  <article>
+    <section class="header">
+      Posted on February 14, 2020 by ebenpack 
+    </section>
+  	<p><em>Wherein I will gently and briefly guide the reader through certain high-level aspects of the type systems of several programming languages, with the intent to demonstrate that a sufficiently strong and expressive type system can be a powerful tool not only for proving the correctness of our programs, but also for assisting and guiding us in the process of the design and implementation of the programs that we write.</em></p>
+<!--more-->
+<h2 id="what-even-is-a-type-system">What even is a type system?</h2>
+<p>Informally, programming language type systems provide methods of categorizing values in programs, as well as methods for enforcing rules for how these values can, or cannot, be operated upon.</p>
+<p>In our programs, we have values (terms). These can be simple, primitive values, like <code>1729</code>, or <code>True</code>, or they can be complex values composed of different compound, ad-hoc values of our own designs, such as a list of people, or a dictionary mapping the name of an author to the list of books that they have written. Our programs will also define operations on these values, such as integer addition, logical disjunction on boolean values, or sorting a list of people by their age.</p>
+<p>Type systems allow us to group these values into categories, and to impose certain constraints on how these values can interact, and on how they may be used in our operations. The purpose of a type system is to help us identify certain kinds of issues (type errors) in our programs, in order to help us identify and eliminate errors that would have otherwise have arisen at runtime.</p>
+<p>In very handwavy terms, we will call the groupings of these values into sets &quot;types&quot;. E.g. <code>{&quot;&quot;, &quot;foo&quot;, &quot;bar&quot;}</code> is a subset of the set of all values that inhabit the type <code>String</code>, whereas <code>{True, False}</code> are the totality of the values that inhabit the type <code>Bool</code>.</p>
+<p>Continuing on with the handwavy and incorrect analogy to set theory, we have operations, or functions, which we can perform on the values of our types. If we squint (and much more squinting is required for some languages than for others), we can think of the functions in our code in set-theoretic terms. A function will have a domain (the set of inputs), and a codomain (the set of outputs). </p>
+<figure>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="799px"
+    height="540px" viewBox="-0.5 -0.5 799 550">
+    <defs />
+    <g>
+        <ellipse cx="165" cy="294" rx="165" ry="245" fill-opacity="0.5" fill="#D7ECFF" stroke="#A4B9CC"
+            stroke-opacity="0.5" pointer-events="all" />
+        <rect x="155" y="150" width="20" height="20" fill="#ff6666" stroke="#b85450" pointer-events="all" />
+        <rect x="155" y="284" width="20" height="20" fill="#ff6666" stroke="#b85450" pointer-events="all" />
+        <rect x="155" y="420" width="20" height="20" fill="#ff6666" stroke="#b85450" pointer-events="all" />
+        <rect x="130" y="0" width="80" height="30" fill="none" stroke="none" pointer-events="all" />
+        <g transform="translate(-0.5 -0.5)">
+            <text x="170" y="21" fill="#000000" font-family="Helvetica" font-size="20px"
+                    text-anchor="middle">Input</text>
+        </g>
+        <ellipse cx="633" cy="294" rx="165" ry="245" fill-opacity="0.5" fill="#D2FFD8" stroke="#82b366"
+            stroke-opacity="0.5" pointer-events="all" />
+        <rect x="623" y="150" width="20" height="20" fill="#ff6666" stroke="#b85450" pointer-events="all" />
+        <rect x="623" y="420" width="20" height="20" fill="#ff6666" stroke="#b85450" pointer-events="all" />
+        <rect x="598" y="0" width="80" height="30" fill="none" stroke="none" pointer-events="all" />
+        <g transform="translate(-0.5 -0.5)"><text x="638" y="21" fill="#000000" font-family="Helvetica" font-size="20px"
+                text-anchor="middle">Output</text>
+        </g>
+        <path d="M 175 160 Q 448 110 616.88 158.25" fill="none" stroke="#000000" stroke-miterlimit="10"
+            pointer-events="stroke" />
+        <path d="M 621.93 159.69 L 614.23 161.14 L 616.88 158.25 L 616.16 154.4 Z" fill="#000000" stroke="#000000"
+            stroke-miterlimit="10" pointer-events="all" />
+        <path d="M 175 430 Q 398 640 628.15 444.13" fill="none" stroke="#000000" stroke-miterlimit="10"
+            pointer-events="stroke" />
+        <path d="M 632.15 440.72 L 629.09 447.93 L 628.15 444.13 L 624.55 442.6 Z" fill="#000000" stroke="#000000"
+            stroke-miterlimit="10" pointer-events="all" />
+        <path d="M 175 294 Q 388 160 628.63 415.37" fill="none" stroke="#000000" stroke-miterlimit="10"
+            pointer-events="stroke" />
+        <path d="M 632.23 419.19 L 624.89 416.49 L 628.63 415.37 L 629.98 411.69 Z" fill="#000000" stroke="#000000"
+            stroke-miterlimit="10" pointer-events="all" />
+        <text x="165" y="140" fill="#000000" font-family="Helvetica" font-size="20px"
+                text-anchor="middle">A</text>
+        <text x="165" y="275" fill="#000000" font-family="Helvetica" font-size="20px"
+                text-anchor="middle">B</text>
+        <text x="165" y="410" fill="#000000" font-family="Helvetica" font-size="20px"
+                text-anchor="middle">C</text>
+        <text x="633" y="140" fill="#000000" font-family="Helvetica" font-size="20px"
+                text-anchor="middle">1</text>
+        <text x="633" y="410" fill="#000000" font-family="Helvetica" font-size="20px"
+                text-anchor="middle">3</text>
+    </g>
+</svg>
+<figcaption>Diagram of a function, with domain Input={A, B, C} and codomain Output={1, 3}</figcaption>
+</figure>
+<p>Take for example the function <code>add</code>, which is a binary function that accepts two numbers, and returns a number. Here the domain is the set of all 2-tuples of numbers, and the codomain is the set of all numbers.</p>
+<h2 id="dynamic-typing">Dynamic typing</h2>
+<p>In many dynamically typed language, values will carry information about their type around with them, and operations will check these types at runtime.</p>
+<pre data-linenos data-lang="python" style="background-color:#272822;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><table><tbody><tr><td>1</td><td><span style="font-style:italic;color:#f92672;">def </span><span style="background-color:#f92672;color:#f8f8f0;">not</span><span>(</span><span style="font-style:italic;color:#fd971f;">b </span><span>: </span><span style="font-style:italic;color:#66d9ef;">bool</span><span>) -&gt; </span><span style="font-style:italic;color:#66d9ef;">bool</span><span>:
+</span></td></tr><tr><td>2</td><td><span>    </span><span style="color:#f92672;">if </span><span>b </span><span style="color:#f92672;">== </span><span style="color:#ae81ff;">True</span><span>:
+</span></td></tr><tr><td>3</td><td><span>        </span><span style="color:#f92672;">return </span><span style="color:#ae81ff;">False
+</span></td></tr><tr><td>4</td><td><span>    </span><span style="color:#f92672;">if </span><span>b </span><span style="color:#f92672;">== </span><span style="color:#ae81ff;">False</span><span>:
+</span></td></tr><tr><td>5</td><td><span>        </span><span style="color:#f92672;">return </span><span style="color:#ae81ff;">True
+</span></td></tr></tbody></table></code></pre>
+<p>Here we have defined a unary function whose domain is <code>bool</code>, and whose codomain is also <code>bool</code>.</p>
+<p>Using the example above, in a dynamically typed language the type hints imply that the function should be passed a boolean value, and the function will return a boolean value. We can think of this as a contract between the program and the programmer. If you as a programmer provide a boolean value, this function will provide you back with a boolean value.</p>
+<p>However, in dynamically typed languages these contracts are often only very loosely binding, if at all. In some cases, it can be literally impossible to determine what type a function will return when called with a particular value. Even under less dire circumstances, it will still be the programmer's responsibility to ensure that any implied contract is not broken when calling a function.</p>
+<p>For example, in the function shown above, it is the programmer's responsibility to pass a boolean, and to only use the returned value as a boolean (and not as if it's a string, or an integer). The language, however, will not prevent us from passing to this function a string, or an integer, or from trying to perform numerical or string operations on the result. In fact, the language won't even prevent us (until it is too late!) from calling this function without any arguments at all, even though a single argument is expected.</p>
+<p>When the user breaks a contract for operations such as these, in a dynamically typed language this can lead to unexpected values propagating throughout your program (perhaps only to be discovered far from their true origin), or to runtime exceptions, or to other undesirable behavior. Many will be familiar with errors such as these:</p>
+<pre style="background-color:#272822;color:#f8f8f2;"><code><span>AttributeError: &#39;Foo&#39; object has no attribute &#39;bar&#39;
+</span></code></pre>
+<p>or:</p>
+<pre style="background-color:#272822;color:#f8f8f2;"><code><span>TypeError: foo.bar is not a function
+</span></code></pre>
+<p>These errors arise at runtime, because something of one type was used as if it were another type.</p>
+<h2 id="weak-typing">Weak typing</h2>
+<p>Returning to the example of the <code>add</code> function, we can write this function in JavaScript like so:</p>
+<pre data-linenos data-lang="js" style="background-color:#272822;color:#f8f8f2;" class="language-js "><code class="language-js" data-lang="js"><table><tbody><tr><td>1</td><td><span style="font-style:italic;color:#66d9ef;">function </span><span style="color:#a6e22e;">add</span><span>(</span><span style="font-style:italic;color:#fd971f;">m</span><span>, </span><span style="font-style:italic;color:#fd971f;">n</span><span>) {
+</span></td></tr><tr><td>2</td><td><span>    </span><span style="color:#f92672;">return </span><span>m </span><span style="color:#f92672;">+ </span><span>n;
+</span></td></tr><tr><td>3</td><td><span>}
+</span></td></tr></tbody></table></code></pre>
+<p>JavaScript does not place on us any restrictions whatsoever in terms of how we can call this function. Let's look at a few examples:</p>
+<pre data-linenos data-lang="js" style="background-color:#272822;color:#f8f8f2;" class="language-js "><code class="language-js" data-lang="js"><table><tbody><tr><td>1</td><td><span style="color:#a6e22e;">add</span><span>();
+</span></td></tr><tr><td>2</td><td><span style="color:#75715e;">// NaN
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr><tr><td>4</td><td><span style="color:#a6e22e;">add</span><span>(</span><span style="color:#ae81ff;">1</span><span>, </span><span style="color:#ae81ff;">true</span><span>);
+</span></td></tr><tr><td>5</td><td><span style="color:#75715e;">// 2
+</span></td></tr><tr><td>6</td><td><span>
+</span></td></tr><tr><td>7</td><td><span>
+</span></td></tr><tr><td>8</td><td><span style="color:#a6e22e;">add</span><span>({})
+</span></td></tr><tr><td>9</td><td><span style="color:#75715e;">// &quot;[object Object]undefined&quot;
+</span></td></tr><tr><td>10</td><td><span>
+</span></td></tr><tr><td>11</td><td><span style="color:#a6e22e;">add</span><span>(</span><span style="color:#ae81ff;">1</span><span>, </span><span style="color:#e6db74;">&#39;a&#39;</span><span>);
+</span></td></tr><tr><td>12</td><td><span style="color:#75715e;">// &quot;1a&quot;
+</span></td></tr><tr><td>13</td><td><span>
+</span></td></tr><tr><td>14</td><td><span style="color:#a6e22e;">add</span><span>(</span><span style="color:#ae81ff;">1</span><span>, </span><span style="color:#ae81ff;">2</span><span>, </span><span style="color:#ae81ff;">3</span><span>);
+</span></td></tr><tr><td>15</td><td><span style="color:#75715e;">// 3
+</span></td></tr></tbody></table></code></pre>
+<p>JavaScript has a dynamic type system, which—as we alluded to earlier—means it does not perform ahead of time any verification that the types in our programs are used correctly. For example, we are able to call <code>add</code> with nonsensical values, such as booleans and objects, and we're even able to pass the wrong number of parameters (either too few, in which case the arguments that we did not pass will be undefined, or too many, in which case the extraneous arguments will simply be ignored). </p>
+<p>Furthermore, JavaScript is weakly typed, meaning that, rather than balking at receiving such unexpected garbage and crashing with a runtime exception, JavaScript &quot;helpfully&quot; attempts to implicitly convert these nonsensical values that we passed into values of some other type that might make a bit more sense (for some value of &quot;sense&quot;).</p>
+<aside>As a brief aside, weak and strong typing tend to be somewhat overloaded, colloquial terms, but in this context we'll use these terms strictly in relation to implicit type conversion, as seen in the previous examples.</aside>
+<p>JavaScript's addition operator <code>+</code> is overloaded to perform both mathematical addition, as well as string concatenation. It is not defined for objects, or booleans, or any other types. When you attempt to use this operator with values of these types, JavaScript invokes an arcane system of type conversions on your behalf in order to avoid throwing an exception. When we called <code>add(1, 'a')</code>, JavaScript converted <code>1</code> to the string <code>'1'</code>, prior to concatenating it with the second argument of the function <code>'a'</code>. Similar conversions are performed for other types, such as objects, booleans, etc., and other sorts of conversions take place in different contexts (the most notable example perhaps being when determining equality with the <code>==</code> operator).</p>
+<p>Somewhat infamously, these type conversion rules can be leveraged such that any JavaScript program can be written using only the following six characters: <code>[]()!+</code>. This subset of the language has been affectionately dubbed &quot;JSFuck&quot;. </p>
+<p>Here we see some examples of JSFuck in action:</p>
+<pre data-linenos data-lang="js" style="background-color:#272822;color:#f8f8f2;" class="language-js "><code class="language-js" data-lang="js"><table><tbody><tr><td>1</td><td><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>2</td><td><span>[</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]])
+</span></td></tr><tr><td>3</td><td><span style="color:#75715e;">// Infinity
+</span></td></tr><tr><td>4</td><td><span>
+</span></td></tr><tr><td>5</td><td><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]
+</span></td></tr><tr><td>6</td><td><span style="color:#75715e;">// &#39;a&#39;
+</span></td></tr><tr><td>7</td><td><span>
+</span></td></tr><tr><td>8</td><td><span>[][(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>([</span><span style="color:#f92672;">!</span><span>[]]</span><span style="color:#f92672;">+</span><span>[][[]])[</span><span style="color:#f92672;">+!+
+</span></td></tr><tr><td>9</td><td><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>10</td><td><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>11</td><td><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]][([][(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>12</td><td><span>([</span><span style="color:#f92672;">!</span><span>[]]</span><span style="color:#f92672;">+</span><span>[][[]])[</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+
+</span></td></tr><tr><td>13</td><td><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>14</td><td><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>15</td><td><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[][(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>([</span><span style="color:#f92672;">!</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>16</td><td><span>[][[]])[</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>17</td><td><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>18</td><td><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]])[</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+</span><span>([][[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>19</td><td><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>20</td><td><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>([][[]]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>21</td><td><span>([][(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>([</span><span style="color:#f92672;">!</span><span>[]]</span><span style="color:#f92672;">+</span><span>[][[]])[</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>22</td><td><span>[]]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>23</td><td><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>24</td><td><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>25</td><td><span>[][(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>([</span><span style="color:#f92672;">!</span><span>[]]</span><span style="color:#f92672;">+</span><span>[][[]])[</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>26</td><td><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+
+</span></td></tr><tr><td>27</td><td><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]])[</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>28</td><td><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]]((</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>29</td><td><span style="color:#f92672;">!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>30</td><td><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[][(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>([</span><span style="color:#f92672;">!</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>31</td><td><span>[][[]])[</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>32</td><td><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+!+
+</span></td></tr><tr><td>33</td><td><span>[]]])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[][(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>34</td><td><span>[]]</span><span style="color:#f92672;">+</span><span>([</span><span style="color:#f92672;">!</span><span>[]]</span><span style="color:#f92672;">+</span><span>[][[]])[</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>35</td><td><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]]</span><span style="color:#f92672;">+</span><span>(</span><span style="color:#f92672;">!!</span><span>[]</span><span style="color:#f92672;">+</span><span>[])[</span><span style="color:#f92672;">+
+</span></td></tr><tr><td>36</td><td><span style="color:#f92672;">!+</span><span>[]]])[</span><span style="color:#f92672;">!+</span><span>[]</span><span style="color:#f92672;">+!+</span><span>[]</span><span style="color:#f92672;">+</span><span>[</span><span style="color:#f92672;">+</span><span>[]]])()
+</span></td></tr><tr><td>37</td><td><span style="color:#75715e;">// alert(1)
+</span></td></tr></tbody></table></code></pre>
+<p>While at a glance this might appear quite baffling, nevertheless it is a consistent and inevitable outcome of the implicit type conversion rules of the language. This bizarre quirk of the language has notably been exploited to allow arbitrary JavaScript execution on eBay's listing pages (although the extreme verbosity of writing JavaScript in this way often limits the extent to which this can be exploited, e.g. when the number of characters that can be entered into an input field is limited).</p>
+<h2 id="strong-typing">Strong typing</h2>
+<p>To some, the idea of the implicit conversions between different types that weak typing provides, as presented in the preceding section, may seem unpalatable. Fortunately for these people, there are type systems which do not perform such implicit conversions. In contrast to weak typing, this is called strong typing. In a strongly typed language, such as python, we might define our <code>add</code> function like this:</p>
+<pre data-linenos data-lang="python" style="background-color:#272822;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><table><tbody><tr><td>1</td><td><span style="font-style:italic;color:#f92672;">def </span><span style="color:#a6e22e;">add</span><span>(</span><span style="font-style:italic;color:#fd971f;">m</span><span>, </span><span style="font-style:italic;color:#fd971f;">n</span><span>):
+</span></td></tr><tr><td>2</td><td><span>    </span><span style="color:#f92672;">return </span><span>m </span><span style="color:#f92672;">+ </span><span>n
+</span></td></tr></tbody></table></code></pre>
+<p>Here again are some examples of how we might call this function, displayed along with the result of these calls:</p>
+<pre data-linenos data-lang="python" style="background-color:#272822;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><table><tbody><tr><td>1</td><td><span>add();
+</span></td></tr><tr><td>2</td><td><span style="color:#75715e;"># TypeError: add() missing 2 required positional arguments: &#39;m&#39; and &#39;n&#39;
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr><tr><td>4</td><td><span>add(</span><span style="color:#ae81ff;">1</span><span>, </span><span style="color:#ae81ff;">True</span><span>);
+</span></td></tr><tr><td>5</td><td><span style="color:#75715e;"># 2
+</span></td></tr><tr><td>6</td><td><span>
+</span></td></tr><tr><td>7</td><td><span>add({})
+</span></td></tr><tr><td>8</td><td><span style="color:#75715e;"># TypeError: add() missing 1 required positional argument: &#39;n&#39;
+</span></td></tr><tr><td>9</td><td><span>
+</span></td></tr><tr><td>10</td><td><span>add(</span><span style="color:#ae81ff;">1</span><span>, </span><span style="color:#e6db74;">&#39;a&#39;</span><span>);
+</span></td></tr><tr><td>11</td><td><span style="color:#75715e;"># TypeError: unsupported operand type(s) for +: &#39;int&#39; and &#39;str&#39;
+</span></td></tr><tr><td>12</td><td><span>
+</span></td></tr><tr><td>13</td><td><span>add(</span><span style="color:#ae81ff;">1</span><span>, </span><span style="color:#ae81ff;">2</span><span>, </span><span style="color:#ae81ff;">3</span><span>)
+</span></td></tr><tr><td>14</td><td><span style="color:#75715e;"># TypeError: add() takes 2 positional arguments but 3 were given
+</span></td></tr></tbody></table></code></pre>
+<p>There are two things to note here. First, largely for historical reasons, <code>bool</code> in python is a subclass of <code>int</code>, which is why we were able to add <code>1</code> to <code>True</code> without issue. We will not dwell on this further. Second, python prevented us from calling <code>add</code> in many of the nonsensical ways that JavaScript did not, namely by throwing <code>TypeError</code> exceptions when we did not provide arguments of the correct type, or when we did not provide the correct number of arguments. The type system here has constrained our use of this function, in order to help us avoid incorrect programs.</p>
+<p>While this is certainly a step in the right direction, it should be noted that these were runtime exceptions, which occurred only at the moment that the function was called incorrectly. If a call like this were to occur somewhere deep within your program, in some rarely used code path, you might not know about such a problem until it's too late and your code is already in production.</p>
+<p>One implication we might draw from this is that the knowledge that a dynamic type system was able to provide to us, with respect to certain aspects of the correctness of our program, was in a sense derived a posteriori. I would argue, however, that if we were able to derive this same knowledge a priori, we could have prevented such an exception from ever occurring.</p>
+<p>In virtually every programming language, the values that we're dealing with in our programs do have types. In dynamically typed languages, we're allowed to use values of the wrong type in ways that don't make sense, such that meaningless data will propagate throughout our systems—as in the case of weak typing—or our programs will crash at runtime—as we saw with strong typing.</p>
+<h2 id="static-typing">Static typing</h2>
+<p>In a statically typed language, the semantics of the language specify that terms have types, and the language's type checker will track these types throughout the program to ensure they are not used in ways that would break any contracts. If the type checker cannot determine that types are used in valid ways throughout the program, the program is rejected as invalid.</p>
+<p>This is, as the name implies, a static analysis process. Meaning that this type checking is performed on some static representation of the program (e.g. the source code), and does not involve actually running the code being analyzed. In other words, the problems that were only found at runtime in our strongly, dynamically typed language, can be discovered at compile time in our statically typed language.</p>
+<aside>Statically typed languages can also be strongly or weakly typed, with the most notable example of the latter being C. For the purposes of this discussion, however, this topic is not worth any further comment.</aside>
+<p>So, building on the example from above, in a statically typed language such as Java, the <code>not</code> function from earlier might look like this:</p>
+<pre data-linenos data-lang="java" style="background-color:#272822;color:#f8f8f2;" class="language-java "><code class="language-java" data-lang="java"><table><tbody><tr><td>1</td><td><span style="color:#f92672;">import </span><span style="font-style:italic;color:#66d9ef;">com</span><span>.</span><span style="font-style:italic;color:#66d9ef;">makeyev</span><span>.</span><span style="font-style:italic;color:#66d9ef;">sarmat</span><span>.</span><span style="font-style:italic;color:#66d9ef;">ICBM</span><span>;
+</span></td></tr><tr><td>2</td><td><span>
+</span></td></tr><tr><td>3</td><td><span style="color:#f92672;">public </span><span style="font-style:italic;color:#66d9ef;">class </span><span style="text-decoration:underline;color:#a6e22e;">Main </span><span>{
+</span></td></tr><tr><td>4</td><td><span>    </span><span style="color:#f92672;">public static </span><span style="font-style:italic;color:#66d9ef;">void </span><span style="color:#a6e22e;">main</span><span>(</span><span style="font-style:italic;color:#66d9ef;">String </span><span style="color:#f92672;">[]</span><span style="font-style:italic;color:#fd971f;">args</span><span>){
+</span></td></tr><tr><td>5</td><td><span>        </span><span style="font-style:italic;color:#66d9ef;">boolean</span><span> a </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">true</span><span>;
+</span></td></tr><tr><td>6</td><td><span>        </span><span style="font-style:italic;color:#66d9ef;">System</span><span>.out.println(not(a));
+</span></td></tr><tr><td>7</td><td><span>    }
+</span></td></tr><tr><td>8</td><td><span>
+</span></td></tr><tr><td>9</td><td><span>    </span><span style="color:#f92672;">public static </span><span style="font-style:italic;color:#66d9ef;">boolean </span><span style="color:#a6e22e;">not</span><span>(</span><span style="font-style:italic;color:#66d9ef;">boolean </span><span style="font-style:italic;color:#fd971f;">b</span><span>) {
+</span></td></tr><tr><td>10</td><td><span>        </span><span style="color:#f92672;">if </span><span>(b </span><span style="color:#f92672;">!= </span><span style="color:#ae81ff;">false</span><span>) { </span><span style="color:#f92672;">return </span><span style="color:#ae81ff;">true</span><span>; }
+</span></td></tr><tr><td>11</td><td><span>        ICBM().launch();
+</span></td></tr><tr><td>12</td><td><span>        </span><span style="color:#f92672;">return </span><span style="color:#ae81ff;">false</span><span>;
+</span></td></tr><tr><td>13</td><td><span>    }
+</span></td></tr><tr><td>14</td><td><span>}
+</span></td></tr></tbody></table></code></pre>
+<p>It is not possible to break this contract in the ways that were possible with dynamically typed languages. Attempting to call this function with a string, or an integer, or any other value that is not a boolean will result in a compile time type error, and your code will not be compiled.</p>
+<p>Here, the type system has further constrained us. We cannot write programs that call <code>not</code> with anything other than a boolean value, which will help to prevent an entire class of bugs which, as we saw, are possible with dynamically typed languages.</p>
+<p>However, there is one small issue with this function. Can you spot it?</p>
+<p>If you noted that <code>not</code> does not correctly return the negation of its input, then you are correct. While the type system here can prevent us from making egregious mistakes, like trying to calculate the logical complement of the textual content of Moby Dick, it was not able to prevent us from making a small logical error.</p>
+<p>Of course there also one other minor flaw in this function. While the type signature was able to tell us much about the behavior of this function—about the types of values that it would accept as input, and the types of values that it could potentially return to us as output—the type signature did not quite tell us the entire story of this function. When passing <code>false</code> to this function, we can reasonably expect to get some boolean value back (and we might hope, unfortunately to little avail, that this value will be <code>true</code>). To this end, the function will perform serviceably. However, upon closer inspection of the function's implementation, we may begin to notice something untoward, perhaps even sinister. Before returning a value, the function also performs some other work, which is neither represented, nor constrained by the type system. In other words, it performed a side-effect.</p>
+<h2 id="side-effects">Side effects</h2>
+<p>The type system in the previous example was neither expressive nor powerful enough to either reflect these side-effects in the type, nor to otherwise prevent the free use of such side-effects. This, however, is a failing of this type system in particular, and not of type systems in general.</p>
+<p>In a language such as Haskell, it is not only possible, but also mandatory that side-effects—such as those seen in the previous example—be reflected in a function's type. As an example:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#a6e22e;">hello </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">String </span><span style="color:#f92672;">-&gt; </span><span style="font-style:italic;color:#66d9ef;">IO </span><span style="color:#66d9ef;">()
+</span></td></tr><tr><td>2</td><td><span>hello s </span><span style="color:#f92672;">=</span><span> putStr </span><span style="color:#f92672;">$ </span><span style="color:#e6db74;">&quot;Hello &quot; </span><span style="color:#f92672;">++</span><span> s </span><span style="color:#f92672;">++ </span><span style="color:#e6db74;">&quot;!</span><span style="color:#ae81ff;">\n</span><span style="color:#e6db74;">&quot;
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr><tr><td>4</td><td><span style="color:#a6e22e;">add </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">Num </span><span>a </span><span style="color:#f92672;">=&gt; </span><span>a </span><span style="color:#f92672;">-&gt; </span><span>a </span><span style="color:#f92672;">-&gt; </span><span>a
+</span></td></tr><tr><td>5</td><td><span>add m n </span><span style="color:#f92672;">=</span><span> m </span><span style="color:#f92672;">+</span><span> n
+</span></td></tr></tbody></table></code></pre>
+<p>These functions demonstrate to us, via their signatures, whether they will be performing side effects. Put another way, <code>IO a</code> can perhaps be thought of as the type of values that perform side-effects. And furthermore, values of other types, by definition, cannot perform these side-effects (ignoring shenanigans like <code>unsafePerformIO</code>). At a glance, we can know that <code>hello</code> will be performing some kind of side-effects, whereas <code>add</code> will not (and in fact <strong>cannot</strong>).</p>
+<p>Whereas in the earlier example there was rather a vast gulf of program behavior that the type system was unable to express to us (e.g. the call to <code>ICBM().launch()</code> went completely unremarked, as far as the type system was concerned), here the types are able to provide us with a richer, more complete description of our programs, which the compiler will enforce at compile time. This is beneficial to us, as programmers, if we wish to have guarantees about what our programs may or may not be doing (e.g. launching ICBM missiles).</p>
+<aside><code>IO a</code> is not a particularly granular or descriptive type. It tells us only that side-effects will be performed, but it tells us nothing of the nature of those side-effects. Disk access, network access, FFI... all side-effects are lumped into a single type. There are type systems that are able to treat side-effects much more granularly (e.g. koka), but we will not be discussing these here.</aside>
+<p>While we have come a long way since the wild west of the weakly, dynamically typed languages where we began, we still have not yet reached the end of this journey. To see why, let us look at the example of appending together two lists.</p>
+<p>In Haskell, we can define our own list type like this (I will use the GADT extension, as well as some others, for better syntactic consistency with some later examples that we'll be seeing in another language):</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>{-# </span><span style="color:#f92672;">LANGUAGE</span><span> KindSignatures, GADTs #-}
+</span></td></tr><tr><td>2</td><td><span>
+</span></td></tr><tr><td>3</td><td><span style="color:#f92672;">import </span><span>Data.Kind
+</span></td></tr><tr><td>4</td><td><span style="color:#f92672;">import </span><span>Prelude (</span><span style="font-style:italic;color:#66d9ef;">Char</span><span>, </span><span style="font-style:italic;color:#66d9ef;">Int</span><span>)
+</span></td></tr><tr><td>5</td><td><span>
+</span></td></tr><tr><td>6</td><td><span style="color:#f92672;">infixr </span><span style="color:#ae81ff;">7 </span><span style="color:#f92672;">:&lt;
+</span></td></tr><tr><td>7</td><td><span>
+</span></td></tr><tr><td>8</td><td><span style="color:#f92672;">data </span><span style="color:#ae81ff;">List </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">Type </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Type </span><span style="color:#f92672;">where
+</span></td></tr><tr><td>9</td><td><span>    </span><span style="color:#ae81ff;">Nil  </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">List</span><span> a
+</span></td></tr><tr><td>10</td><td><span>    </span><span style="color:#a6e22e;">(:&lt;) </span><span style="color:#f92672;">::</span><span> a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">List</span><span> a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">List</span><span> a
+</span></td></tr></tbody></table></code></pre>
+<p>Here we have defined a type constructor <code>List</code>. When <code>List</code> is provided with some type, it becomes an inhabited type (e.g. <code>List Int</code> or <code>List String</code>). There are two data constructors for this type: <code>Nil</code>, the empty list, and <code>:&lt;</code> (which we will pronounce &quot;cons&quot;), which appends some value to an already constructed list.</p>
+<p>Here are a few example of list values:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#a6e22e;">emptyList </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">List Int
+</span></td></tr><tr><td>2</td><td><span>emptyList </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">Nil
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr><tr><td>4</td><td><span style="color:#a6e22e;">oneList </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">List Int
+</span></td></tr><tr><td>5</td><td><span>oneList </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">1 </span><span style="color:#f92672;">:&lt; </span><span style="color:#ae81ff;">Nil
+</span></td></tr><tr><td>6</td><td><span>
+</span></td></tr><tr><td>7</td><td><span style="color:#a6e22e;">twoList </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">List Char
+</span></td></tr><tr><td>8</td><td><span>twoList </span><span style="color:#f92672;">= </span><span style="color:#e6db74;">&#39;1&#39; </span><span style="color:#f92672;">:&lt; </span><span style="color:#e6db74;">&#39;2&#39; </span><span style="color:#f92672;">:&lt; </span><span style="color:#ae81ff;">Nil
+</span></td></tr></tbody></table></code></pre>
+<p>Now, we can define a function to append two lists together.</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#a6e22e;">appendLists </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">List </span><span>a </span><span style="color:#f92672;">-&gt; </span><span style="font-style:italic;color:#66d9ef;">List </span><span>a </span><span style="color:#f92672;">-&gt; </span><span style="font-style:italic;color:#66d9ef;">List </span><span>a
+</span></td></tr><tr><td>2</td><td><span>appendLists </span><span style="color:#ae81ff;">Nil</span><span>       ys </span><span style="color:#f92672;">=</span><span> ys
+</span></td></tr><tr><td>3</td><td><span>appendLists (x </span><span style="color:#f92672;">:&lt;</span><span> xs) ys </span><span style="color:#f92672;">=</span><span> x </span><span style="color:#f92672;">:&lt;</span><span> (appendLists xs ys)
+</span></td></tr></tbody></table></code></pre>
+<p>We presented here the correct implementation, but it should be clear that the type of this function would also have allowed for any number of incorrect implementations, such as the following:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#a6e22e;">appendLists </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">List </span><span>a </span><span style="color:#f92672;">-&gt; </span><span style="font-style:italic;color:#66d9ef;">List </span><span>a </span><span style="color:#f92672;">-&gt; </span><span style="font-style:italic;color:#66d9ef;">List </span><span>a
+</span></td></tr><tr><td>2</td><td><span>appendLists xs ys </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">Nil
+</span></td></tr></tbody></table></code></pre>
+<p>While this is clearly not what we would like for our list-appending function to be doing, it's equally clear that it is nevertheless correct from the perspective of the type system, and this program will compile without issue.</p>
+<h2 id="expressivity">Expressivity</h2>
+<p>Beyond simply using the types that are provided to us by our languages, more advanced type systems can also allow programmers to build their own types, and to encode additional information into these types, providing greater expressivity, as well as stronger guarantees about the correctness of our programs.</p>
+<p>E.g.:</p>
+<pre data-linenos data-lang="python" style="background-color:#272822;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><table><tbody><tr><td>1</td><td><span style="font-style:italic;color:#f92672;">def </span><span style="color:#a6e22e;">add_100_feet_to_distance</span><span>(</span><span style="font-style:italic;color:#fd971f;">dist</span><span>: </span><span style="font-style:italic;color:#66d9ef;">int</span><span>) -&gt; </span><span style="font-style:italic;color:#66d9ef;">int</span><span>:
+</span></td></tr><tr><td>2</td><td><span>    </span><span style="color:#f92672;">return </span><span>dist </span><span style="color:#f92672;">+ </span><span style="color:#ae81ff;">100
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr><tr><td>4</td><td><span>distance_in_feet </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">328
+</span></td></tr><tr><td>5</td><td><span>distance_in_meters </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">100
+</span></td></tr><tr><td>6</td><td><span>add_100_feet_to_distance(distance_in_meters)
+</span></td></tr></tbody></table></code></pre>
+<p>Here we have a value that is purportedly a distance in meters, but it's being passed to a function that claims to add 100 feet to the distance. In this example, however, we're using plain integers to represent both values, and from a type perspective the two values cannot be distinguished from each other. While this program as written is apparently well-typed, it's nevertheless clear that it is in some way incorrect, and will likely cause problems in our program which could be difficult to identify and locate.</p>
+<p>In another language, such as Haskell, we might be able to do something like this:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#f92672;">newtype </span><span style="color:#ae81ff;">Feet </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">MkFeet Int
+</span></td></tr><tr><td>2</td><td><span style="color:#f92672;">newtype </span><span style="color:#ae81ff;">Meters </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">MkMeters Int
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr><tr><td>4</td><td><span style="color:#a6e22e;">add100FeetToDistance </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">Feet </span><span style="color:#f92672;">-&gt; </span><span style="font-style:italic;color:#66d9ef;">Feet
+</span></td></tr><tr><td>5</td><td><span>add100FeetToDistance (</span><span style="color:#ae81ff;">MkFeet</span><span> n) </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">MkFeet</span><span> (</span><span style="color:#ae81ff;">100 </span><span style="color:#f92672;">+</span><span> n)
+</span></td></tr><tr><td>6</td><td><span>
+</span></td></tr><tr><td>7</td><td><span style="color:#a6e22e;">distanceInFeet </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">Feet
+</span></td></tr><tr><td>8</td><td><span>distanceInFeet </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">MkFeet 328
+</span></td></tr><tr><td>9</td><td><span>
+</span></td></tr><tr><td>10</td><td><span style="color:#a6e22e;">distanceInMeters </span><span style="color:#f92672;">:: </span><span style="font-style:italic;color:#66d9ef;">Meters
+</span></td></tr><tr><td>11</td><td><span>distanceInMeters </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">MkMeters 100
+</span></td></tr></tbody></table></code></pre>
+<p>Here we have encoded additional information into our types (namely the unit of measure), the consistent use of which the type system will enforce for us. Any attempts to use a value of type <code>Meters</code> where a value of type <code>Feet</code> is expected will be rejected by the type checker, and the program will not compile.</p>
+<h2 id="dependent-types">Dependent types</h2>
+<p>We've seen that much can be done with a sufficiently advanced type system. By encoding information about our programs at the type level, the type system can verify that the properties that we've encoded into our types hold, and if they do not the program will not compile.</p>
+<p>So far, we've seen examples of static types being used to encode fairly straightforward properties of the domains that we've been working with. However, there are type systems which allow for even greater expressivity and power when encoding properties of our programs at the type level.</p>
+<p>As a motivating example, we will again examine the concatenation of two lists, using a new language, Idris.</p>
+<p>For reasons that should become clear later, we will begin by defining a type, <code>Nat</code>, representing the natural numbers, using an inductively defined representation (also known as Peano numbers).</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#f92672;">data </span><span style="color:#ae81ff;">Nat </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Type </span><span style="color:#f92672;">where
+</span></td></tr><tr><td>2</td><td><span>    </span><span style="color:#ae81ff;">Z </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Nat
+</span></td></tr><tr><td>3</td><td><span>    </span><span style="color:#ae81ff;">S </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Nat </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Nat
+</span></td></tr></tbody></table></code></pre>
+<p>By definition, <code>Nat</code> can be either <code>Z</code> (representing zero), or <code>S n</code> (the successor of another <code>Nat</code>).</p>
+<p>Some examples:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>zero </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Nat
+</span></td></tr><tr><td>2</td><td><span>zero </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">Z
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr><tr><td>4</td><td><span>one </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Nat
+</span></td></tr><tr><td>5</td><td><span>one </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">S Z
+</span></td></tr><tr><td>6</td><td><span>
+</span></td></tr><tr><td>7</td><td><span>two </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Nat
+</span></td></tr><tr><td>8</td><td><span>two </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">S</span><span> (</span><span style="color:#ae81ff;">S Z</span><span>)
+</span></td></tr><tr><td>9</td><td><span>
+</span></td></tr><tr><td>10</td><td><span>five </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Nat
+</span></td></tr><tr><td>11</td><td><span>five </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">S</span><span> (</span><span style="color:#ae81ff;">S</span><span> (</span><span style="color:#ae81ff;">S</span><span> (</span><span style="color:#ae81ff;">S</span><span> (</span><span style="color:#ae81ff;">S Z</span><span>))))
+</span></td></tr></tbody></table></code></pre>
+<p>Here we have defined several values of type <code>Nat</code>, and assigned them to what seem to be fitting names (<code>zero</code>, <code>one</code>, <code>two</code>, etc.). The names here are arbitrary, however, and nothing would have prevented us from choosing different, less suitable names.</p>
+<p>Using this type, we can now define addition:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#a6e22e;">(+) </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Nat </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Nat </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Nat
+</span></td></tr><tr><td>2</td><td><span style="color:#ae81ff;">Z     </span><span style="color:#f92672;">+</span><span> n </span><span style="color:#f92672;">=</span><span> n
+</span></td></tr><tr><td>3</td><td><span>(</span><span style="color:#ae81ff;">S</span><span> m) </span><span style="color:#f92672;">+</span><span> n </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">S</span><span> (m </span><span style="color:#f92672;">+</span><span> n)
+</span></td></tr></tbody></table></code></pre>
+<p>So, as we defined in the pattern matches above, zero plus any <code>Nat</code> value <code>n</code> is simply <code>n</code>, whereas the successor of any value <code>m</code> plus any value <code>n</code> will be the successor of <code>m + n</code>. Very simple!</p>
+<p>Now that we have natural numbers with which we can count and add, we can define an ordered collection type which is in some ways list-like, but whose type also encodes its length. We will call this type <code>Vect</code> (technically <code>Vect</code> is a type constructor, not a type itself, meaning that you must provide some additional information in order to produce an inhabited type).</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#f92672;">data </span><span style="color:#ae81ff;">Vect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Nat </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Type </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Type </span><span style="color:#f92672;">where
+</span></td></tr><tr><td>2</td><td><span>    </span><span style="color:#ae81ff;">Nil  </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect Zero</span><span> a
+</span></td></tr><tr><td>3</td><td><span>    </span><span style="color:#a6e22e;">(::) </span><span style="color:#f92672;">:</span><span> a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> (</span><span style="color:#ae81ff;">S</span><span> n) a
+</span></td></tr></tbody></table></code></pre>
+<p>To translate this definition: we define a type constructor <code>Vect</code>. When you pass <code>Vect</code> a <code>Nat</code> and any arbitrary type <code>a</code>, it will return to you a type, which in this case will be a <code>Vect</code> of some length and type, like <code>Vect (S Z) String</code>. Note that we are using here a <code>Nat</code> <em>value</em> at the type level.</p>
+<p>The two data constructors for <code>Vect</code> are <code>Nil</code>, which is defined as a vector of length zero (an empty vector) of some type, and <code>::</code> (pronounced &quot;cons&quot;), which is a function that takes a value of type <code>a</code>, a vector of type <code>Vect n a</code>, and which returns a vector, of type <code>Vect (S n) a</code>.</p>
+<p>Let's look at some examples:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>emptyVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect Z Int
+</span></td></tr><tr><td>2</td><td><span>emptyVect </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">Nil
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr><tr><td>4</td><td><span>oneVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> (</span><span style="color:#ae81ff;">S Z</span><span>) </span><span style="color:#ae81ff;">Int
+</span></td></tr><tr><td>5</td><td><span>oneVect </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">1 </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">Nil
+</span></td></tr><tr><td>6</td><td><span>
+</span></td></tr><tr><td>7</td><td><span>twoVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> (</span><span style="color:#ae81ff;">S</span><span> (</span><span style="color:#ae81ff;">S Z</span><span>)) </span><span style="color:#ae81ff;">Int
+</span></td></tr><tr><td>8</td><td><span>twoVect </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">1 </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">2 </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">Nil
+</span></td></tr></tbody></table></code></pre>
+<p>We have now defined a type which, by its very definition, cannot be constructed in such a way that the length described in the type does not match the actual length of the data structure.</p>
+<p>This, for example, will not compile:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>threeOrFourVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> (</span><span style="color:#ae81ff;">S</span><span> (</span><span style="color:#ae81ff;">S</span><span> (</span><span style="color:#ae81ff;">S Z</span><span>))) </span><span style="color:#ae81ff;">Int
+</span></td></tr><tr><td>2</td><td><span>threeOrFourVect </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">1 </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">2 </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">3 </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">4 </span><span style="color:#f92672;">:: </span><span style="color:#ae81ff;">Nil
+</span></td></tr></tbody></table></code></pre>
+<p>This is a type error, and the type checker will not permit such an ill-typed program to be compiled. Instead, it will error with a message like the following:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span style="color:#ae81ff;">Type</span><span> mismatch between
+</span></td></tr><tr><td>2</td><td><span>        </span><span style="color:#ae81ff;">Vect</span><span> (</span><span style="color:#ae81ff;">S</span><span> len) elem (</span><span style="color:#ae81ff;">Type </span><span style="color:#f92672;">of</span><span> x </span><span style="color:#f92672;">::</span><span> xs)
+</span></td></tr><tr><td>3</td><td><span>and
+</span></td></tr><tr><td>4</td><td><span>        </span><span style="color:#ae81ff;">Vect Z Int</span><span> (</span><span style="color:#ae81ff;">Expected </span><span style="color:#f92672;">type</span><span>)
+</span></td></tr><tr><td>5</td><td><span>
+</span></td></tr><tr><td>6</td><td><span style="color:#ae81ff;">Specifically</span><span style="color:#f92672;">:
+</span></td></tr><tr><td>7</td><td><span>        </span><span style="color:#ae81ff;">Type</span><span> mismatch between
+</span></td></tr><tr><td>8</td><td><span>                </span><span style="color:#ae81ff;">S</span><span> len
+</span></td></tr><tr><td>9</td><td><span>        and
+</span></td></tr><tr><td>10</td><td><span>                </span><span style="color:#ae81ff;">Z
+</span></td></tr></tbody></table></code></pre>
+<p>What do we gain by having such a type? As was mentioned earlier, we have encoded more information about our data at the type level. Specifically in this case we have encoded the length of our list-like vector in its type. With this information, the type system can further assist us, by checking that the operations we write are correct with respect to the type signatures that we specify. As an example, if we wish to write an operation to append two vectors together it should be clear that the result will be a vector whose length is the sum of the lengths of the two input vectors. The signature for this function might look like this:</p>
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>appendVec </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> m a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> (m </span><span style="color:#f92672;">+</span><span> n) a
+</span></td></tr></tbody></table></code></pre>
+<p>With the length encoded at the type level, we can leverage the type system to reject incorrect implementations where the important properties of the operation do not hold. In this case, the important property of the append function is that the length of the resulting <code>Vect</code> is the sum of the lengths of the two input <code>Vect</code>s. The type checker can now determine for us that a naive implementation—say, one which simply always returns an empty vector—does not satisfy the length summing property that we have specified in our type signature.</p>
+<p>But in fact beyond even just rejecting incorrect implementations, we can leverage the type system to write a complete implementation of this function for us. Through a series of fairly mechanical steps, we can ask the compiler to fill out aspects of our function for us, using the information it knows about our types, until we're left with a complete and correct implementation. Here's what this looks like in action. Keep in mind that at every step, while we're directing the compiler on what we want it to do, it's determining how to do it.</p>
+<div class="appendVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>appendVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> m a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> (m </span><span style="color:#f92672;">+</span><span> n) a
+</span></td></tr><tr><td>2</td><td><span>
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr></tbody></table></code></pre>
+<div class="caption"></div>
+</div>
+<div class="appendVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>appendVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> m a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> (m </span><span style="color:#f92672;">+</span><span> n) a
+</span></td></tr><tr><td>2</td><td><span>appendVect x        y </span><span style="color:#f92672;">= ?</span><span>appendVect_rhs
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Generate an initial pattern match clause</div>
+</div>
+<div class="appendVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>appendVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> m a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> (m </span><span style="color:#f92672;">+</span><span> n) a
+</span></td></tr><tr><td>2</td><td><span>appendVect </span><span style="color:#ae81ff;">Nil</span><span>      y </span><span style="color:#f92672;">= ?</span><span>appendVect_rhs_1
+</span></td></tr><tr><td>3</td><td><span>appendVect (x </span><span style="color:#f92672;">::</span><span> z) y </span><span style="color:#f92672;">= ?</span><span>appendVect_rhs_2
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Generate a case split for a pattern variable</div>
+</div>
+<div class="appendVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>appendVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> m a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> (m </span><span style="color:#f92672;">+</span><span> n) a
+</span></td></tr><tr><td>2</td><td><span>appendVect </span><span style="color:#ae81ff;">Nil</span><span>      y </span><span style="color:#f92672;">=</span><span> y
+</span></td></tr><tr><td>3</td><td><span>appendVect (x </span><span style="color:#f92672;">::</span><span> z) y </span><span style="color:#f92672;">= ?</span><span>appendVect_rhs_2
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Attempt to fill a hole</div>
+</div>
+<div class="appendVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>appendVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> m a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> (m </span><span style="color:#f92672;">+</span><span> n) a
+</span></td></tr><tr><td>2</td><td><span>appendVect </span><span style="color:#ae81ff;">Nil</span><span>      y </span><span style="color:#f92672;">=</span><span> y
+</span></td></tr><tr><td>3</td><td><span>appendVect (x </span><span style="color:#f92672;">::</span><span> z) y </span><span style="color:#f92672;">=</span><span> x </span><span style="color:#f92672;">::</span><span> appendVec z y
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Attempt to fill a hole</div>
+</div>
+<div id="controls-appendVect">
+</div>
+<p>Amazing! By providing the type checker with more information about our types, not only can our type checker do more for us to verify the correctness of our programs, but it can also write many of our programs for us!</p>
+<p>Let's look at another brief example:</p>
+<div class="zipVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>zipVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n b </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n (a,b)
+</span></td></tr><tr><td>2</td><td><span>
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr></tbody></table></code></pre>
+<div class="caption"></div>
+</div>
+<div class="zipVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>zipVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n b </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n (a,b)
+</span></td></tr><tr><td>2</td><td><span>zipVect x        y         </span><span style="color:#f92672;">= ?</span><span>zipVect_rhs
+</span></td></tr><tr><td>3</td><td><span>
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Generate an initial pattern match clause</div>
+</div>
+<div class="zipVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>zipVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n b </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n (a,b)
+</span></td></tr><tr><td>2</td><td><span>zipVect </span><span style="color:#ae81ff;">Nil</span><span>      y         </span><span style="color:#f92672;">= ?</span><span>zipVect_rhs_1
+</span></td></tr><tr><td>3</td><td><span>zipVect (x </span><span style="color:#f92672;">::</span><span> z) y         </span><span style="color:#f92672;">= ?</span><span>zipVect_rhs_2
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Generate a case split for a pattern variable</div>
+</div>
+<div class="zipVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>zipVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n b </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n (a,b)
+</span></td></tr><tr><td>2</td><td><span>zipVect </span><span style="color:#ae81ff;">Nil      Nil       </span><span style="color:#f92672;">= ?</span><span>zipVect_rhs_1
+</span></td></tr><tr><td>3</td><td><span>zipVect (x </span><span style="color:#f92672;">::</span><span> z) y         </span><span style="color:#f92672;">= ?</span><span>zipVect_rhs_2
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Generate a case split for a pattern variable</div>
+</div>
+<div class="zipVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>zipVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n b </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n (a,b)
+</span></td></tr><tr><td>2</td><td><span>zipVect </span><span style="color:#ae81ff;">Nil      Nil       </span><span style="color:#f92672;">= ?</span><span>zipVect_rhs_1
+</span></td></tr><tr><td>3</td><td><span>zipVect (x </span><span style="color:#f92672;">::</span><span> z) (y </span><span style="color:#f92672;">::</span><span> ys) </span><span style="color:#f92672;">= ?</span><span>zipVect_rhs_2
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Generate a case split for a pattern variable</div>
+</div>
+<div class="zipVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>zipVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n b </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n (a,b)
+</span></td></tr><tr><td>2</td><td><span>zipVect </span><span style="color:#ae81ff;">Nil      Nil       </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">Nil
+</span></td></tr><tr><td>3</td><td><span>zipVect (x </span><span style="color:#f92672;">::</span><span> z) (y </span><span style="color:#f92672;">::</span><span> ys) </span><span style="color:#f92672;">= ?</span><span>zipVect_rhs_2
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Attempt to fill a hole</div>
+</div>
+<div class="zipVect">
+<pre data-linenos data-lang="haskell" style="background-color:#272822;color:#f8f8f2;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><table><tbody><tr><td>1</td><td><span>zipVect </span><span style="color:#f92672;">: </span><span style="color:#ae81ff;">Vect</span><span> n a </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n b </span><span style="color:#f92672;">-&gt; </span><span style="color:#ae81ff;">Vect</span><span> n (a,b)
+</span></td></tr><tr><td>2</td><td><span>zipVect </span><span style="color:#ae81ff;">Nil      Nil       </span><span style="color:#f92672;">= </span><span style="color:#ae81ff;">Nil
+</span></td></tr><tr><td>3</td><td><span>zipVect (x </span><span style="color:#f92672;">::</span><span> z) (y </span><span style="color:#f92672;">::</span><span> ys) </span><span style="color:#f92672;">=</span><span> (x, y) </span><span style="color:#f92672;">::</span><span> zipVect z w
+</span></td></tr></tbody></table></code></pre>
+<div class="caption">Attempt to fill a hole</div>
+</div>
+<div id="controls-zipVect">
+</div>
+<p>Here the compiler wrote for us the full implementation of a function that zips two vectors together. Note that the type signature specifies the two vectors passed to this function must be of the same length, <code>n</code>, and the vector returned must also be of length <code>n</code>. The compiler was able to determine that, when the first parameter is an empty vector, so too will be the second parameter (their lengths are, after all, equal), and was able to correctly pattern match and provide full, correct implementations for the two cases given the available information. Furthermore, the compiler will enforce these constraints whenever this function is called. It is impossible to call this function with two vectors that the compiler cannot determine to be of the same length. And with only a few more tools in our toolbelt (e.g. a <code>min</code> function for <code>Nat</code> values), we could have implemented a different, equally provably correct function that zips together any two arbitrary length <code>Vect</code>s, producing a new <code>Vect</code> of a length equal to the lesser of the lengths of the two input <code>Vect</code>s.</p>
+<aside>Remember that the length checks mentioned above are compile time checks. Since the compiler has already performed these checks, and has verified and proven the correctness of our programs, these checks need not incur any runtime cost. In fact, our types can often be erased entirely during compilation.</aside>
+<script>
+// TODO: Fix this!
+(function(){
+    function registerPlayButton(selector){
+        var TICK = 1100;
+        var controls = document.querySelector('#controls-' + selector);
+        var els = document.querySelectorAll('.' + selector);
+        var end = els.length;
+        var currentFrame = 0;
+        var tallestCaption = 0;
+        els.forEach(function(el){
+            var caption = Array.prototype.find.call(el.children, function(child){
+                return child.classList.contains('caption');
+            });
+            var captionBoundingClientRect = caption.getBoundingClientRect();
+            tallestCaption = Math.max(tallestCaption, captionBoundingClientRect.height);
+        });
+
+        var caption = document.createElement('div');        
+        caption.style.height = tallestCaption + 'px';
+        caption.style.margin = '1em 0';
+
+
+        var controlsContainer = document.createElement('div');
+        controlsContainer.style.display = 'flex';
+        controlsContainer.style.alignItems = 'center';
+        controlsContainer.style.gap = '10px';
+
+        var playButton = document.createElement('button');        
+        caption.style.height = tallestCaption + 'px';
+        caption.style.margin = '1em 0';
+        playButton.textContent = 'Play';
+
+        var rangeSlider = document.createElement('input');
+        rangeSlider.type = 'range';
+        rangeSlider.min = 0;
+        rangeSlider.max = end - 1;
+        rangeSlider.value = 0; 
+        rangeSlider.step = 1;
+
+        controls.appendChild(caption);
+        controlsContainer.appendChild(playButton);
+        controlsContainer.appendChild(rangeSlider);
+        controls.appendChild(controlsContainer);
+
+        rangeSlider.addEventListener('input', function(evt){
+            currentFrame = parseInt(event.target.value, 10);
+            redraw();
+            if (currentFrame >= (end - 1)) {
+                currentFrame = 0;
+            }
+        });
+
+        function redraw() {
+            rangeSlider.value = currentFrame;
+            for (var m = 0; m < end; m++) {
+                var el = els[m];
+                if (m === currentFrame) {
+                    el.style.display = '';
+                    var elCaption = el.querySelector('.caption');
+                    if (elCaption) {
+                        elCaption.style.display = 'none';
+                        caption.textContent = elCaption.textContent;
+                    } else {
+                        caption.textContent = '';
+                    }
+                } else {
+                    el.style.display = 'none';
+                }
+            }
+        }
+        function play(){
+            // TODO - this is kinda bunk. firefox formats it weird, and it's a shitty function anyway
+            currentFrame = currentFrame % end;
+            redraw();
+            currentFrame = currentFrame + 1;
+            if (currentFrame !== end) {
+                setTimeout(function(){play()}, TICK);
+            } else {
+                playButton.disabled = false;
+            }
+        }
+        playButton.addEventListener('click', function(){
+            if (!playButton.disabled) {
+                playButton.disabled = true;
+                play();
+            }
+        });
+        redraw();
+    }
+    registerPlayButton('appendVect');
+    registerPlayButton('zipVect');
+})();
+</script>
+<h2 id="conclusion">Conclusion</h2>
+<p>We began by demonstrating some of the issues that a weak, dynamic type system will permit. We saw that these type systems, by performing implicit type conversions, can allow nonsensical values to propagate throughout our systems.</p>
+<p>We then proceeded to introduce a constraint, in the form of strong typing, whereby our operations would enforce for us the types which they would permit us to operate on. However, we also saw that, while strong typing did much to help ensure the correctness of our programs that weak typing was unable to, when coupled with a dynamic type system, strong typing was unable to reveal to us the correctness (or incorrectness) of our systems without actually running our code. This opened the possibility of edge cases in rarely used code paths, or when unexpected input somehow entered our systems.</p>
+<p>Introducing further constraints, we examined static typing. We saw that static typing was able to reject incorrect programs at compile time, which would have only been discovered at runtime using a comparable dynamically typed language. But again, we found deficiencies in the static type system that we were examining; namely, the type system allowed for side-effects which were not represented, or constrained at the type level.</p>
+<p>And yet again, we introduced another constraint. Next, we looked at a type system where side-effects were represented and constrained at the type level. We saw how this eliminated the possibility of certain kinds of undesirable behavior, namely the unrestricted use of side-effects in innocuous seeming functions. Exploring this  type system, though, we found further areas for improvement, as the types of our functions often provided too much latitude in our implementations, such as writing a list-appending function that simply always returned an empty list.</p>
+<p>We then briefly explored some ways that encoding the important properties of our systems at the type level could allow us to leverage the type system to provide us with additional degrees of safety.</p>
+<p>Finally, we introduced a type system that allowed us to define functions where the types of our functions (both the argument types, as well as the output type) could be dependent on values at the type level. This allowed us to define functions where the type precisely encoded some of the most important properties of our data types and functions. Building on the example of appending lists, we defined a list-like type, <code>Vect</code>, which encoded its length at the type level. This allowed us to leverage the newfound power of our dependent type system not only to prevent the sorts of issues we had seen with our earlier attempt at writing a list-appending function, but we also found that the type system was in fact powerful enough to entirely write this function for us.</p>
+<p>The recurring motif has been that throughout our journey through different type systems, we have introduced new type systems, we have explored some of their features, and then we have focused on some of the implications—and especially the failings—of their designs, and how these failings would allow us to write incorrect or delinquent programs. Moving on to the next type system, we would then see how, by introducing further constraints on the programs the type system would allow us to write, and by increasing the expressivity and power of what we can encode at the type level, these more advanced type systems were able to help us to prevent entirely some of the undesirable and aberrant behaviour we had seen with the previous, less capable type systems.</p>
+<p>In short, with a sufficiently powerful type system, we are often able to make the illegal states in our systems literally unrepresentable. And beyond even this, we've seen that, by encoding the important aspects of our programs at the type level, a sufficiently advanced compiler can in fact write many of our programs for us. By defining <code>Vect</code> as we did, we were able to encapsulate in the type the properties that were important to us (namely its length). With this, we needed only to write a specifications for <code>appendVect</code> and <code>zipVect</code> (i.e. the type signatures), at which point we had provided the compiler with enough information to write the implementation for us. </p>
+<p>While the type systems we explored gradually introduced further and further constraints on the programs we were allowed to write, these constraints were, in actuality, preventing us from writing incorrect, nonsensical, and otherwise undesirable programs. And perhaps paradoxically, the more constraints our type system imposed on us, the more powerful they became, and the more confidant we could be in the correctness of our programs.</p>
+
+  </div>
+  </article>
+
+  </main>
+  
+  <footer class="page-foot">
+    <p> Powered by
+        <a href="https://www.getzola.org" rel="noreferrer">Zola</a>
+    </p>
+    <p>
+        <a id="github-link" class="github-link" href="https://github.com/ebenpack/ebenpack.github.io" rel="noreferrer">
+            Fork me on Github
+        </a>
+    </p>
+    <p>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="/images/ccbyncnd.png">
+        </a>
+    </p>
+    <p>
+        This work is licensed under a
+        <a href="http://creativecommons.org/licenses/by-nc/4.0/" rel="noreferrer">
+            Creative Commons Attribution-NonCommercial 4.0 International License.
+        </a>
+    </p>
+</footer>
+  
+</div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://ebenpackwood.com/main.css">
+
+  <link rel="shortcut icon" type="image/ico" sizes="32x32" href="https://ebenpackwood.com/assets/favicon.ico">
+
+  
+    <link type="application/atom+xml" rel="alternate" href="https://ebenpackwood.com/atom.xml" title="Eben Packwood" />
+  
+
+  
+  
+
+  
+
+  
+<title>Eben Packwood | lidrisp</title>
+
+
+
+<meta property="og:title" content="Home">
+
+
+
+<meta name="author" content="ebenpack">
+
+
+<meta property="og:locale" content="en-US">
+
+
+
+
+
+
+<meta property="og:site_name" content="Eben Packwood" />
+
+
+
+
+
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2019-01-22T18:16:00+00:00">
+
+
+
+
+
+</head>
+
+<body>
+  <div class="page">
+  
+  <header class="page-head">
+  <div class="logo">
+    <a href="https://ebenpackwood.com">
+      Eben Packwood
+    </a>
+  </div>
+  <nav >
+      
+        
+          <a href="https://ebenpackwood.com">Home</a>
+        
+          <a href="https://ebenpackwood.com/pages/projects">Projects</a>
+                  
+      
+      <a href="https://github.com/ebenpack">Github</a>
+  </nav>
+  </header>
+  
+
+  <main class="page-body">
+    
+<article>
+    <script src="/js/bundle/bundle.js"></script>
+    <section>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ext-language_tools.js"></script>
+<div style="font-size:16px;">
+    <pre style="border:1px solid gray;height:500px;overflow-y: auto;margin-bottom: 5px;" id="input" contentEditable="true">
+(define (foldl fn acc ls)
+    (if (null? ls)
+        acc
+        (foldl fn (fn acc (car ls)) (cdr ls))))
+(define (foldr fn acc ls)
+    (if (null? ls)
+        acc
+        (fn (car ls) (foldr fn acc (cdr ls)))))
+(define (map fn ls)
+    (foldr (lambda (x xs) (cons (fn x) xs)) '() ls))
+(define (filter fn ls)
+    (foldr (lambda (x xs) (if (fn x) (cons x xs) xs)) '() ls))
+(define (double n) (+ n n))
+(define (even?  n) (= 0 (modulo n 2)))
+(define (zero?  n) (= 0 n))
+(define (sub1   n) (- n 1))
+(define (not    b) (if b #f #t))
+<p>(foldl  + 0    '(1 2 3 4 5))
+(map    double '(1 2 3 4 5))
+(filter even?  '(1 2 3 4 5 6 7 8 9 10))
+(let* ([a 5] [b (+ a 10)]) (+ b 20))
+(letrec
+([is-even? 
+(lambda (n)
+(if (zero? n) #t
+(is-odd? (sub1 n))))]
+[is-odd? 
+(lambda (n)
+(if (zero? n) #f
+(is-even? (sub1 n))))])
+(is-odd? 13))
+</pre>
+<pre style="border:1px solid gray;height:200px;overflow-y: auto; color: white;" id="output"></pre>
+<div style="clear:both; margin:1em;">
+<button id="eval">Eval</button>
+</div>
+<p>It's a lisp! Or maybe a scheme! And it's written in idris!</p>
+<p>How's it work? Write some scheme in the top pane, hit the 'eval' button, and see the results in the bottom pane.</p>
+<p><a href="https://github.com/ebenpack/lidrisp" rel="noreferrer">Check it out</a></p></p>
+</div>
+<script>
+(function(){
+    main.initLidrisp().then(function(initLidrisp){
+        initLidrisp();
+    });
+})();
+</script>
+
+    </section>
+</article>
+
+  </main>
+  
+  <footer class="page-foot">
+    <p> Powered by
+        <a href="https://www.getzola.org" rel="noreferrer">Zola</a>
+    </p>
+    <p>
+        <a id="github-link" class="github-link" href="https://github.com/ebenpack/ebenpack.github.io" rel="noreferrer">
+            Fork me on Github
+        </a>
+    </p>
+    <p>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="/images/ccbyncnd.png">
+        </a>
+    </p>
+    <p>
+        This work is licensed under a
+        <a href="http://creativecommons.org/licenses/by-nc/4.0/" rel="noreferrer">
+            Creative Commons Attribution-NonCommercial 4.0 International License.
+        </a>
+    </p>
+</footer>
+  
+</div>
+</body>
+</html>

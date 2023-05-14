@@ -1,204 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://ebenpackwood.com</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-
-    
     <url>
-        <loc>https://ebenpackwood.com/profligate/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/</loc>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/lidrisp.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/archives/</loc>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/lispish.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/page/1/</loc>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/lattice-boltzmann.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/page/2/</loc>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/vu.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/</loc>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/wireframe.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/</loc>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/videoascii.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/a-star/</loc>
+        <lastmod>2014-02-15T20:28:00</lastmod>
     </url>
-    
-
-    
-    
-
-    
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/a-star.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/game-of-life/</loc>
+        <lastmod>2014-02-15T20:28:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/game-of-life.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/js1k/</loc>
+        <lastmod>2014-02-15T20:28:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects/js1k.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/lattice-boltzmann/</loc>
+        <lastmod>2015-08-02T20:28:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/posts/not-my-type.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/lidrisp/</loc>
+        <lastmod>2019-01-22T18:16:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/posts/chrome-devtools-synchronous-xhr-redirect-bug.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/lispish/</loc>
+        <lastmod>2015-12-10T18:46:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/posts/canvas-path-performance.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/lm3000/</loc>
+        <lastmod>2014-02-25T15:15:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/posts/low-garbage-canvas.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/profligate/</loc>
+        <lastmod>2019-03-24T12:34:36</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/posts/css-sort.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/pygular/</loc>
+        <lastmod>2014-02-22T15:15:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/posts/too-much-recursion.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/schemers/</loc>
+        <lastmod>2023-05-05T16:40:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/posts/wavybits.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/videoascii/</loc>
+        <lastmod>2014-11-22T15:19:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/posts/lattice-boltzmann.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/vu/</loc>
+        <lastmod>2015-07-29T17:18:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/archives.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/pages/projects/wireframe/</loc>
+        <lastmod>2015-02-22T15:15:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/pages/projects.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/posts/canvas-path-performance.html/</loc>
+        <lastmod>2014-08-31T12:34:00</lastmod>
     </url>
-    
-
-    
     <url>
-        <loc>https://ebenpackwood.com/index2.html</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
+        <loc>https://ebenpackwood.com/posts/chrome-devtools-synchronous-xhr-redirect-bug.html/</loc>
+        <lastmod>2015-10-24T10:14:00</lastmod>
     </url>
-    
-
+    <url>
+        <loc>https://ebenpackwood.com/posts/css-sort.html/</loc>
+        <lastmod>2014-08-22T13:52:00</lastmod>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/posts/lattice-boltzmann.html/</loc>
+        <lastmod>2014-02-16T12:49:00</lastmod>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/posts/low-garbage-canvas.html/</loc>
+        <lastmod>2014-08-28T09:30:00</lastmod>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/posts/not-my-type.html/</loc>
+        <lastmod>2020-02-14T14:39:00</lastmod>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/posts/too-much-recursion.html/</loc>
+        <lastmod>2014-07-30T21:00:00</lastmod>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/posts/wavybits.html/</loc>
+        <lastmod>2014-02-17T12:49:00</lastmod>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/canvas/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/css/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/devtools/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/haskell/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/html/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/idris/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/javascript/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/js1k/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/lattice-boltzmann/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/purescript/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/python/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/rust/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/scheme/</loc>
+    </url>
+    <url>
+        <loc>https://ebenpackwood.com/tags/type-theory/</loc>
+    </url>
 </urlset>

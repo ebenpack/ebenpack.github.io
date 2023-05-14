@@ -16,13 +16,13 @@
   
 
   
+
   
-  
-<title>404 | Eben Packwood</title>
+<title>Eben Packwood | Schemers</title>
 
 
 
-<meta property="og:title" content="404">
+<meta property="og:title" content="Home">
 
 
 
@@ -41,6 +41,9 @@
 
 
 
+
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2023-05-05T16:40:00+00:00">
 
 
 
@@ -72,15 +75,23 @@
 
   <main class="page-body">
     
-<div class="notfound">
-	<h1 class="notfound-error">404: Page not found</h1>
-	<div class="notfound-line"></div>
-	<p class="notfound-message">
-		<h2>Whoopsy daisy...</h2>
-		It looks like that page cannot be found. Sorry about that. Let's 
-	</p>
-	<p></p>
+<article>
+    <script src="/js/bundle/bundle.js"></script>
+    <section>
+        <div>
+    <div id="scheme"></div>
+    <pre id="output"></pre>
+    <button id="eval">Eval</button>
+    <script src="index.js"></script>
+    <script>
+    (function(){
+        main.initSchemeRs();
+    })();
+    </script>
 </div>
+
+    </section>
+</article>
 
   </main>
   

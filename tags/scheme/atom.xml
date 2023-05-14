@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Eben Packwood - Scheme</title>
+    <subtitle>TODO</subtitle>
+    <link href="https://ebenpackwood.com/tags/scheme/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://ebenpackwood.com"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2023-05-05T16:40:00+00:00</updated>
+    <id>https://ebenpackwood.com/tags/scheme/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Schemers</title>
+        <published>2023-05-05T16:40:00+00:00</published>
+        <updated>2023-05-05T16:40:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://ebenpackwood.com/pages/projects/schemers/" type="text/html"/>
+        <id>https://ebenpackwood.com/pages/projects/schemers/</id>
+        
+        <content type="html">&lt;div&gt;
+    &lt;div id=&quot;scheme&quot;&gt;&lt;&#x2F;div&gt;
+    &lt;pre id=&quot;output&quot;&gt;&lt;&#x2F;pre&gt;
+    &lt;button id=&quot;eval&quot;&gt;Eval&lt;&#x2F;button&gt;
+    &lt;script src=&quot;index.js&quot;&gt;&lt;&#x2F;script&gt;
+    &lt;script&gt;
+    (function(){
+        main.initSchemeRs();
+    })();
+    &lt;&#x2F;script&gt;
+&lt;&#x2F;div&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>lidrisp</title>
+        <published>2019-01-22T18:16:00+00:00</published>
+        <updated>2019-01-22T18:16:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://ebenpackwood.com/pages/projects/lidrisp/" type="text/html"/>
+        <id>https://ebenpackwood.com/pages/projects/lidrisp/</id>
+        
+        <content type="html">&lt;script src=&quot;https:&#x2F;&#x2F;cdnjs.cloudflare.com&#x2F;ajax&#x2F;libs&#x2F;ace&#x2F;1.1.9&#x2F;ace.js&quot;&gt;&lt;&#x2F;script&gt;
+&lt;script type=&quot;text&#x2F;javascript&quot; src=&quot;https:&#x2F;&#x2F;cdnjs.cloudflare.com&#x2F;ajax&#x2F;libs&#x2F;ace&#x2F;1.1.9&#x2F;ext-language_tools.js&quot;&gt;&lt;&#x2F;script&gt;
+&lt;div style=&quot;font-size:16px;&quot;&gt;
+    &lt;pre style=&quot;border:1px solid gray;height:500px;overflow-y: auto;margin-bottom: 5px;&quot; id=&quot;input&quot; contentEditable=&quot;true&quot;&gt;
+(define (foldl fn acc ls)
+    (if (null? ls)
+        acc
+        (foldl fn (fn acc (car ls)) (cdr ls))))
+(define (foldr fn acc ls)
+    (if (null? ls)
+        acc
+        (fn (car ls) (foldr fn acc (cdr ls)))))
+(define (map fn ls)
+    (foldr (lambda (x xs) (cons (fn x) xs)) &#x27;() ls))
+(define (filter fn ls)
+    (foldr (lambda (x xs) (if (fn x) (cons x xs) xs)) &#x27;() ls))
+(define (double n) (+ n n))
+(define (even?  n) (= 0 (modulo n 2)))
+(define (zero?  n) (= 0 n))
+(define (sub1   n) (- n 1))
+(define (not    b) (if b #f #t))
+&lt;p&gt;(foldl  + 0    &#x27;(1 2 3 4 5))
+(map    double &#x27;(1 2 3 4 5))
+(filter even?  &#x27;(1 2 3 4 5 6 7 8 9 10))
+(let* ([a 5] [b (+ a 10)]) (+ b 20))
+(letrec
+([is-even? 
+(lambda (n)
+(if (zero? n) #t
+(is-odd? (sub1 n))))]
+[is-odd? 
+(lambda (n)
+(if (zero? n) #f
+(is-even? (sub1 n))))])
+(is-odd? 13))
+&lt;&#x2F;pre&gt;
+&lt;pre style=&quot;border:1px solid gray;height:200px;overflow-y: auto; color: white;&quot; id=&quot;output&quot;&gt;&lt;&#x2F;pre&gt;
+&lt;div style=&quot;clear:both; margin:1em;&quot;&gt;
+&lt;button id=&quot;eval&quot;&gt;Eval&lt;&#x2F;button&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;It&#x27;s a lisp! Or maybe a scheme! And it&#x27;s written in idris!&lt;&#x2F;p&gt;
+&lt;p&gt;How&#x27;s it work? Write some scheme in the top pane, hit the &#x27;eval&#x27; button, and see the results in the bottom pane.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ebenpack&#x2F;lidrisp&quot; rel=&quot;noreferrer&quot;&gt;Check it out&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;script&gt;
+(function(){
+    main.initLidrisp().then(function(initLidrisp){
+        initLidrisp();
+    });
+})();
+&lt;&#x2F;script&gt;
+</content>
+        
+    </entry>
+</feed>

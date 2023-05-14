@@ -16,13 +16,13 @@
   
 
   
+
   
-  
-<title>404 | Eben Packwood</title>
+<title>Eben Packwood | JS1K Lattice Boltzmann</title>
 
 
 
-<meta property="og:title" content="404">
+<meta property="og:title" content="Home">
 
 
 
@@ -41,6 +41,9 @@
 
 
 
+
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2014-02-15T20:28:00+00:00">
 
 
 
@@ -72,15 +75,24 @@
 
   <main class="page-body">
     
-<div class="notfound">
-	<h1 class="notfound-error">404: Page not found</h1>
-	<div class="notfound-line"></div>
-	<p class="notfound-message">
-		<h2>Whoopsy daisy...</h2>
-		It looks like that page cannot be found. Sorry about that. Let's 
-	</p>
-	<p></p>
-</div>
+<article>
+    <script src="/js/bundle/bundle.js"></script>
+    <section>
+        <p><canvas id="c" style="position: relative;"></canvas></p>
+<script>
+(function(){
+    var a = document.getElementsByTagName('canvas')[0];
+    var b = document.body;
+    var c = a.getContext('2d');
+    a.width = a.height = 600;
+    main.projectwavybits().then(function(projectwavybits){
+        projectwavybits();
+    });
+})();
+</script>
+
+    </section>
+</article>
 
   </main>
   

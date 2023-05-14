@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Eben Packwood - Purescript</title>
+    <subtitle>TODO</subtitle>
+    <link href="https://ebenpackwood.com/tags/purescript/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://ebenpackwood.com"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2019-03-24T12:34:36+00:00</updated>
+    <id>https://ebenpackwood.com/tags/purescript/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Profligate</title>
+        <published>2019-03-24T12:34:36+00:00</published>
+        <updated>2019-03-24T12:34:36+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://ebenpackwood.com/pages/projects/profligate/" type="text/html"/>
+        <id>https://ebenpackwood.com/pages/projects/profligate/</id>
+        
+        <content type="html"></content>
+        
+    </entry>
+</feed>

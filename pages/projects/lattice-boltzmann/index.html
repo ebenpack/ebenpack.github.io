@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://ebenpackwood.com/main.css">
+
+  <link rel="shortcut icon" type="image/ico" sizes="32x32" href="https://ebenpackwood.com/assets/favicon.ico">
+
+  
+    <link type="application/atom+xml" rel="alternate" href="https://ebenpackwood.com/atom.xml" title="Eben Packwood" />
+  
+
+  
+  
+
+  
+
+  
+<title>Eben Packwood | Lattice Boltzmann</title>
+
+
+
+<meta property="og:title" content="Home">
+
+
+
+<meta name="author" content="ebenpack">
+
+
+<meta property="og:locale" content="en-US">
+
+
+
+
+
+
+<meta property="og:site_name" content="Eben Packwood" />
+
+
+
+
+
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2015-08-02T20:28:00+00:00">
+
+
+
+
+
+</head>
+
+<body>
+  <div class="page">
+  
+  <header class="page-head">
+  <div class="logo">
+    <a href="https://ebenpackwood.com">
+      Eben Packwood
+    </a>
+  </div>
+  <nav >
+      
+        
+          <a href="https://ebenpackwood.com">Home</a>
+        
+          <a href="https://ebenpackwood.com/pages/projects">Projects</a>
+                  
+      
+      <a href="https://github.com/ebenpack">Github</a>
+  </nav>
+  </header>
+  
+
+  <main class="page-body">
+    
+<article>
+    <script src="/js/bundle/bundle.js"></script>
+    <section>
+        <div class="main" style="position:relative;">
+<div class="canvases" style="position: relative; height: 240px; width: 600px;">
+    <canvas id="boltzmann" style="background-color: #9044FF; position: absolute; left: 0; top: 0;" width='600' height='240'></canvas>
+    <canvas id="vectorcanvas" style="position: absolute; left: 0; top: 0;; pointer-events: none" width='600' height='240'></canvas>
+    <canvas id="particlecanvas" style="position: absolute; left: 0; top: 0; pointer-events: none" width='600' height='240'></canvas>
+    <canvas id="barriercanvas" style="position: absolute; left: 0; top: 0; pointer-events: none" width='600' height='240'></canvas>
+</div>
+<div id="controls" class="controls">   
+    <select id="drawmode">
+        <option value="speed">Speed</option>
+        <option value="xvelocity">X Velocity</option>
+        <option value="yvelocity">Y Velocity</option>
+        <option value="density">Density</option>
+        <option value="curl">Curl</option>
+        <option value="nothing">Nothing</option>
+    </select>
+    <label><input id="flowvectors" type="checkbox" name="flowvectors"> Flow Vectors</label>
+    <label><input id="flowparticles" type="checkbox" name="flowparticles"> Flow Particles</label>
+    <button id="play">Start</button>
+    <button id="reset">Reset</button>
+    <button id="clearbarriers">Clear barriers</button>
+    <br>
+    <br>
+    <label><input id="viscosity" type="range" name="viscosity" min="2" max="50"> Viscosity</label><br><br>
+    <label><input id="speed" type="range" name="anim-speed" min="1" max="15"> Animation Speed</label>
+    <br><br>
+    <label><input id="flow-speed" type="range" name="flow-speed" value="0" min="0" max="100"> Flow Speed</label>
+</div>
+<div style="border:1px solid gray; width: 600px; padding: 10px; margin-top:10px;">
+    <p><b>Left click</b> to drag fluid</p>
+    <p><b>Right click</b> to draw/erase barriers</p>
+</div>
+<div id="debug"></div>
+</div>
+<script>
+main.boltzmann().then(function(boltzmann){
+    boltzmann({
+        boltzId: "boltzmann",
+        latticeWidth: 200,
+        latticeHeight: 80,
+        vectorcanvasId: "vectorcanvas",
+        particlecanvasId: "particlecanvas",
+        barriercanvasId: "barriercanvas",
+    });
+});
+</script>
+
+    </section>
+</article>
+
+  </main>
+  
+  <footer class="page-foot">
+    <p> Powered by
+        <a href="https://www.getzola.org" rel="noreferrer">Zola</a>
+    </p>
+    <p>
+        <a id="github-link" class="github-link" href="https://github.com/ebenpack/ebenpack.github.io" rel="noreferrer">
+            Fork me on Github
+        </a>
+    </p>
+    <p>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="/images/ccbyncnd.png">
+        </a>
+    </p>
+    <p>
+        This work is licensed under a
+        <a href="http://creativecommons.org/licenses/by-nc/4.0/" rel="noreferrer">
+            Creative Commons Attribution-NonCommercial 4.0 International License.
+        </a>
+    </p>
+</footer>
+  
+</div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Eben Packwood - DevTools</title>
+    <subtitle>TODO</subtitle>
+    <link href="https://ebenpackwood.com/tags/devtools/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://ebenpackwood.com"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2015-10-24T10:14:00+00:00</updated>
+    <id>https://ebenpackwood.com/tags/devtools/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Chrome DevTools Synchronous XHR Redirect Bug</title>
+        <published>2015-10-24T10:14:00+00:00</published>
+        <updated>2015-10-24T10:14:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://ebenpackwood.com/posts/chrome-devtools-synchronous-xhr-redirect-bug.html/" type="text/html"/>
+        <id>https://ebenpackwood.com/posts/chrome-devtools-synchronous-xhr-redirect-bug.html/</id>
+        
+        <content type="html">&lt;p&gt;There is an unusual, and potentially very frustrating bug in Chrome&#x27;s DevTools (at least as of version 46.0.2490.80).
+It does not appear to have been documented elsewhere, so it is being recorded here in the hope that it may prevent some
+future hair-pulling.&lt;&#x2F;p&gt;
+&lt;!--more--&gt;
+&lt;p&gt;When making synchronous XHR requests (*see note below) with 301, 302, etc. redirect responses, the network panel in
+Chrome&#x27;s DevTools will collapse all redirected requests into a single request (which can potentially contain mixed
+elements of, at the very least, the first and last request). So, for example, if you make a synchronous Ajax request
+to &lt;code&gt;&#x2F;1&lt;&#x2F;code&gt;, which redirects to &lt;code&gt;&#x2F;2&lt;&#x2F;code&gt;, which finally redirects to &lt;code&gt;&#x2F;3&lt;&#x2F;code&gt; (where you get a nice 200 response), instead of
+seeing these three requests in the network panel, you will only see a single request to &lt;code&gt;&#x2F;3&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Even more frustrating is that, if the request was a &lt;code&gt;POST&lt;&#x2F;code&gt; or a &lt;code&gt;PUT&lt;&#x2F;code&gt; or suchlike, the &#x27;collapsed&#x27; request that is
+displayed in the network panel will appear as if it was made with the initial request method (&lt;code&gt;POST&lt;&#x2F;code&gt;, &lt;code&gt;PUT&lt;&#x2F;code&gt;, etc.),
+along with any submitted content (a JSON payload, or form data, e.g.), and it will appear as if this request was made
+directly to the final redirected URL. In actuality, however, the initial request will be the &lt;code&gt;POST&lt;&#x2F;code&gt;&#x2F;&lt;code&gt;PUT&lt;&#x2F;code&gt;&#x2F;whatever with
+the request body, and the final request will be a &lt;code&gt;GET&lt;&#x2F;code&gt; request with (of course) no request body (plus any number of
+intermediary redirected &lt;code&gt;GET&lt;&#x2F;code&gt; requests).&lt;&#x2F;p&gt;
+&lt;p&gt;As a concrete example, see the quick and dirty node server below.&lt;&#x2F;p&gt;
+&lt;pre data-linenos data-lang=&quot;js&quot; style=&quot;background-color:#272822;color:#f8f8f2;&quot; class=&quot;language-js &quot;&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;1&lt;&#x2F;td&gt;&lt;td&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;var &lt;&#x2F;span&gt;&lt;span&gt;http &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#66d9ef;&quot;&gt;require&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;http&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;2&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;3&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;http.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;createServer&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;function&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;res&lt;&#x2F;span&gt;&lt;span&gt;){
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;4&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;var &lt;&#x2F;span&gt;&lt;span&gt;loc &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#66d9ef;&quot;&gt;parseInt&lt;&#x2F;span&gt;&lt;span&gt;(req.url.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#66d9ef;&quot;&gt;replace&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;&#x2F;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ae81ff;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;5&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;(req.url &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;=== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;&#x2F;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;6&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;start&lt;&#x2F;span&gt;&lt;span&gt;(req, res);
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;7&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    } &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;else if &lt;&#x2F;span&gt;&lt;span&gt;(loc &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ae81ff;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;8&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;redir&lt;&#x2F;span&gt;&lt;span&gt;(req, res, loc);
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;9&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    } &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;10&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;finish&lt;&#x2F;span&gt;&lt;span&gt;(req, res);
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;11&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;12&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;}).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;listen&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ae81ff;&quot;&gt;8000&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;13&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;14&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;15&lt;&#x2F;td&gt;&lt;td&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;start&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;res&lt;&#x2F;span&gt;&lt;span&gt;){
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;16&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    res.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;writeHead&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ae81ff;&quot;&gt;200&lt;&#x2F;span&gt;&lt;span&gt;, {&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;quot;Content-Type&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;quot;text&#x2F;html; charset=utf-8&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;});
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;17&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    res.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;end&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;18&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;&amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html lang=&amp;quot;en&amp;quot;&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta charset=&amp;quot;UTF-8&amp;quot;&amp;gt;&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;19&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;&amp;lt;title&amp;gt;Synchronous XHR Bug&amp;lt;&#x2F;title&amp;gt;&amp;lt;&#x2F;head&amp;gt;&amp;lt;body&amp;gt;&amp;lt;script&amp;gt;&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;20&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;var request = new XMLHttpRequest();&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;21&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;request.open(&amp;quot;POST&amp;quot;, &amp;quot;&#x2F;1&amp;quot;, false);&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;22&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;request.send(JSON.stringify({foo:&amp;quot;bar&amp;quot;}));&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;23&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;if (request.status === 200) {&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;24&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;  console.log(request.responseText);&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;25&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;}&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;26&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;&amp;lt;&#x2F;script&amp;gt;&amp;lt;&#x2F;body&amp;gt;&amp;lt;&#x2F;html&amp;gt;&amp;#39;
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;27&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    );
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;28&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;29&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;30&lt;&#x2F;td&gt;&lt;td&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;redir&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;res&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;loc&lt;&#x2F;span&gt;&lt;span&gt;){
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;31&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    res.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;writeHead&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ae81ff;&quot;&gt;302&lt;&#x2F;span&gt;&lt;span&gt;, {&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;quot;location&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;quot;&#x2F;&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;(loc &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f92672;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ae81ff;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;)});
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;32&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    res.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;end&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;33&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;34&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;35&lt;&#x2F;td&gt;&lt;td&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;function &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;finish&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;req&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fd971f;&quot;&gt;res&lt;&#x2F;span&gt;&lt;span&gt;){
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;36&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    res.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;writeHead&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ae81ff;&quot;&gt;200&lt;&#x2F;span&gt;&lt;span&gt;, {&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;quot;Content-Type&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;quot;application&#x2F;javascript&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;});
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;37&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;    res.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a6e22e;&quot;&gt;end&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#66d9ef;&quot;&gt;JSON&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#66d9ef;&quot;&gt;stringify&lt;&#x2F;span&gt;&lt;span&gt;({baz:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e6db74;&quot;&gt;&amp;#39;qux&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;}));
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;tr&gt;&lt;td&gt;38&lt;&#x2F;td&gt;&lt;td&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;When a request is made to &lt;code&gt;&#x2F;&lt;&#x2F;code&gt;, a synchronous Ajax &lt;code&gt;POST&lt;&#x2F;code&gt; request will be made to &lt;code&gt;&#x2F;1&lt;&#x2F;code&gt;, which will redirect (via a &lt;code&gt;GET&lt;&#x2F;code&gt;)
+to &lt;code&gt;&#x2F;2&lt;&#x2F;code&gt;, which will redirect to... until finally &lt;code&gt;&#x2F;5&lt;&#x2F;code&gt; is reached, and the JSON string &lt;code&gt;{&amp;quot;baz&amp;quot;:&amp;quot;qux&amp;quot;}&lt;&#x2F;code&gt; is returned. Here
+is how this appears in Chrome DevTools network panel (note that this appears as a single &lt;code&gt;POST&lt;&#x2F;code&gt; request directly
+to &lt;code&gt;&#x2F;5&lt;&#x2F;code&gt;):&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;chrome-xhr-redirect.jpg&quot; alt=&quot;Chrome XHR redirect&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;And here is how the same request looks from Firefox&#x27;s network panel:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;images&#x2F;firefox-xhr-redirect.jpg&quot; alt=&quot;Firefox XHR redirect&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Firefox gives a much more accurate depiction of the actual request that were made.&lt;&#x2F;p&gt;
+&lt;p&gt;While this is unlikely to be a common source of issues, in the right circumstances it can be extremely frustrating. In
+my case, I was reverse-engineering an internal legacy system in order to provide an API façade which would be easier to
+work with. At one point, this system made a synchronous XHR &lt;code&gt;POST&lt;&#x2F;code&gt; request to URL A, which redirected to URL B, which
+redirected to URL C. Chrome, however, was telling me that this was simply a single &lt;code&gt;POST&lt;&#x2F;code&gt; to URL C, and my attempts to
+perform this particular action (e.g. via cURL or an HTTP request from node) were stymied. It took some time, and
+considerable frustration, to realize that my tools were simply lying to me.&lt;&#x2F;p&gt;
+&lt;p&gt;* Note: Synchronous requests are generally discouraged, especially on the main thread. Even so, synchronous XHRs do
+still exist in the wild.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

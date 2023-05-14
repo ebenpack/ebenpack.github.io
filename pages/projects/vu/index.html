@@ -16,13 +16,13 @@
   
 
   
+
   
-  
-<title>404 | Eben Packwood</title>
+<title>Eben Packwood | VU</title>
 
 
 
-<meta property="og:title" content="404">
+<meta property="og:title" content="Home">
 
 
 
@@ -41,6 +41,9 @@
 
 
 
+
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2015-07-29T17:18:00+00:00">
 
 
 
@@ -72,15 +75,22 @@
 
   <main class="page-body">
     
-<div class="notfound">
-	<h1 class="notfound-error">404: Page not found</h1>
-	<div class="notfound-line"></div>
-	<p class="notfound-message">
-		<h2>Whoopsy daisy...</h2>
-		It looks like that page cannot be found. Sorry about that. Let's 
-	</p>
-	<p></p>
+<article>
+    <script src="/js/bundle/bundle.js"></script>
+    <section>
+        <p><canvas id="canvas" width="600" height="400" style="background-color:black;"></canvas></p>
+<div>
+    <p>Drop an audio file onto the canvas above (some <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats" rel="noreferrer">filetype restrictions</a> may apply). You can also use the audio file that is loaded by default. Once the status reads 'Ready!', click the canvas to begin playback.</p>
 </div>
+<div>
+    <p>Click on the canvas to give it focus. Move with WASDRF keys. Look around with QETG.</p>
+</div>
+<script>
+    main.vu().then((vu) => vu("/audio/piano-sonata-no13.ogg"));
+</script>
+
+    </section>
+</article>
 
   </main>
   

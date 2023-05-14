@@ -16,13 +16,13 @@
   
 
   
+
   
-  
-<title>404 | Eben Packwood</title>
+<title>Eben Packwood | Conway&#x27;s Game of Life</title>
 
 
 
-<meta property="og:title" content="404">
+<meta property="og:title" content="Home">
 
 
 
@@ -41,6 +41,9 @@
 
 
 
+
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2014-02-15T20:28:00+00:00">
 
 
 
@@ -72,15 +75,22 @@
 
   <main class="page-body">
     
-<div class="notfound">
-	<h1 class="notfound-error">404: Page not found</h1>
-	<div class="notfound-line"></div>
-	<p class="notfound-message">
-		<h2>Whoopsy daisy...</h2>
-		It looks like that page cannot be found. Sorry about that. Let's 
-	</p>
-	<p></p>
+<article>
+    <script src="/js/bundle/bundle.js"></script>
+    <section>
+        <div id="game" class="game">
+    <canvas id="gol" style="border: 1px solid black;position:relative;" width='600' height='400'></canvas>
 </div>
+<script>
+(function(){
+    main.conway().then(function(conway){
+        new conway('gol', 50);
+    });
+})();
+</script>
+
+    </section>
+</article>
 
   </main>
   

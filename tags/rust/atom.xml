@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Eben Packwood - Rust</title>
+    <subtitle>TODO</subtitle>
+    <link href="https://ebenpackwood.com/tags/rust/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://ebenpackwood.com"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2023-05-05T16:40:00+00:00</updated>
+    <id>https://ebenpackwood.com/tags/rust/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Schemers</title>
+        <published>2023-05-05T16:40:00+00:00</published>
+        <updated>2023-05-05T16:40:00+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://ebenpackwood.com/pages/projects/schemers/" type="text/html"/>
+        <id>https://ebenpackwood.com/pages/projects/schemers/</id>
+        
+        <content type="html">&lt;div&gt;
+    &lt;div id=&quot;scheme&quot;&gt;&lt;&#x2F;div&gt;
+    &lt;pre id=&quot;output&quot;&gt;&lt;&#x2F;pre&gt;
+    &lt;button id=&quot;eval&quot;&gt;Eval&lt;&#x2F;button&gt;
+    &lt;script src=&quot;index.js&quot;&gt;&lt;&#x2F;script&gt;
+    &lt;script&gt;
+    (function(){
+        main.initSchemeRs();
+    })();
+    &lt;&#x2F;script&gt;
+&lt;&#x2F;div&gt;
+</content>
+        
+    </entry>
+</feed>
