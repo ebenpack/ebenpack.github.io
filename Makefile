@@ -15,7 +15,7 @@ build:
 
 .PHONY : deploy
 deploy : clean build prepare_deploy_dir
-$(eval current_git_url := $(shell git ls-remote --get-url origin))
+	$(eval current_git_url := $(shell git ls-remote --get-url origin))
 	mkdir -p _publish_dir
 	git -C _publish_dir/ init
 	git -C _publish_dir/ config remote.origin.url >&- || git -C _publish_dir/ remote add origin ${current_git_url}
