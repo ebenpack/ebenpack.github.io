@@ -14,7 +14,7 @@ build:
 	zola build
 
 .PHONY : deploy
-deploy : clean build prepare_deploy_dir
+deploy : clean build
 	$(eval current_git_url := $(shell git ls-remote --get-url origin))
 	mkdir -p _publish_dir
 	git -C _publish_dir/ init
