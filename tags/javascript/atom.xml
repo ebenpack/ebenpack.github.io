@@ -5,8 +5,21 @@
     <link href="https://ebenpackwood.com/tags/javascript/atom.xml" rel="self" type="application/atom+xml"/>
     <link href="https://ebenpackwood.com"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2020-02-14T14:39:00+00:00</updated>
+    <updated>2023-07-19T20:06:18+00:00</updated>
     <id>https://ebenpackwood.com/tags/javascript/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Shark Game</title>
+        <published>2023-07-19T20:06:18+00:00</published>
+        <updated>2023-07-19T20:06:18+00:00</updated>
+        <author>
+          <name>Unknown</name>
+        </author>
+        <link rel="alternate" href="https://ebenpackwood.com/pages/projects/sharkgame/" type="text/html"/>
+        <id>https://ebenpackwood.com/pages/projects/sharkgame/</id>
+        
+        <content type="html"></content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Not My Type: A Highly Opinionated and Incomplete Journey Through the Type Systems of Several Programming Languages</title>
         <published>2020-02-14T14:39:00+00:00</published>
