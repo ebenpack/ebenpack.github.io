@@ -3,6 +3,7 @@ clean:
 	rm -rf public/
 	rm -rf static/js/bundle
 	rm -rf js/dist
+	rm -rf js/node_modules
 	rm -rf _publish_dir/
 
 .PHONY : build
