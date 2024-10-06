@@ -5,4 +5,5 @@ public/
 _publish_dir/
 js/dist
 static/js/dist
+static/js/bundle
 node_modules/
