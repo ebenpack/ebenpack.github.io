@@ -6,9 +6,13 @@ clean:
 	rm -rf js/node_modules
 	rm -rf _publish_dir/
 
+.PHONY : update-lockfile
+update-lockfile:
+	yarn --cwd js upgrade
+
 .PHONY : build
 build:
-	yarn --cwd js install
+	yarn --cwd js install --check-files --force
 	yarn --cwd js build:prod
 	cp -r js/dist static/js/bundle
 	mkdir -p templates
